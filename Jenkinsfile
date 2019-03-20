@@ -2,11 +2,18 @@ properties ([gitLabConnection('jenkins'), buildDiscarder(logRotator(artifactDays
 
 node ('vagrant') {
     try {
-        checkout scm
-        sh "virtualenv .env"
-        sh "source .env/bin/activate"
-        sh "pip install -r requirements.txt"
-        sh "molecule test"
+        stage ('Testing') {
+            withPythonEnv('/usr/bin/python2.7') {
+                sh "mkdir steamulo.steamengine"
+                dir('steamulo.steamengine') {
+                    checkout scm
+                    gitlabCommitStatus('Testing') {
+                        sh "pip install -r requirements.txt"
+                        sh "molecule test"
+                    }
+                }
+            }
+        }
     } finally {
         cleanWs notFailBuild: true
     }

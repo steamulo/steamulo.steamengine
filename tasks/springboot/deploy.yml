@@ -1,0 +1,22 @@
+---
+
+- name: Creation configuration file
+  copy:
+    content: "{{ steamengine_project_configuration | to_nice_yaml }}"
+    dest: "/{{ steamengine_project_name }}/conf/project_env_conf.yml"
+    owner: "{{ steamengine_project_name }}"
+    group: "{{ steamengine_project_name }}app"
+    mode: 0640
+  notify:
+    - "steamengine restart"
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "/{{ steamengine_project_name }}/project_root/project.jar"
+    checksum: "{{ steamengine_build_sha1_checksum }}"
+    owner: "{{ steamengine_project_name }}"
+    group: "{{ steamengine_project_name }}app"
+    mode: 0750
+  notify:
+    - "steamengine restart"

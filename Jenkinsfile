@@ -9,7 +9,7 @@ node ('vagrant') {
                     checkout scm
                     gitlabCommitStatus('Testing') {
                         sh "pip install -r requirements.txt"
-                        sh "molecule test"
+                        sh "molecule test --all"
                     }
                 }
             }

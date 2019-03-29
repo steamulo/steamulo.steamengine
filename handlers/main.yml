@@ -1,2 +1,16 @@
 ---
-# handlers file for steamulo.steamengine
+
+- name: steamengine restart
+  command: "/{{ steamengine_project_name }}/bin/steamengine restart"
+
+- name: steamengine stop
+  command: "/{{ steamengine_project_name }}/bin/steamengine stop"
+
+- name: steamengine start
+  command: "/{{ steamengine_project_name }}/bin/steamengine start"
+
+- name: rsyslog restart
+  become: true
+  systemd:
+    name: "rsyslog"
+    state: restarted

@@ -1,0 +1,54 @@
+---
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "/{{ steamengine_project_name }}/project_root/project.zip"
+    checksum: "{{ steamengine_build_sha1_checksum }}"
+    owner: "{{ steamengine_project_name }}"
+    group: "{{ steamengine_project_name }}app"
+    mode: 0750
+  register: get_url_build
+
+- name: Create www directory
+  file:
+    path: "/{{ steamengine_project_name }}/project_root/www"
+    owner: "{{ steamengine_project_name }}"
+    group: "{{ steamengine_project_name }}app"
+    mode: u=rwx,g=rx,o=
+    state: directory
+
+- name: Unzip build
+  unarchive:
+    src: "/{{ steamengine_project_name }}/project_root/project.zip"
+    dest: "/{{ steamengine_project_name }}/project_root/www"
+    remote_src: true
+    list_files: true
+  register: front_static_unzip_output
+  when: get_url_build.changed
+
+- find:
+    paths: "/{{ steamengine_project_name }}/project_root/www"
+    recurse: true
+  register: front_static_find_output
+  when: get_url_build.changed
+
+- set_fact:
+    front_static_old_files: "{{ front_static_find_output.files | map(attribute='path') | list | map('regex_replace', '/' + steamengine_project_name + '/project_root/www/', '' ) | list }}"
+    front_static_new_files: "{{ front_static_unzip_output.files }}"
+  when: get_url_build.changed
+
+- name: Remove old static files
+  file:
+    path: "/{{ steamengine_project_name }}/project_root/www/{{ item }}"
+    state: absent
+  with_items: "{{ front_static_old_files | difference(front_static_new_files) }}"
+  when: get_url_build.changed
+
+- name: "Add read permission for {{ steamengine_project_name }}app"
+  file:
+    path: "/{{ steamengine_project_name }}/project_root/www"
+    owner: "{{ steamengine_project_name }}"
+    group: "{{ steamengine_project_name }}app"
+    recurse: true
+    mode: u=rwx,g=rx,o=

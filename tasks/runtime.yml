@@ -1,0 +1,43 @@
+---
+
+- name: Create steamengine bin
+  template:
+    src: "steamengine_{{ steamengine_project_type }}.sh.j2"
+    dest: "/{{ steamengine_project_name }}/bin/steamengine"
+    owner: "{{ steamengine_project_name }}"
+    group: "{{ steamengine_project_name }}"
+    mode: 0500
+
+- name: Create sudo configuration
+  copy:
+    content: |
+      {{ steamengine_project_name }} ALL= NOPASSWD: /{{ steamengine_project_name }}/bin/steamengine *
+
+    dest: "/etc/sudoers.d/10-{{ steamengine_project_name }}"
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Grant syslog user write access to logs directory
+  acl:
+    path: "/{{ steamengine_project_name }}/logs"
+    entity: syslog
+    etype: user
+    permissions: rwx
+    state: present
+
+- name: Create rsyslog configuration
+  template:
+    src: rsyslog.conf.j2
+    dest: "/etc/rsyslog.d/10-{{ steamengine_project_name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - "rsyslog restart"
+
+- name: Create logrotate scripts
+  template:
+    src: logrotate.conf.j2
+    dest: "/etc/logrotate.d/{{ item.name }}"
+  with_items: "{{ steamengine_logrotate_scripts }}"

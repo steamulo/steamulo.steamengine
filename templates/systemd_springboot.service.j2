@@ -1,0 +1,14 @@
+[Unit]
+Description={{ steamengine_project_name }} server
+
+[Service]
+ExecStart=/usr/bin/java -jar /{{ steamengine_project_name }}/project_root/project.jar --spring.config.location={% if steamengine_project_configuration_base_name is defined %}classpath:/{{ steamengine_project_configuration_base_name }},{% endif %}file:/{{ steamengine_project_name }}/conf/project_env_conf.yml
+Type=simple
+Restart=always
+RestartSec=10
+User={{ steamengine_project_name }}
+Group={{ steamengine_project_name }}
+SyslogIdentifier={{ steamengine_project_name }}
+
+[Install]
+WantedBy=multi-user.target

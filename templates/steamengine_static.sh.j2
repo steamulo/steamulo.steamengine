@@ -1,0 +1,64 @@
+#!/bin/bash
+
+display_usage() {
+    echo -e "Usage: $0 <arguments>"
+    echo -e "\nArguments:"
+    echo -e "  start\n\t\t\tStart the http server"
+    echo -e "  stop\n\t\t\tStop the http server"
+    echo -e "  restart\n\t\t\tRestart the http server"
+    echo -e "  status\n\t\t\tDisplay the http server status"
+    echo -e "  reload\n\t\t\tReload the http server configuration"
+    echo -e "  -h, --help\n\t\t\tShow Usages"
+    echo ""
+}
+
+if [ "$EUID" -ne 0 ]
+then
+    exec sudo "$0" "$@"
+fi
+
+# if less than two arguments supplied, display usage
+if [  $# -le 0 ]
+then
+    display_usage
+    exit 1
+fi
+
+# check whether user had supplied -h or --help . If yes display usage
+if [[ ( $# == "--help") ||  $# == "-h" ]]
+then
+    display_usage
+    exit 0
+fi
+
+while [ $# -gt 0 ]; do
+  arg=$1
+  shift
+  case $arg in
+    start)
+     systemctl start nginx
+     exit $?
+    ;;
+    stop)
+     systemctl stop nginx
+     exit $?
+    ;;
+    restart)
+     systemctl restart nginx
+     exit $?
+    ;;
+    status)
+     systemctl status nginx
+     exit $?
+    ;;
+    reload)
+     systemctl reload nginx
+     exit $?
+    ;;
+    *)
+     echo "Wrong option"
+     display_usage
+     exit 1
+    ;;
+  esac
+done

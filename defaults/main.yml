@@ -1,2 +1,22 @@
 ---
-# defaults file for steamulo.steamengine
+
+# steamengine_project_type: ""
+# steamengine_build_url: ""
+# steamengine_build_sha1_checksum: ""
+
+steamengine_project_name: "default_project"
+
+steamengine_project_ssh_keys: []
+
+steamengine_logrotate_scripts:
+  - name: "{{ steamengine_project_name }}"
+    path: "/{{ steamengine_project_name }}/logs/*.log"
+    options:
+      - daily
+      - missingok
+      - compress
+      - copytruncate
+      - extension .log
+      - notifempty
+      - rotate 7
+      - dateext

@@ -1,0 +1,25 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+  roles:
+    - role: geerlingguy.nginx
+      vars:
+        nginx_ppa_use: true
+        nginx_remove_default_vhost: true
+        nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+        nginx_vhosts:
+          - listen: "80"
+            server_name: "localhost"
+            index: "/"
+            extra_parameters: |
+              location / {
+                  root /test_static/project_root/www;
+                  try_files $uri /index.html =404;
+              }
+    - role: steamulo.steamengine
+      vars:
+        steamengine_project_name: test_static
+        steamengine_project_type: static
+        steamengine_build_url: http://delivery.steamulo.org/SteamEngineV2_tests/react-static-build.zip
+        steamengine_build_sha1_checksum: sha1:63ac5873cab55a971dbbe3f3be8504dd82dbb71a.

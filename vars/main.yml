@@ -1,1 +1,13 @@
 ---
+
+# USERS
+steamengine_project_user: "{{ steamengine_project_name }}"
+steamengine_app_user: "{{ steamengine_project_name }}app"
+
+# PATHS
+steamengine_home_path: "/{{ steamengine_project_name }}"
+steamengine_project_root_path: "{{ steamengine_home_path }}/project_root"
+steamengine_project_root_path_web: "{{ steamengine_project_root_path }}/www"
+steamengine_conf_path: "{{ steamengine_home_path }}/conf"
+steamengine_bin_path: "{{ steamengine_home_path }}/bin"
+steamengine_logs_path: "{{ steamengine_home_path }}/logs"

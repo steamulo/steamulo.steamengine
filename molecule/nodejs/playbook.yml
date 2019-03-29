@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+  pre_tasks:
+    - name: apt update
+      apt:
+        update_cache: true
+  roles:
+    - role: geerlingguy.nodejs
+      vars:
+        nodejs_version: "10.x"
+        nodejs_npm_global_packages:
+          - "pm2"

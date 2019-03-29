@@ -1,0 +1,24 @@
+---
+
+- name: Unzip build
+  unarchive:
+    src: "{{ zip_path }}"
+    dest: "{{ dest_path }}"
+    remote_src: true
+    list_files: true
+  register: front_static_unzip_output
+
+- find:
+    paths: "{{ dest_path }}"
+    recurse: true
+  register: front_static_find_output
+
+- set_fact:
+    front_static_old_files: "{{ front_static_find_output.files | map(attribute='path') | list | map('regex_replace', dest_path + '/', '' ) | list }}"
+    front_static_new_files: "{{ front_static_unzip_output.files }}"
+
+- name: Remove old static files
+  file:
+    path: "{{ dest_path }}/{{ item }}"
+    state: absent
+  with_items: "{{ front_static_old_files | difference(front_static_new_files) }}"

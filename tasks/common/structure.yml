@@ -1,0 +1,42 @@
+---
+
+- name: Create project folder structure (1)
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0751
+  with_items:
+    - "{{ steamengine_home_path }}"
+
+- name: Create project folder structure (2)
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0750
+  with_items:
+    - "{{ steamengine_project_root_path }}"
+    - "{{ steamengine_conf_path }}"
+
+- name: Create project folder structure (3)
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_project_user }}"
+    mode: 0750
+  with_items:
+    - "{{ steamengine_bin_path }}"
+
+- name: Create project folder structure (4)
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_items:
+    - "{{ steamengine_logs_path }}"

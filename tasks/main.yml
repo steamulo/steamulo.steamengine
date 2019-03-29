@@ -8,20 +8,20 @@
 
 - import_tasks: "{{ steamengine_project_type }}/asserts.yml"
 
-- import_tasks: install_deps.yml
+- import_tasks: common/install_deps.yml
   tags: dependencies
 
-- import_tasks: user.yml
+- import_tasks: common/user.yml
   tags: user
 
-- import_tasks: structure.yml
+- import_tasks: common/structure.yml
   tags: structure
 
 - import_tasks: "{{ steamengine_project_type }}/deploy.yml"
   when: steamengine_build_url is defined
   tags: deploy
 
-- import_tasks: runtime.yml
+- import_tasks: common/runtime.yml
   tags: runtime
 
 - import_tasks: "{{ steamengine_project_type }}/runtime.yml"

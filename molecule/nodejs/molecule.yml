@@ -17,7 +17,7 @@ provisioner:
   lint:
     name: ansible-lint
 scenario:
-  name: default
+  name: nodejs
 verifier:
   name: testinfra
   lint:

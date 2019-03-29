@@ -3,9 +3,9 @@
 - name: Create steamengine bin
   template:
     src: "steamengine_{{ steamengine_project_type }}.sh.j2"
-    dest: "/{{ steamengine_project_name }}/bin/steamengine"
-    owner: "{{ steamengine_project_name }}"
-    group: "{{ steamengine_project_name }}"
+    dest: "{{ steamengine_bin_path }}/steamengine"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0500
 
 - name: Create sudo configuration
@@ -20,7 +20,7 @@
 
 - name: Grant syslog user write access to logs directory
   acl:
-    path: "/{{ steamengine_project_name }}/logs"
+    path: "{{ steamengine_logs_path }}"
     entity: syslog
     etype: user
     permissions: rwx

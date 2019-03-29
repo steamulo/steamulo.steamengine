@@ -1,0 +1,37 @@
+---
+
+- name: Create project groups
+  group:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ steamengine_project_user }}"
+    - "{{ steamengine_app_user }}"
+
+- name: "Create project app user {{ steamengine_app_user }}"
+  user:
+    name: "{{ steamengine_app_user }}"
+    password: "*"
+    createhome: false
+    group: "{{ steamengine_app_user }}"
+    append: true
+
+- name: "Create project user {{ steamengine_project_user }}"
+  user:
+    name: "{{ steamengine_project_user }}"
+    password: "*"
+    home: "{{ steamengine_home_path }}"
+    createhome: true
+    group: "{{ steamengine_project_user }}"
+    groups:
+      - "{{ steamengine_app_user }}"
+    shell: "/bin/bash"
+    append: true
+
+- name: "Ensure authorized_keys are present for user {{ steamengine_project_user }}"
+  authorized_key:
+    user: "{{ steamengine_project_user }}"
+    key: "{{ steamengine_project_ssh_keys | join('\n') }}"
+    state: present
+    manage_dir: true
+    exclusive: true

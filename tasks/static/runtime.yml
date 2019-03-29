@@ -1,7 +1,7 @@
 ---
 
-- name: "Add www-data in {{ steamengine_project_name }}app group"
+- name: "Add www-data in {{ steamengine_app_user }} group"
   user:
     name: www-data
-    groups: "{{ steamengine_project_name }}app"
+    groups: "{{ steamengine_app_user }}"
     append: true

@@ -20,3 +20,5 @@ steamengine_logrotate_scripts:
       - notifempty
       - rotate 7
       - dateext
+
+steamengine_nodejs_entrypoint: "bin/www"

@@ -1,0 +1,16 @@
+---
+
+- name: Create systemd unit file
+  template:
+    src: systemd_nodejs_pm2.service.j2
+    dest: "/etc/systemd/system/{{ steamengine_project_name }}.service"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
+  systemd:
+    state: started
+    enabled: true
+    daemon_reload: true
+    name: "{{ steamengine_project_name }}"

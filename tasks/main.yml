@@ -4,7 +4,7 @@
   assert:
     that:
       - "steamengine_project_type is defined"
-      - "steamengine_project_type == 'springboot' or steamengine_project_type == 'static'"
+      - "steamengine_project_type == 'springboot' or steamengine_project_type == 'static' or steamengine_project_type == 'nodejs'"
 
 - import_tasks: "{{ steamengine_project_type }}/asserts.yml"
 

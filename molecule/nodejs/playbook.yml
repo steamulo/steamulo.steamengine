@@ -3,7 +3,7 @@
   hosts: instance
   become: true
   pre_tasks:
-    - name: apt update
+    - name: Update apt cache
       apt:
         update_cache: true
   roles:
@@ -12,3 +12,9 @@
         nodejs_version: "10.x"
         nodejs_npm_global_packages:
           - "pm2"
+    - role: steamulo.steamengine
+      vars:
+        steamengine_project_name: test_nodejs
+        steamengine_project_type: nodejs
+        steamengine_build_url: http://delivery.steamulo.org/SteamEngineV2_tests/nodejs-express-build.zip
+        steamengine_build_sha1_checksum: sha1:5ca5bebc8f3b770358732c90b20b94b710158d55.

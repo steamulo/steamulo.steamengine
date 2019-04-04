@@ -18,6 +18,14 @@
     mode: u=rwx,g=rx,o=
     state: directory
 
+- name: Create pm2 directory
+  file:
+    path: "{{ steamengine_project_root_path }}/pm2"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+    state: directory
+
 - name: Update www directory
   import_tasks: include/update_from_zip.yml
   vars:

@@ -1,9 +1,6 @@
 ---
 
-# steamengine_project_type: ""
-# steamengine_build_url: ""
-# steamengine_build_sha1_checksum: ""
-
+# GLOBAL
 steamengine_project_name: "default_project"
 
 steamengine_project_ssh_keys: []
@@ -21,4 +18,16 @@ steamengine_logrotate_scripts:
       - rotate 7
       - dateext
 
+# NODEJS
 steamengine_nodejs_entrypoint: "bin/www"
+
+# TOMCAT7
+steamengine_tomcat7_tomcat_version: "7.0.93"
+steamengine_tomcat7_tomcat_sha512: "7ae5186f63df7821b7de4e4c92780a27ccc678119614ad074349c3d02bd2f764ac08fa72f776e880e98aad2617de01521eb3de6fe57e4a749c8c04f28e042f0a"
+steamengine_tomcat7_http_port: 8080
+steamengine_tomcat7_max_threads: 200
+steamengine_tomcat7_accept_count: 100
+steamengine_tomcat7_acceptor_thread_count: 1
+steamengine_tomcat7_max_connections: 10000
+steamengine_tomcat7_min_spare_threads: 10
+steamengine_tomcat7_connection_timeout: 20000

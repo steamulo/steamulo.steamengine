@@ -1,0 +1,106 @@
+---
+
+- name: Create tomcat directory
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    state: directory
+
+- name: Download tomcat
+  get_url:
+    url: "{{ steamengine_tomcat7_tomcat_url }}"
+    dest: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
+    checksum: "sha512:{{ steamengine_tomcat7_tomcat_sha512 }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  register: get_url_tomcat
+  notify:
+    - "steamengine restart"
+
+- name: Unzip tomcat
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
+    dest: "{{ steamengine_project_root_path }}/tomcat"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    remote_src: true
+    extra_opts: [--strip-components=1]
+  when: get_url_tomcat.changed
+
+- name: Remove default tomcat deployment
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat/webapps"
+    state: absent
+  when: get_url_tomcat.changed
+
+- name: Remove default tomcat deployment (2)
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat/webapps"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: get_url_tomcat.changed
+
+- name: Create tomcat ROOT deployment
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: get_url_tomcat.changed
+
+- name: Create tomcat working directory
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat/work"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when: get_url_tomcat.changed
+
+- name: Create tomcat temp directory
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat/temp"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when: get_url_tomcat.changed
+
+- name: Create tomcat configuration file
+  template:
+    src: "tomcat7.server.xml.j2"
+    dest: "{{ steamengine_project_root_path }}/tomcat/conf/server.xml"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  notify:
+    - "steamengine restart"
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_project_root_path }}/project.war"
+    checksum: "{{ steamengine_build_sha1_checksum }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  register: get_url_build
+  notify:
+    - "steamengine restart"
+
+- name: Unzip tomcat
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.war"
+    dest: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    remote_src: true
+  when: get_url_build.changed

@@ -1,0 +1,5 @@
+---
+
+- name: Verify build extension
+  assert:
+    that: (steamengine_build_url | basename | splitext)[1] == ".war"

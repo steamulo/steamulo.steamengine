@@ -8,6 +8,8 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
+  notify:
+    - "steamengine restart"
   register: get_url_build
 
 - name: Create www directory

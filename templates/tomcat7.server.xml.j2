@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- {{ ansible_managed }} -->
+
+<Server port="-1" shutdown="SHUTDOWN">
+    <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    <Listener className="org.apache.catalina.core.JasperListener" />
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+    <Service name="Catalina">
+
+        <Connector port="{{ steamengine_tomcat7_http_port }}"
+                   protocol="org.apache.coyote.http11.Http11NioProtocol"
+                   connectionTimeout="{{ steamengine_tomcat7_connection_timeout }}"
+                   maxThreads="{{ steamengine_tomcat7_max_threads }}"
+                   acceptCount="{{ steamengine_tomcat7_accept_count }}"
+                   acceptorThreadCount="{{ steamengine_tomcat7_acceptor_thread_count }}"
+                   maxConnections="{{ steamengine_tomcat7_max_connections }}"
+                   minSpareThreads="{{ steamengine_tomcat7_min_spare_threads }}"
+                   server="Apache Tomcat" />
+
+        <Engine name="Catalina" defaultHost="localhost">
+            <Host name="localhost"
+                  appBase="webapps"
+                  unpackWARs="false"
+                  autoDeploy="false"
+                  createDirs="false"
+                  deployOnStartup="true" >
+
+                <Valve className="org.apache.catalina.valves.AccessLogValve"
+                       rotatable="false"
+                       directory="{{ steamengine_logs_path }}"
+                       prefix="tomcat_access"
+                       suffix=".log"
+                       pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+
+            </Host>
+        </Engine>
+    </Service>
+</Server>

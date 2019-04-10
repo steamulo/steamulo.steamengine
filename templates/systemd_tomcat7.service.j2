@@ -1,0 +1,24 @@
+[Unit]
+Description={{ steamengine_project_name }} server
+
+[Service]
+ExecStart={{ steamengine_project_root_path }}/tomcat/bin/catalina.sh run
+Type=simple
+
+# Environment=JAVA_OPTS=-Djava.util.logging.config.file=/dev/null
+Environment=CATALINA_HOME={{ steamengine_project_root_path }}/tomcat
+Environment=CATALINA_BASE={{ steamengine_project_root_path }}/tomcat
+
+Restart=always
+RestartSec=10
+
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+User={{ steamengine_app_user }}
+Group={{ steamengine_app_user }}
+SyslogIdentifier={{ steamengine_project_name }}
+
+[Install]
+WantedBy=multi-user.target

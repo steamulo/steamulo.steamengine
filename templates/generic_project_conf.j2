@@ -1,0 +1,15 @@
+{%- macro display_keys(key, value) -%}
+    {%- if value is string -%}
+        {{ key }}={{ value + '\n'}}
+    {%- else -%}
+        {%- if value is mapping -%}
+            {%- for d_key, d_value in value.items() -%}
+                {{ display_keys(key + '.' + d_key, d_value) }}
+            {%- endfor -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- for key, value in steamengine_project_configuration.items() -%}
+    {{ display_keys(key, value) }}
+{%- endfor -%}

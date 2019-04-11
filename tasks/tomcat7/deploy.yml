@@ -1,5 +1,16 @@
 ---
 
+- name: Create configuration file
+  template:
+    src: "generic_project_conf.j2"
+    dest: "{{ steamengine_conf_path }}/project_env.conf"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0640
+  when: steamengine_project_configuration is defined
+  notify:
+    - "steamengine restart"
+
 - name: Create tomcat directory
   file:
     path: "{{ steamengine_project_root_path }}/tomcat"

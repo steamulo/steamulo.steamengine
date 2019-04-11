@@ -20,5 +20,7 @@ scenario:
   name: static
 verifier:
   name: testinfra
+  options:
+    sudo: true
   lint:
     name: flake8

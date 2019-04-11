@@ -19,3 +19,10 @@ def test_app_listening(host):
 def test_app_response(host):
     resp = host.run("curl localhost:8088/hello").stdout
     assert "the Hello, World application" in resp
+
+
+def test_configuration_file(host):
+    conf = host.file("/test_tomcat7/conf/project_env.conf").content_string
+    assert "test_conf.item1=test1" in conf
+    assert "test_conf.item2.item2_sub1=test2" in conf
+    assert "test_conf.item2.item2_sub2=test3" in conf

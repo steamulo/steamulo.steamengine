@@ -2,7 +2,9 @@
 
 - name: Create configuration file
   copy:
-    content: "{{ steamengine_project_configuration | to_nice_yaml }}"
+    content: |
+      # This file is managed by Ansible, all changes will be lost.
+      {{ steamengine_project_configuration | to_nice_yaml }}
     dest: "{{ steamengine_conf_path }}/project_env_conf.yml"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

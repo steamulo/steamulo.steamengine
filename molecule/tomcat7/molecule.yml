@@ -20,5 +20,7 @@ scenario:
   name: tomcat7
 verifier:
   name: testinfra
+  options:
+    sudo: true
   lint:
     name: flake8

@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 [Unit]
 Description={{ steamengine_project_name }} server
 
@@ -5,9 +7,9 @@ Description={{ steamengine_project_name }} server
 ExecStart={{ steamengine_project_root_path }}/tomcat/bin/catalina.sh run
 Type=simple
 
-Environment=CATALINA_OPTS="
+Environment=CATALINA_OPTS="-Dconfiguration.filename={{ steamengine_conf_path }}/project_env.conf
 {%- for opt in steamengine_java_base_opts | union(steamengine_java_opts | default ([])) -%}
-    {{ opt + ' ' }}
+    {{ ' ' + opt }}
 {%- endfor %}"
 Environment=CATALINA_HOME={{ steamengine_project_root_path }}/tomcat
 Environment=CATALINA_BASE={{ steamengine_project_root_path }}/tomcat

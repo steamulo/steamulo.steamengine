@@ -2,7 +2,7 @@
 
 - name: Create configuration file
   template:
-    src: "generic_project_conf.j2"
+    src: "project_properties.conf.j2"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

@@ -1,3 +1,9 @@
+# {{ ansible_managed }}
+
+{% if steamengine_project_configuration_base_name is defined %}
+include {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF/{{ steamengine_project_configuration_base_name }}
+{% endif %}
+
 {%- macro display_keys(key, value) -%}
     {%- if value is string -%}
         {{ key }}={{ value + '\n'}}

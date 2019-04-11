@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 if $programname == '{{ steamengine_project_name }}' then {
     action(type="omfile" fileCreateMode="0644" file="{{ steamengine_logs_path }}/application.log")
 }

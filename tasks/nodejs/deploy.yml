@@ -29,7 +29,7 @@
     state: directory
 
 - name: Update www directory
-  import_tasks: include/update_from_archive.yml
+  include_tasks: include/update_from_archive.yml
   vars:
     archive_path: "{{ steamengine_project_root_path }}/project.zip"
     dest_path: "{{ steamengine_project_root_path_web }}"

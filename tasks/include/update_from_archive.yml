@@ -1,8 +1,8 @@
 ---
 
-- name: Unzip build
+- name: Unarchive build
   unarchive:
-    src: "{{ zip_path }}"
+    src: "{{ archive_path }}"
     dest: "{{ dest_path }}"
     remote_src: true
     list_files: true

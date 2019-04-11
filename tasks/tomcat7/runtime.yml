@@ -6,7 +6,9 @@
     dest: "/etc/systemd/system/{{ steamengine_project_name }}.service"
     owner: root
     group: root
-    mode: 0644
+    mode: u=rw,g=r,o=r
+  notify:
+    - "steamengine restart"
 
 - name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
   systemd:

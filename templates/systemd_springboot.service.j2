@@ -2,7 +2,11 @@
 Description={{ steamengine_project_name }} server
 
 [Service]
-ExecStart=/usr/bin/java -jar {{ steamengine_project_root_path }}/project.jar --spring.config.location={% if steamengine_project_configuration_base_name is defined %}classpath:/{{ steamengine_project_configuration_base_name }},{% endif %}file:{{ steamengine_conf_path }}/project_env_conf.yml
+ExecStart=/usr/bin/java \
+    -jar {{ steamengine_project_root_path }}/project.jar \
+    --spring.config.location={% if steamengine_project_configuration_base_name is defined %}classpath:/{{ steamengine_project_configuration_base_name }},{% endif %}file:{{ steamengine_conf_path }}/project_env_conf.yml \
+    {% for opt in steamengine_java_base_opts | union(steamengine_java_opts | default ([])) %}{{ opt + ' ' }}{% endfor %}
+
 Type=simple
 
 Restart=always

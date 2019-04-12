@@ -1,40 +1,58 @@
-Role Name
+Steamengine
 =========
 
-A brief description of the role goes here.
-
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should
-be mentioned here. For instance, if the role uses the EC2 module, it may be a
-good idea to mention in this section that the boto package is required.
+This role provides production grade installation and deployment workflow for nodejs, tomcat7, springboot and static files.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including
-any variables that are in defaults/main.yml, vars/main.yml, and any variables
-that can/should be set via parameters to the role. Any variables that are read
-from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
-be mentioned here as well.
+Here are the main variables that should be set :
 
-Dependencies
-------------
+```yaml
+# Project name. This is also the base path of the project installation and the system user used to manage the project.
+# Default is default_project.
+steamengine_project_name: "default_project"
 
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables that
-are used from other roles.
+# Project type, should be a value in "static", "springboot", "nodejs", "tomcat7".
+# No default value but mandatory
+steamengine_project_type:
+
+# Url of the build that will be deployed.
+# No default value and not mandatory. Nothing will be deployed if missing.
+steamengine_build_url:
+
+# Checksum of the build. Should be in the following format : "<algorithm>:<checksum>"
+# No default value, mandatory if steamengine_build_url is set.
+steamengine_build_sha1_checksum:
+
+# Project configuration.
+# No default value and not mandatory.
+steamengine_project_configuration:
+
+# Public ssh keys that will be added to the project user.
+# Default is empty.
+steamengine_project_ssh_keys: []
+```
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
+Examples for different project types can be found under the molecule folder.
 
-    - hosts: servers
-      roles:
-         - { role: steamulo.steamengine, x: 42 }
+Development
+------------
+
+This role use the [molecule framework](https://molecule.readthedocs.io/en/stable/) in order to simplify
+the development process.
+
+Setup your local environnement with python virtualenv prior to using molecule :
+
+```virtualenv ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
+
+Use the commande ```molecule converge -s <project_type>``` to create a local environnement
+ans ```molecule login -s <project_type``` to log into the test machine.
+
+Before any commit ensure that every test are passing with ```molecule test --all```
 
 License
 -------
@@ -44,11 +62,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a
-website (HTML is not allowed).
-
-
-
-INSTALL
-
-virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
+Steamulo - http://www.steamulo.com

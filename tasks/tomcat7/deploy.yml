@@ -120,3 +120,12 @@
     group: "{{ steamengine_app_user }}"
     recurse: true
     mode: u=rwx,g=rx,o=
+
+- name: "Add write permission for {{ steamengine_app_user }} on WEB-INF"
+  file:
+    path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    recurse: true
+    mode: u=rwx,g=rwx,o=
+  when: steamengine_tomcat7_allow_insecure_write_web_inf

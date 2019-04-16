@@ -31,6 +31,7 @@ steamengine_tomcat7_acceptor_thread_count: 1
 steamengine_tomcat7_max_connections: 10000
 steamengine_tomcat7_min_spare_threads: 10
 steamengine_tomcat7_connection_timeout: 20000
+steamengine_tomcat7_allow_insecure_write_web_inf: false
 
 # JAVA
 steamengine_java_opts:

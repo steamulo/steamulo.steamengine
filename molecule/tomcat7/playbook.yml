@@ -5,10 +5,8 @@
   roles:
     - role: lean_delivery.java
       vars:
-        java_package: jdk
-        java_major_version: 8
-        java_minor_version: 202
-        java_arch: x64
+        transport: web
+        transport_web: https://s3-eu-west-1.amazonaws.com/delivery.steamulo.org/oracle-java/jdk-8u211-linux-x64.tar.gz
     - role: steamulo.steamengine
       vars:
         steamengine_project_name: test_tomcat7

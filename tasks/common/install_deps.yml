@@ -3,7 +3,9 @@
 - name: Install acl package
   apt:
     name: acl
+  tags: dependencies
 
 - name: Install unzip package
   apt:
     name: unzip
+  tags: dependencies

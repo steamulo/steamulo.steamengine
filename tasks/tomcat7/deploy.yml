@@ -10,6 +10,7 @@
   when: steamengine_project_configuration is defined
   notify:
     - "steamengine restart"
+  tags: deploy
 
 - name: Create tomcat directory
   file:
@@ -18,6 +19,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
+  tags: deploy
 
 - name: Download tomcat
   get_url:
@@ -30,6 +32,7 @@
   register: get_url_tomcat
   notify:
     - "steamengine restart"
+  tags: deploy
 
 - name: Unzip tomcat
   unarchive:
@@ -41,12 +44,14 @@
     remote_src: true
     extra_opts: [--strip-components=1]
   when: get_url_tomcat.changed
+  tags: deploy
 
 - name: Remove default tomcat deployment
   file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps"
     state: absent
   when: get_url_tomcat.changed
+  tags: deploy
 
 - name: Remove default tomcat deployment (2)
   file:
@@ -56,6 +61,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: get_url_tomcat.changed
+  tags: deploy
 
 - name: Create tomcat ROOT deployment
   file:
@@ -65,6 +71,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: get_url_tomcat.changed
+  tags: deploy
 
 - name: Create tomcat working directory
   file:
@@ -74,6 +81,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
   when: get_url_tomcat.changed
+  tags: deploy
 
 - name: Create tomcat temp directory
   file:
@@ -83,6 +91,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
   when: get_url_tomcat.changed
+  tags: deploy
 
 - name: Create tomcat configuration file
   template:
@@ -93,6 +102,7 @@
     mode: u=rwx,g=rx,o=
   notify:
     - "steamengine restart"
+  tags: deploy
 
 - name: "Download build {{ steamengine_build_url }}"
   get_url:
@@ -105,6 +115,7 @@
   register: get_url_build
   notify:
     - "steamengine restart"
+  tags: deploy
 
 - name: Update webapps/ROOT directory
   include_tasks: include/update_from_archive.yml
@@ -112,6 +123,7 @@
     archive_path: "{{ steamengine_project_root_path }}/project.war"
     dest_path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
   when: get_url_build.changed
+  tags: deploy
 
 - name: "Add read permission for {{ steamengine_app_user }}"
   file:
@@ -121,6 +133,7 @@
     recurse: true
     mode: u=rwx,g=rx,o=
   when: get_url_build.changed
+  tags: deploy
 
 - name: "Add write permission for {{ steamengine_app_user }} on WEB-INF"
   file:
@@ -130,6 +143,7 @@
     recurse: true
     mode: u=rwx,g=rwx,o=
   when: steamengine_tomcat7_allow_insecure_write_web_inf and get_url_build.changed
+  tags: deploy
 
 - name: "Add write permission for {{ steamengine_app_user }} on ROOT"
   file:
@@ -139,3 +153,4 @@
     recurse: true
     mode: u=rwx,g=rwx,o=
   when: steamengine_tomcat7_allow_insecure_write_root and get_url_build.changed
+  tags: deploy

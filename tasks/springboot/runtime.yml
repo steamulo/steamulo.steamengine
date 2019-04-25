@@ -9,6 +9,7 @@
     mode: u=rw,g=r,o=r
   notify:
     - "steamengine restart"
+  tags: runtime
 
 - name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
   systemd:
@@ -16,3 +17,4 @@
     enabled: true
     daemon_reload: true
     name: "{{ steamengine_project_name }}"
+  tags: runtime

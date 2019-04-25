@@ -23,7 +23,7 @@ steamengine_build_url:
 
 # Checksum of the build. Should be in the following format : "<algorithm>:<checksum>"
 # No default value, mandatory if steamengine_build_url is set.
-steamengine_build_sha1_checksum:
+steamengine_build_checksum:
 
 # Project configuration.
 # No default value and not mandatory.

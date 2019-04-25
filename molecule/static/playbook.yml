@@ -21,5 +21,5 @@
       vars:
         steamengine_project_name: test_static
         steamengine_project_type: static
-        steamengine_build_url: http://delivery.steamulo.org/SteamEngineV2_tests/react-static-build.zip
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/react-static-build.zip
         steamengine_build_sha1_checksum: sha1:63ac5873cab55a971dbbe3f3be8504dd82dbb71a.

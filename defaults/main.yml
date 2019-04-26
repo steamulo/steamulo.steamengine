@@ -34,6 +34,7 @@ steamengine_tomcat7_connection_timeout: 20000
 steamengine_tomcat7_allow_insecure_write_web_inf: false
 steamengine_tomcat7_allow_insecure_write_root: false
 steamengine_tomcat7_configuration_key: "configuration.filename"
+steamengine_tomcat7_reverse_https: false
 
 # JAVA
 steamengine_java_opts:

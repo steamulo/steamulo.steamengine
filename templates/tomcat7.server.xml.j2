@@ -12,6 +12,10 @@
     <Service name="Catalina">
 
         <Connector port="{{ steamengine_tomcat7_http_port }}"
+                   {% if steamengine_tomcat7_reverse_https %}
+                   secure="true"
+                   scheme="https"
+                   {% endif %}
                    protocol="org.apache.coyote.http11.Http11NioProtocol"
                    connectionTimeout="{{ steamengine_tomcat7_connection_timeout }}"
                    maxThreads="{{ steamengine_tomcat7_max_threads }}"

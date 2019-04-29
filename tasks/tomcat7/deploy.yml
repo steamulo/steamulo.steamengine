@@ -114,6 +114,7 @@
     mode: u=rwx,g=rx,o=
   register: get_url_build
   notify:
+    - "steamengine fixpermissions"
     - "steamengine restart"
   tags: deploy
 
@@ -123,34 +124,4 @@
     archive_path: "{{ steamengine_project_root_path }}/project.war"
     dest_path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
   when: get_url_build.changed
-  tags: deploy
-
-- name: "Add read permission for {{ steamengine_app_user }}"
-  file:
-    path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    recurse: true
-    mode: u=rwx,g=rx,o=
-  when: get_url_build.changed
-  tags: deploy
-
-- name: "Add write permission for {{ steamengine_app_user }} on WEB-INF"
-  file:
-    path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    recurse: true
-    mode: u=rwx,g=rwx,o=
-  when: steamengine_tomcat7_allow_insecure_write_web_inf and get_url_build.changed
-  tags: deploy
-
-- name: "Add write permission for {{ steamengine_app_user }} on ROOT"
-  file:
-    path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    recurse: true
-    mode: u=rwx,g=rwx,o=
-  when: steamengine_tomcat7_allow_insecure_write_root and get_url_build.changed
   tags: deploy

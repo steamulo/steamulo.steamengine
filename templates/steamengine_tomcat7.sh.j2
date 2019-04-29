@@ -57,6 +57,16 @@ while [ $# -gt 0 ]; do
      journalctl -f -u {{ steamengine_project_name }}
      exit $?
     ;;
+    fixpermissions)
+     chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
+     chmod -R u=rwx,g=rx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
+
+     {% if steamengine_tomcat7_allow_insecure_write_web_inf %}chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF{% endif %}
+
+     {% if steamengine_tomcat7_allow_insecure_write_root %}chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT{% endif %}
+
+     exit $?
+    ;;
     *)
      echo "Wrong option"
      display_usage

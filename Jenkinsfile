@@ -15,6 +15,6 @@ node ('vagrant') {
             }
         }
     } finally {
-        cleanWs notFailBuild: true
+        cleanWs()
     }
 }

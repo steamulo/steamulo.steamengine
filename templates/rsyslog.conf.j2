@@ -1,5 +1,9 @@
 # {{ ansible_managed }}
 
+{% if steamengine_disable_rsyslog_escape_control_characters %}
+$EscapeControlCharactersOnReceive off
+{% endif %}
+
 template(name="tplMsgOnly" type="string" string="%msg%\n")
 
 if $programname == '{{ steamengine_project_name }}' then {

@@ -18,6 +18,9 @@ steamengine_logrotate_scripts:
       - rotate 7
       - dateext
 
+# This is a global option to rsyslog, this affect all your rsyslog conf
+steamengine_disable_rsyslog_escape_control_characters: true
+
 # NODEJS
 steamengine_nodejs_entrypoint: "bin/www"
 

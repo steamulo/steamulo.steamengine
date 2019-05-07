@@ -7,7 +7,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_project_user }}"
     mode: 0500
-  tags: runtime
+  tags: steamengine_runtime
 
 - name: Create sudo configuration
   copy:
@@ -18,7 +18,7 @@
     owner: root
     group: root
     mode: 0440
-  tags: runtime
+  tags: steamengine_runtime
 
 - name: Grant syslog user write access to logs directory
   acl:
@@ -27,7 +27,7 @@
     etype: user
     permissions: rwx
     state: present
-  tags: runtime
+  tags: steamengine_runtime
 
 - name: Create rsyslog configuration
   template:
@@ -38,11 +38,11 @@
     mode: 0644
   notify:
     - "rsyslog restart"
-  tags: runtime
+  tags: steamengine_runtime
 
 - name: Create logrotate scripts
   template:
     src: logrotate.conf.j2
     dest: "/etc/logrotate.d/{{ item.name }}"
   with_items: "{{ steamengine_logrotate_scripts }}"
-  tags: runtime
+  tags: steamengine_runtime

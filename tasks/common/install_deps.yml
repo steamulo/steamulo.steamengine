@@ -3,9 +3,9 @@
 - name: Install acl package
   apt:
     name: acl
-  tags: dependencies
+  tags: steamengine_dependencies
 
 - name: Install unzip package
   apt:
     name: unzip
-  tags: dependencies
+  tags: steamengine_dependencies

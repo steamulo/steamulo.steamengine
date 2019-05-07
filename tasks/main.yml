@@ -9,20 +9,14 @@
 - include_tasks: "{{ steamengine_project_type }}/asserts.yml"
 
 - include_tasks: common/install_deps.yml
-  tags: dependencies
 
 - include_tasks: common/user.yml
-  tags: user
 
 - include_tasks: common/structure.yml
-  tags: structure
 
 - include_tasks: "{{ steamengine_project_type }}/deploy.yml"
   when: steamengine_build_url is defined
-  tags: deploy
 
 - include_tasks: common/runtime.yml
-  tags: runtime
 
 - include_tasks: "{{ steamengine_project_type }}/runtime.yml"
-  tags: runtime

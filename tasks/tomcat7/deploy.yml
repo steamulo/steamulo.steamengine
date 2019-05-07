@@ -10,7 +10,9 @@
   when: steamengine_project_configuration is defined
   notify:
     - "steamengine restart"
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Create tomcat directory
   file:
@@ -19,7 +21,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Download tomcat
   get_url:
@@ -32,7 +36,9 @@
   register: get_url_tomcat
   notify:
     - "steamengine restart"
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Unzip tomcat
   unarchive:
@@ -44,14 +50,18 @@
     remote_src: true
     extra_opts: [--strip-components=1]
   when: get_url_tomcat.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Remove default tomcat deployment
   file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps"
     state: absent
   when: get_url_tomcat.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Remove default tomcat deployment (2)
   file:
@@ -61,7 +71,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: get_url_tomcat.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Create tomcat ROOT deployment
   file:
@@ -71,7 +83,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: get_url_tomcat.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Create tomcat working directory
   file:
@@ -81,7 +95,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
   when: get_url_tomcat.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Create tomcat temp directory
   file:
@@ -91,7 +107,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
   when: get_url_tomcat.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Create tomcat configuration file
   template:
@@ -102,7 +120,9 @@
     mode: u=rwx,g=rx,o=
   notify:
     - "steamengine restart"
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: "Download build {{ steamengine_build_url }}"
   get_url:
@@ -116,7 +136,9 @@
   notify:
     - "steamengine fixpermissions"
     - "steamengine restart"
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7
 
 - name: Update webapps/ROOT directory
   include_tasks: include/update_from_archive.yml
@@ -124,4 +146,6 @@
     archive_path: "{{ steamengine_project_root_path }}/project.war"
     dest_path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
   when: get_url_build.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_tomcat7

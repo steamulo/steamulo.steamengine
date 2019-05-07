@@ -11,7 +11,9 @@
     mode: 0640
   notify:
     - "steamengine restart"
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_springboot
 
 - name: "Download build {{ steamengine_build_url }}"
   get_url:
@@ -23,4 +25,6 @@
     mode: 0750
   notify:
     - "steamengine restart"
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_springboot

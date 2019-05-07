@@ -5,4 +5,6 @@
     name: www-data
     groups: "{{ steamengine_app_user }}"
     append: true
-  tags: runtime
+  tags:
+    - steamengine_runtime
+    - steamengine_runtime_static

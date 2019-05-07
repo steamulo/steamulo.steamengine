@@ -9,7 +9,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   register: get_url_build
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_static
 
 - name: Create www directory
   file:
@@ -18,7 +20,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_static
 
 - name: Update www directory
   include_tasks: include/update_from_archive.yml
@@ -26,7 +30,9 @@
     archive_path: "{{ steamengine_project_root_path }}/project.zip"
     dest_path: "{{ steamengine_project_root_path_web }}"
   when: get_url_build.changed
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_static
 
 - name: "Add read permission for {{ steamengine_app_user }}"
   file:
@@ -35,4 +41,6 @@
     group: "{{ steamengine_app_user }}"
     recurse: true
     mode: u=rwx,g=rx,o=
-  tags: deploy
+  tags:
+    - steamengine_deploy
+    - steamengine_deploy_static

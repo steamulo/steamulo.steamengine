@@ -12,7 +12,6 @@
     - "steamengine restart"
   register: get_url_build
   tags:
-    - steamengine_deploy
     - steamengine_deploy_nodejs
 
 - name: Create www directory
@@ -23,7 +22,6 @@
     mode: u=rwx,g=rx,o=
     state: directory
   tags:
-    - steamengine_deploy
     - steamengine_deploy_nodejs
 
 - name: Create pm2 directory
@@ -34,7 +32,6 @@
     mode: u=rwx,g=rwx,o=
     state: directory
   tags:
-    - steamengine_deploy
     - steamengine_deploy_nodejs
 
 - name: Update www directory
@@ -43,8 +40,12 @@
     archive_path: "{{ steamengine_project_root_path }}/project.zip"
     dest_path: "{{ steamengine_project_root_path_web }}"
   when: get_url_build.changed
+  args:
+    apply:
+      tags:
+        - steamengine_deploy
+        - steamengine_deploy_nodejs
   tags:
-    - steamengine_deploy
     - steamengine_deploy_nodejs
 
 - name: "Add read permission for {{ steamengine_app_user }}"
@@ -55,5 +56,4 @@
     recurse: true
     mode: u=rwx,g=rx,o=
   tags:
-    - steamengine_deploy
     - steamengine_deploy_nodejs

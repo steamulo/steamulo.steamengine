@@ -5,5 +5,4 @@
     that: (steamengine_build_url | basename | splitext)[1] == ".zip"
   when: steamengine_build_url is defined
   tags:
-    - steamengine_deploy
     - steamengine_deploy_nodejs

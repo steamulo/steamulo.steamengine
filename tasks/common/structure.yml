@@ -9,7 +9,6 @@
     mode: 0751
   with_items:
     - "{{ steamengine_home_path }}"
-  tags: steamengine_structure
 
 - name: Create project folder structure (2)
   file:
@@ -21,7 +20,6 @@
   with_items:
     - "{{ steamengine_project_root_path }}"
     - "{{ steamengine_conf_path }}"
-  tags: steamengine_structure
 
 - name: Create project folder structure (3)
   file:
@@ -32,7 +30,6 @@
     mode: 0750
   with_items:
     - "{{ steamengine_bin_path }}"
-  tags: steamengine_structure
 
 - name: Create project folder structure (4)
   file:
@@ -43,4 +40,3 @@
     mode: 0770
   with_items:
     - "{{ steamengine_logs_path }}"
-  tags: steamengine_structure

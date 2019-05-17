@@ -11,7 +11,6 @@
   notify:
     - "steamengine restart"
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Create tomcat directory
@@ -22,7 +21,6 @@
     mode: u=rwx,g=rx,o=
     state: directory
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Download tomcat
@@ -37,7 +35,6 @@
   notify:
     - "steamengine restart"
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Unzip tomcat
@@ -51,7 +48,6 @@
     extra_opts: [--strip-components=1]
   when: get_url_tomcat.changed
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Remove default tomcat deployment
@@ -60,7 +56,6 @@
     state: absent
   when: get_url_tomcat.changed
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Remove default tomcat deployment (2)
@@ -72,7 +67,6 @@
     mode: u=rwx,g=rx,o=
   when: get_url_tomcat.changed
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Create tomcat ROOT deployment
@@ -84,7 +78,6 @@
     mode: u=rwx,g=rx,o=
   when: get_url_tomcat.changed
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Create tomcat working directory
@@ -96,7 +89,6 @@
     mode: u=rwx,g=rwx,o=
   when: get_url_tomcat.changed
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Create tomcat temp directory
@@ -108,7 +100,6 @@
     mode: u=rwx,g=rwx,o=
   when: get_url_tomcat.changed
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Create tomcat configuration file
@@ -121,7 +112,6 @@
   notify:
     - "steamengine restart"
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: "Download build {{ steamengine_build_url }}"
@@ -137,7 +127,6 @@
     - "steamengine fixpermissions"
     - "steamengine restart"
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7
 
 - name: Update webapps/ROOT directory
@@ -146,6 +135,10 @@
     archive_path: "{{ steamengine_project_root_path }}/project.war"
     dest_path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
   when: get_url_build.changed
+  args:
+    apply:
+      tags:
+        - steamengine_deploy
+        - steamengine_deploy_tomcat7
   tags:
-    - steamengine_deploy
     - steamengine_deploy_tomcat7

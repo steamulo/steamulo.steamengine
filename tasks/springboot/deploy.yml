@@ -12,7 +12,6 @@
   notify:
     - "steamengine restart"
   tags:
-    - steamengine_deploy
     - steamengine_deploy_springboot
 
 - name: "Download build {{ steamengine_build_url }}"
@@ -26,5 +25,4 @@
   notify:
     - "steamengine restart"
   tags:
-    - steamengine_deploy
     - steamengine_deploy_springboot

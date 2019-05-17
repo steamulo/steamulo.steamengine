@@ -10,7 +10,6 @@
   notify:
     - "steamengine restart"
   tags:
-    - steamengine_runtime
     - steamengine_runtime_springboot
 
 - name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
@@ -20,5 +19,4 @@
     daemon_reload: true
     name: "{{ steamengine_project_name }}"
   tags:
-    - steamengine_runtime
     - steamengine_runtime_springboot

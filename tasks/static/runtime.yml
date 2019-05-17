@@ -6,5 +6,4 @@
     groups: "{{ steamengine_app_user }}"
     append: true
   tags:
-    - steamengine_runtime
     - steamengine_runtime_static

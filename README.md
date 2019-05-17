@@ -42,15 +42,18 @@ Examples for different project types can be found under the molecule folder.
 Development
 ------------
 
-This role use the [molecule framework](https://molecule.readthedocs.io/en/stable/) in order to simplify
-the development process.
+This role use the [molecule framework](https://molecule.readthedocs.io/en/stable/) in order to simplify the development process.
+
+Requirements:
+* [Python 2.7](https://www.python.org/download/releases/2.7/)
+* [VirtualBox](https://www.virtualbox.org/)
+* [Vagrant](https://www.vagrantup.com/)
 
 Setup your local environnement with python virtualenv prior to using molecule :
 
 ```virtualenv ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
 
-Use the commande ```molecule converge -s <project_type>``` to create a local environnement
-ans ```molecule login -s <project_type``` to log into the test machine.
+Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type``` to log into the test machine.
 
 Before any commit ensure that every test are passing with ```molecule test --all```
 

@@ -7,7 +7,6 @@
   with_items:
     - "{{ steamengine_project_user }}"
     - "{{ steamengine_app_user }}"
-  tags: steamengine_user
 
 - name: "Create project app user {{ steamengine_app_user }}"
   user:
@@ -16,7 +15,6 @@
     createhome: false
     group: "{{ steamengine_app_user }}"
     append: true
-  tags: steamengine_user
 
 - name: "Create project user {{ steamengine_project_user }}"
   user:
@@ -29,7 +27,6 @@
       - "{{ steamengine_app_user }}"
     shell: "/bin/bash"
     append: true
-  tags: steamengine_user
 
 - name: "Ensure authorized_keys are present for user {{ steamengine_project_user }}"
   authorized_key:
@@ -38,4 +35,3 @@
     state: present
     manage_dir: true
     exclusive: true
-  tags: steamengine_user

@@ -5,46 +5,54 @@
     that:
       - "steamengine_project_type is defined"
       - "steamengine_project_type in steamengine_project_types"
+  tags: always
 
-- include_tasks: "{{ steamengine_project_type }}/asserts.yml"
-  args:
+- include_tasks:
+    file: "{{ steamengine_project_type }}/asserts.yml"
     apply:
       tags:
         - steamengine_deploy
+  tags: always
 
-- include_tasks: common/install_deps.yml
-  args:
+- include_tasks:
+    file: common/install_deps.yml
     apply:
       tags:
         - steamengine_dependencies
+  tags: always
 
-- include_tasks: common/user.yml
-  args:
+- include_tasks:
+    file: common/user.yml
     apply:
       tags:
         - steamengine_user
+  tags: always
 
-- include_tasks: common/structure.yml
-  args:
+- include_tasks:
+    file: common/structure.yml
     apply:
       tags:
         - steamengine_structure
+  tags: always
 
-- include_tasks: "{{ steamengine_project_type }}/deploy.yml"
-  when: steamengine_build_url is defined
-  args:
+- include_tasks:
+    file: "{{ steamengine_project_type }}/deploy.yml"
     apply:
       tags:
         - steamengine_deploy
+  when: steamengine_build_url is defined
+  tags: always
 
-- include_tasks: common/runtime.yml
-  args:
+- include_tasks:
+    file: common/runtime.yml
     apply:
       tags:
         - steamengine_runtime
+  tags: always
 
-- include_tasks: "{{ steamengine_project_type }}/runtime.yml"
-  args:
+- include_tasks:
+    file: "{{ steamengine_project_type }}/runtime.yml"
     apply:
       tags:
         - steamengine_runtime
+  tags: always

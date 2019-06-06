@@ -129,6 +129,12 @@
   tags:
     - steamengine_deploy_tomcat7
 
+- name: "Fix permissions"
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  when: get_url_build.changed
+  tags:
+    - steamengine_deploy_tomcat7
+
 - name: Update webapps/ROOT directory
   include_tasks: include/update_from_archive.yml
   vars:

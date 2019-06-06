@@ -124,6 +124,7 @@
     mode: u=rwx,g=rx,o=
   register: get_url_build
   notify:
+    - "steamengine fixpermissions"
     - "steamengine restart"
   tags:
     - steamengine_deploy_tomcat7
@@ -145,7 +146,5 @@
       tags:
         - steamengine_deploy
         - steamengine_deploy_tomcat7
-  notify:
-    - "steamengine fixpermissions"
   tags:
     - steamengine_deploy_tomcat7

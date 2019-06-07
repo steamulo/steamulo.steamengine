@@ -1,0 +1,67 @@
+---
+
+- name: Create configuration file
+  copy:
+    content: |
+      # This file is managed by Ansible, all changes will be lost.
+      {{ steamengine_project_configuration | to_nice_yaml }}
+    dest: "{{ steamengine_conf_path }}/project_env_conf.yml"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0640
+  notify:
+    - "steamengine restart"
+  tags:
+    - steamengine_deploy_play2
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_project_root_path }}/project.zip"
+    checksum: "{{ steamengine_build_checksum }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0750
+  notify:
+    - "steamengine restart"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_play2
+
+- name: Create tmp directory
+  file:
+    path: "{{ steamengine_project_root_path }}/projectTmp"
+    state: directory
+    mode: '0755'
+  when: get_url_build.changed
+
+- name: Create destination directory
+  file:
+    path: "{{ steamengine_project_root_path }}/project"
+    state: directory
+    mode: '0755'
+
+- name: Update www directory
+  include_tasks: unarchive.yml
+  vars:
+    archive_path: "{{ steamengine_project_root_path }}/project.zip"
+    tmp_path: "{{ steamengine_project_root_path }}/projectTmp"
+    dest_path: "{{ steamengine_project_root_path }}/project"
+  when: get_url_build.changed
+  args:
+    apply:
+      tags:
+        - steamengine_deploy
+        - steamengine_deploy_play2
+  tags:
+    - steamengine_deploy_play2
+
+
+- name: Register excec script name
+  find:
+    paths: "{{ steamengine_project_root_path }}/project/bin/"
+    patterns: '*.bat'
+  register: file
+
+- set_fact:
+    steamengine_play2_run_script: "{{ file.files[0].path | basename | splitext | first }}"

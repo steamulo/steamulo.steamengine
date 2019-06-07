@@ -1,0 +1,18 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+  roles:
+    - role: lean_delivery.java
+      vars:
+        transport: web
+        transport_web: https://delivery.steamulo.org/oracle-java/jdk-8u211-linux-x64.tar.gz
+    - role: steamulo.steamengine
+      vars:
+        steamengine_project_name: play2_test
+        steamengine_project_type: play
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/play2_test.zip
+        steamengine_build_checksum: sha1:3769ec0f24780da7969846f4a697df405feeaf80
+        steamengine_project_configuration:
+          server:
+            port: 8085

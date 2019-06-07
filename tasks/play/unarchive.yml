@@ -1,0 +1,17 @@
+---
+
+- name: Unarchive build
+  unarchive:
+    src: "{{ archive_path }}"
+    dest: "{{ tmp_path }}"
+    remote_src: true
+    list_files: true
+  register: front_static_unzip_output
+
+- name: move archive files to /project
+  shell: "mv {{ tmp_path }}/*/* {{ dest_path }}"
+
+- name: Remove tmp directory
+  file:
+    path: "{{ tmp_path }}"
+    state: absent

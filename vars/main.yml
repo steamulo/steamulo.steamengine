@@ -18,6 +18,7 @@ steamengine_project_types:
   - static
   - nodejs
   - tomcat7
+  - play
 
 # TOMCAT7
 steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7//v{{ steamengine_tomcat7_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat7_tomcat_version }}.tar.gz"

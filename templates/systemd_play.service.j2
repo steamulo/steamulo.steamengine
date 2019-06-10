@@ -6,7 +6,7 @@ Description={{ steamengine_project_name }} server
 [Service]
 ExecStart={{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }} \
     -Dconfig.file={{ steamengine_conf_path }}/project_env.conf \
-    -Dplay.server.pidfile.path=/dev/null {{ appParams|default('') }}
+    -Dplay.server.pidfile.path=/dev/null {% for opt in steamengine_play_base_opts | union(steamengine_play_opts | default ([])) %}{{ opt + ' ' }}{% endfor %}
 
 
 Type=simple

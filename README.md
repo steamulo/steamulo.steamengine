@@ -1,7 +1,7 @@
 Steamengine
 =========
 
-This role provides production grade installation and deployment workflow for nodejs, tomcat7, springboot and static files.
+This role provides production grade installation and deployment workflow for nodejs, tomcat7, play, springboot and static files.
 
 Role Variables
 --------------

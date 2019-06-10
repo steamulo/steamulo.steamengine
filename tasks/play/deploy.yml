@@ -1,0 +1,82 @@
+---
+
+- name: Create configuration file
+  template:
+    src: "project_properties.conf.j2"
+    dest: "{{ steamengine_conf_path }}/project_env.conf"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0640
+  when: steamengine_project_configuration is defined
+  notify:
+    - "steamengine restart"
+  tags:
+    - steamengine_deploy_play2
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_project_root_path }}/project.zip"
+    checksum: "{{ steamengine_build_checksum }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0750
+  notify:
+    - "steamengine restart"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_play2
+
+- name: Create tmp directory
+  file:
+    path: "{{ steamengine_project_root_path_tmp }}"
+    state: directory
+    mode: 0755
+  when: get_url_build.changed
+
+- name: Create destination directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: directory
+    mode: 0755
+
+- name: Unarchive build
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ steamengine_project_root_path_tmp }}"
+    remote_src: true
+    list_files: true
+  register: front_static_unzip_output
+  when: get_url_build.changed
+  tags:
+    - steamengine_deploy_play2
+
+- name: "Move archive files to {{ steamengine_project_root_path_web }}"
+  shell: "mv {{ steamengine_project_root_path_tmp }}/*/* {{ steamengine_project_root_path_web }}"
+  when: get_url_build.changed
+  tags:
+    - steamengine_deploy_play2
+
+- name: Remove tmp directory
+  file:
+    path: "{{ steamengine_project_root_path_tmp }}"
+    state: absent
+  tags:
+    - steamengine_deploy_play2
+
+- name: Register run script name
+  find:
+    paths: "{{ steamengine_project_root_path_web }}/bin/"
+    patterns: "*.bat"
+  register: run_script_file
+
+- name: Move start_project script
+  command: "mv {{ run_script_file.files[0].path | dirname }}/{{ run_script_file.files[0].path | basename | splitext | first }} {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
+  when: get_url_build.changed
+
+- name: Make script executable
+  file:
+    path: "{{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
+    state: file
+    mode: 0755
+  when: get_url_build.changed

@@ -51,7 +51,7 @@
   tags:
     - steamengine_deploy_play2
 
-- name: move archive files to /wwww
+- name: "Move archive files to {{ steamengine_project_root_path_web }}"
   shell: "mv {{ steamengine_project_root_path_tmp }}/*/* {{ steamengine_project_root_path_web }}"
   when: get_url_build.changed
   tags:
@@ -64,14 +64,14 @@
   tags:
     - steamengine_deploy_play2
 
-- name: Register excec script name
+- name: Register run script name
   find:
     paths: "{{ steamengine_project_root_path_web }}/bin/"
     patterns: "*.bat"
-  register: file
+  register: run_script_file
 
 - name: Move start_project script
-  command: "mv {{ file.files[0].path | dirname }}/{{ file.files[0].path | basename | splitext | first }} {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
+  command: "mv {{ run_script_file.files[0].path | dirname }}/{{ run_script_file.files[0].path | basename | splitext | first }} {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
   when: get_url_build.changed
 
 - name: Make script executable

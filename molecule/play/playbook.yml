@@ -12,7 +12,7 @@
         steamengine_project_name: play2_test
         steamengine_project_type: play
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/play2_test.zip
-        steamengine_build_checksum: sha1:1647db0e96df9da3a3ecdc60c425b720a646a670
+        steamengine_build_checksum: sha1:9c6df9e945380af0732b028718c5d1a47c5be441
         steamengine_project_configuration_base_name: "application"
         steamengine_project_configuration:
           play:

@@ -4,9 +4,9 @@
 Description={{ steamengine_project_name }} server
 
 [Service]
-ExecStart={{ steamengine_project_root_path }}/project/bin/{{ steamengine_play2_run_script }} \
-    -Dconfig.file={{ steamengine_conf_path }}/project_env_conf.yml -Dhttp.netty.maxInitialLineLength=8192 -Dplay.http.secret.key='F3tCZYKXAPzj3cjADhkkEFsm9uPtTTPf' \
-    -Dplay.server.pidfile.path=/dev/null -Dhttp.port={{ steamengine_project_configuration.server.port }} {{ appParams|default('') }}
+ExecStart={{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }} \
+    -Dconfig.file={{ steamengine_conf_path }}/project_env.conf \
+    -Dplay.server.pidfile.path=/dev/null {{ appParams|default('') }}
 
 
 Type=simple

@@ -1,5 +1,9 @@
 # {{ ansible_managed }}
 
+{% if steamengine_project_configuration_base_name is defined and steamengine_project_type == 'play' %}
+include "{{ steamengine_project_configuration_base_name }}"
+{% endif %}
+
 {%- macro display_keys(key, value) -%}
     {%- if value is string -%}
         {{ key }}={{ value + '\n'}}
@@ -16,6 +20,6 @@
     {{ display_keys(key, value) }}
 {%- endfor -%}
 
-{% if steamengine_project_configuration_base_name is defined %}
+{% if steamengine_project_configuration_base_name is defined and steamengine_project_type == 'tomcat7' %}
 include {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF/{{ steamengine_project_configuration_base_name }}
 {% endif %}

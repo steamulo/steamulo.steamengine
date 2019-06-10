@@ -13,9 +13,9 @@ def test_app_running_and_enabled(host):
 
 
 def test_app_listening(host):
-    assert host.socket("tcp://0.0.0.0:8085").is_listening
+    assert host.socket("tcp://0.0.0.0:9000").is_listening
 
 
 def test_app_response(host):
-    resp = host.run("curl localhost:8085").stdout
+    resp = host.run("curl localhost:9000").stdout
     assert "Your new application is ready" in resp

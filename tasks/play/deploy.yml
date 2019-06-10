@@ -1,14 +1,13 @@
 ---
 
 - name: Create configuration file
-  copy:
-    content: |
-      # This file is managed by Ansible, all changes will be lost.
-      {{ steamengine_project_configuration | to_nice_yaml }}
-    dest: "{{ steamengine_conf_path }}/project_env_conf.yml"
+  template:
+    src: "project_properties.conf.j2"
+    dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0640
+  when: steamengine_project_configuration is defined
   notify:
     - "steamengine restart"
   tags:
@@ -30,38 +29,54 @@
 
 - name: Create tmp directory
   file:
-    path: "{{ steamengine_project_root_path }}/projectTmp"
+    path: "{{ steamengine_project_root_path_tmp }}"
     state: directory
-    mode: '0755'
+    mode: 0755
   when: get_url_build.changed
 
 - name: Create destination directory
   file:
-    path: "{{ steamengine_project_root_path }}/project"
+    path: "{{ steamengine_project_root_path_web }}"
     state: directory
-    mode: '0755'
+    mode: 0755
 
-- name: Update www directory
-  include_tasks: unarchive.yml
-  vars:
-    archive_path: "{{ steamengine_project_root_path }}/project.zip"
-    tmp_path: "{{ steamengine_project_root_path }}/projectTmp"
-    dest_path: "{{ steamengine_project_root_path }}/project"
+- name: Unarchive build
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ steamengine_project_root_path_tmp }}"
+    remote_src: true
+    list_files: true
+  register: front_static_unzip_output
   when: get_url_build.changed
-  args:
-    apply:
-      tags:
-        - steamengine_deploy
-        - steamengine_deploy_play2
   tags:
     - steamengine_deploy_play2
 
+- name: move archive files to /wwww
+  shell: "mv {{ steamengine_project_root_path_tmp }}/*/* {{ steamengine_project_root_path_web }}"
+  when: get_url_build.changed
+  tags:
+    - steamengine_deploy_play2
+
+- name: Remove tmp directory
+  file:
+    path: "{{ steamengine_project_root_path_tmp }}"
+    state: absent
+  tags:
+    - steamengine_deploy_play2
 
 - name: Register excec script name
   find:
-    paths: "{{ steamengine_project_root_path }}/project/bin/"
-    patterns: '*.bat'
+    paths: "{{ steamengine_project_root_path_web }}/bin/"
+    patterns: "*.bat"
   register: file
 
-- set_fact:
-    steamengine_play2_run_script: "{{ file.files[0].path | basename | splitext | first }}"
+- name: Move start_project script
+  command: "mv {{ file.files[0].path | dirname }}/{{ file.files[0].path | basename | splitext | first }} {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
+  when: get_url_build.changed
+
+- name: Make script executable
+  file:
+    path: "{{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
+    state: file
+    mode: 0755
+  when: get_url_build.changed

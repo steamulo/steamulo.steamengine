@@ -11,6 +11,7 @@ steamengine_project_root_path_web: "{{ steamengine_project_root_path }}/www"
 steamengine_conf_path: "{{ steamengine_home_path }}/conf"
 steamengine_bin_path: "{{ steamengine_home_path }}/bin"
 steamengine_logs_path: "{{ steamengine_home_path }}/logs"
+steamengine_project_root_path_tmp: "{{ steamengine_project_root_path }}/tmp/play2-deploy"
 
 # OTHERS
 steamengine_project_types:
@@ -19,6 +20,9 @@ steamengine_project_types:
   - nodejs
   - tomcat7
   - play
+
+# PLAY
+steamengine_play2_run_script: "startproject"
 
 # TOMCAT7
 steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7//v{{ steamengine_tomcat7_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat7_tomcat_version }}.tar.gz"

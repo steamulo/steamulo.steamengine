@@ -129,9 +129,15 @@
   tags:
     - steamengine_deploy_tomcat7
 
+- name: check if steamengine bin exists
+  stat:
+    path: "{{ steamengine_bin_path }}/steamengine"
+  register: steamengine_bin
+  when: get_url_build.changed
+
 - name: "Fix permissions"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
-  when: get_url_build.changed
+  when: get_url_build.changed and steamengine_bin.stat.exists
   tags:
     - steamengine_deploy_tomcat7
 

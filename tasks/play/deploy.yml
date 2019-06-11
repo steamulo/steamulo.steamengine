@@ -30,22 +30,29 @@
 - name: Create tmp directory
   file:
     path: "{{ steamengine_project_root_path_tmp }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     state: directory
-    mode: 0755
+    mode: u=rw,g=r,o=
   when: get_url_build.changed
 
 - name: Create destination directory
   file:
     path: "{{ steamengine_project_root_path_web }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     state: directory
-    mode: 0755
+    mode: u=rwx,g=rx,o=
 
 - name: Unarchive build
   unarchive:
     src: "{{ steamengine_project_root_path }}/project.zip"
     dest: "{{ steamengine_project_root_path_tmp }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     remote_src: true
     list_files: true
+    mode: u=rwx,g=rx,o=
   register: front_static_unzip_output
   when: get_url_build.changed
   tags:
@@ -78,5 +85,5 @@
   file:
     path: "{{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
     state: file
-    mode: 0755
+    mode: u=rwx,g=rx,o=x
   when: get_url_build.changed

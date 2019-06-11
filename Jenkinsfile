@@ -2,14 +2,16 @@ properties ([gitLabConnection('jenkins'), buildDiscarder(logRotator(artifactDays
 
 node ('vagrant') {
     try {
-        stage ('Testing') {
-            withPythonEnv('/usr/bin/python2.7') {
-                sh "mkdir steamulo.steamengine"
-                dir('steamulo.steamengine') {
-                    checkout scm
-                    gitlabCommitStatus('Testing') {
-                        sh "pip install -r requirements.txt"
-                        sh "molecule test --all"
+        withPythonEnv('/usr/bin/python2.7') {
+            sh "mkdir steamulo.steamengine"
+            dir('steamulo.steamengine') {
+                checkout scm
+                gitlabBuilds(builds: ['Testing']) {
+                    stage ('Testing') {
+                        gitlabCommitStatus('Testing') {
+                            sh "pip install -r requirements.txt"
+                            sh "molecule test --all"
+                        }
                     }
                 }
             }

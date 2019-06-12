@@ -13,6 +13,19 @@
   tags:
     - steamengine_deploy_tomcat7
 
+- name: Create external configuration file
+  template:
+    src: "{{ steamengine_project_configuration_external_path }}"
+    dest: "{{ steamengine_conf_path }}/project_env.conf"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0640
+  when: steamengine_project_configuration_external_path is defined
+  notify:
+    - "steamengine restart"
+  tags:
+    - steamengine_deploy_tomcat7
+
 - name: Create tomcat directory
   file:
     path: "{{ steamengine_project_root_path }}/tomcat"

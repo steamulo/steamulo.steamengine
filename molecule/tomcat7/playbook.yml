@@ -14,9 +14,10 @@
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/tomcat_test.war
         steamengine_build_checksum: sha1:80f5053b166c69d81697ba21113c673f8372aca0..
         steamengine_tomcat7_http_port: 8088
-        steamengine_project_configuration:
-          test_conf:
-            item1: test1
-            item2:
-              item2_sub1: test2
-              item2_sub2: test3
+        steamengine_project_configuration_external_path: ../molecule/tomcat7/templates/conf_test.conf
+#        steamengine_project_configuration:
+#          test_conf:
+#            item1: test1
+#            item2:
+#              item2_sub1: test2
+#              item2_sub2: test3

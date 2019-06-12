@@ -9,6 +9,6 @@
 
 - name: Verify conf sources
   assert:
-    that: steamengine_project_configuration_external_path is undefined or steamengine_project_configuration is undefined
+    that: steamengine_project_configuration_template_path is undefined or steamengine_project_configuration is undefined
   tags:
     - steamengine_deploy_tomcat7

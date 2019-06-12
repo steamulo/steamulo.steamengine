@@ -6,7 +6,7 @@
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: 0640
+    mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
   notify:
     - "steamengine restart"
@@ -19,8 +19,8 @@
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: 0640
-  when: steamengine_project_configuration_external_path is defined
+    mode: u=rw,g=r,o=
+  when: steamengine_project_configuration_template_path is defined
   notify:
     - "steamengine restart"
   tags:

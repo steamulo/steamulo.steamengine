@@ -15,7 +15,7 @@
 
 - name: Create external configuration file
   template:
-    src: "{{ steamengine_project_configuration_external_path }}"
+    src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

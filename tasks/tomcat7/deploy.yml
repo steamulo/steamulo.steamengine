@@ -6,8 +6,21 @@
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: 0640
+    mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
+  notify:
+    - "steamengine restart"
+  tags:
+    - steamengine_deploy_tomcat7
+
+- name: Create external configuration file
+  template:
+    src: "{{ steamengine_project_configuration_template_path }}"
+    dest: "{{ steamengine_conf_path }}/project_env.conf"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  when: steamengine_project_configuration_template_path is defined
   notify:
     - "steamengine restart"
   tags:

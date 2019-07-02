@@ -3,7 +3,7 @@
 - name: Verify build extension
   assert:
     that: (steamengine_build_url | basename | splitext)[1] == ".jar"
-  when: steamengine_build_url is defined
+  when: steamengine_build_url is defined and steamengine_build_url != ''
   tags:
     - steamengine_deploy_springboot
 

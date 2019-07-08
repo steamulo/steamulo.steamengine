@@ -25,7 +25,7 @@ steamengine_project_types:
 steamengine_play2_run_script: "startproject"
 
 # TOMCAT7
-steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7//v{{ steamengine_tomcat7_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
+steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7/v{{ steamengine_tomcat7_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
 
 # JAVA
 steamengine_java_base_opts:

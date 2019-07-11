@@ -9,7 +9,7 @@
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_tomcat7
 
@@ -22,7 +22,7 @@
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration_template_path is defined
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_tomcat7
 
@@ -46,7 +46,7 @@
     mode: u=rwx,g=rx,o=
   register: get_url_tomcat
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_tomcat7
 
@@ -123,7 +123,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_tomcat7
 
@@ -137,8 +137,8 @@
     mode: u=rwx,g=rx,o=
   register: get_url_build
   notify:
-    - "steamengine fixpermissions"
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} fixpermissions"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_tomcat7
 

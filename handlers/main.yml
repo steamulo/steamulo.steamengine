@@ -8,14 +8,14 @@
 
 # This is done this way in order to support steamengine_tomcat7_allow_insecure_write_*
 #  application might have created directory on which steamengine_project_user doesn't have ownership
-- name: steamengine fixpermissions
+- name: "{{ steamengine_project_name }} fixpermissions"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
 
-- name: steamengine restart
+- name: "{{ steamengine_project_name }} restart"
   command: "/{{ steamengine_project_name }}/bin/steamengine restart"
 
-- name: steamengine stop
+- name: "{{ steamengine_project_name }} stop"
   command: "/{{ steamengine_project_name }}/bin/steamengine stop"
 
-- name: steamengine start
+- name: "{{ steamengine_project_name }} start"
   command: "/{{ steamengine_project_name }}/bin/steamengine start"

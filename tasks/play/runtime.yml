@@ -8,7 +8,7 @@
     group: root
     mode: u=rw,g=r,o=r
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_runtime_play2
 

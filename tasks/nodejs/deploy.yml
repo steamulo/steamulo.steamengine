@@ -9,7 +9,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   register: get_url_build
   tags:
     - steamengine_deploy_nodejs

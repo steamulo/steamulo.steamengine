@@ -9,7 +9,7 @@
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_play2
 
@@ -22,7 +22,7 @@
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration_template_path is defined
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   tags:
     - steamengine_deploy_play2
 
@@ -35,7 +35,7 @@
     group: "{{ steamengine_app_user }}"
     mode: 0750
   notify:
-    - "steamengine restart"
+    - "{{ steamengine_project_name }} restart"
   register: get_url_build
   tags:
     - steamengine_deploy_play2

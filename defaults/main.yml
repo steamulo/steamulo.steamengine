@@ -38,6 +38,7 @@ steamengine_tomcat7_allow_insecure_write_web_inf: false
 steamengine_tomcat7_allow_insecure_write_root: false
 steamengine_tomcat7_configuration_key: "configuration.filename"
 steamengine_tomcat7_reverse_https: false
+steamengine_tomcat7_version_logger_listener_on: true
 
 # JAVA
 steamengine_java_opts:

@@ -3,7 +3,11 @@
 <!-- {{ ansible_managed }} -->
 
 <Server port="-1" shutdown="SHUTDOWN">
+
+    {% if steamengine_tomcat7_version_logger_listener_on %}
     <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+    {% endif %}
+
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
     <Listener className="org.apache.catalina.core.JasperListener" />
     <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />

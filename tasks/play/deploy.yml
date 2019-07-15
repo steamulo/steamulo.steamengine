@@ -78,7 +78,7 @@
   file:
     path: "{{ steamengine_project_root_path_web }}"
     state: directory
-    recurse: yes
+    recurse: true
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=

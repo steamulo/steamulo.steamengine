@@ -36,14 +36,6 @@
   tags: always
 
 - include_tasks:
-    file: "{{ steamengine_project_type }}/deploy.yml"
-    apply:
-      tags:
-        - steamengine_deploy
-  when: steamengine_build_url is defined and steamengine_build_url != ''
-  tags: always
-
-- include_tasks:
     file: common/runtime.yml
     apply:
       tags:
@@ -55,4 +47,12 @@
     apply:
       tags:
         - steamengine_runtime
+  tags: always
+
+- include_tasks:
+    file: "{{ steamengine_project_type }}/deploy.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+  when: steamengine_build_url is defined and steamengine_build_url != ''
   tags: always

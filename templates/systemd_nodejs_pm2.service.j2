@@ -15,6 +15,10 @@ Environment=NODE_ENV=production
 Environment=HOME={{ steamengine_project_root_path }}
 Environment=PM2_HOME={{ steamengine_project_root_path }}/pm2
 
+{% for key, value in steamengine_project_configuration.items() %}
+Environment={{key}}={{value}}
+{% endfor %}
+
 Restart=always
 RestartSec=10
 

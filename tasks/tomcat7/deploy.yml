@@ -149,16 +149,11 @@
     - steamengine_deploy_tomcat7
 
 - name: Update webapps/ROOT directory
-  include_tasks: include/update_from_archive.yml
-  vars:
-    archive_path: "{{ steamengine_project_root_path }}/project.war"
-    dest_path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.war"
+    dest: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
+    remote_src: true
   when: get_url_build.changed
-  args:
-    apply:
-      tags:
-        - steamengine_deploy
-        - steamengine_deploy_tomcat7
   tags:
     - steamengine_deploy_tomcat7
 

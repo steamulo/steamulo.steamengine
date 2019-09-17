@@ -14,16 +14,6 @@
   tags:
     - steamengine_deploy_nodejs
 
-- name: Create www directory
-  file:
-    path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rx,o=
-    state: directory
-  tags:
-    - steamengine_deploy_nodejs
-
 - name: Create pm2 directory
   file:
     path: "{{ steamengine_project_root_path }}/pm2"
@@ -34,17 +24,31 @@
   tags:
     - steamengine_deploy_nodejs
 
-- name: Update www directory
-  include_tasks: include/update_from_archive.yml
-  vars:
-    archive_path: "{{ steamengine_project_root_path }}/project.zip"
-    dest_path: "{{ steamengine_project_root_path_web }}"
+- name: Clean www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: absent
   when: get_url_build.changed
-  args:
-    apply:
-      tags:
-        - steamengine_deploy
-        - steamengine_deploy_nodejs
+  tags:
+    - steamengine_deploy_nodejs
+
+- name: Clean www directory (2)
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    state: directory
+  when: get_url_build.changed
+  tags:
+    - steamengine_deploy_nodejs
+
+- name: Update www directory
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ steamengine_project_root_path_web }}"
+    remote_src: true
+  when: get_url_build.changed
   tags:
     - steamengine_deploy_nodejs
 

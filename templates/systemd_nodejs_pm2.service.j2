@@ -9,7 +9,7 @@ Type=simple
 PIDFile={{ steamengine_project_root_path }}/pm2/pm2.pid
 
 Environment=NODE_ENV=production
-Environment=HOME={{ steamengine_project_root_path }}
+Environment=HOME={{ steamengine_project_root_path_web }}
 Environment=PM2_HOME={{ steamengine_project_root_path }}/pm2
 
 {% if steamengine_project_configuration is defined %}

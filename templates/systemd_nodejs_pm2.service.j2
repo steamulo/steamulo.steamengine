@@ -4,12 +4,12 @@
 Description={{ steamengine_project_name }} server
 
 [Service]
-ExecStart=/usr/local/lib/npm/bin/pm2 start {{ steamengine_project_root_path_web }}/{{ steamengine_nodejs_entrypoint }} --name {{ steamengine_project_name }} -i max -e /dev/null -o /dev/null --no-daemon
+WorkingDirectory={{ steamengine_project_root_path_web }}
+ExecStart=/usr/local/lib/npm/bin/pm2 start {{ steamengine_nodejs_entrypoint }} --name {{ steamengine_project_name }} -i max -e /dev/null -o /dev/null --no-daemon
 Type=simple
 PIDFile={{ steamengine_project_root_path }}/pm2/pm2.pid
 
 Environment=NODE_ENV=production
-Environment=HOME={{ steamengine_project_root_path_web }}
 Environment=PM2_HOME={{ steamengine_project_root_path }}/pm2
 
 {% if steamengine_project_configuration is defined %}

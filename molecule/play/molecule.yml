@@ -2,16 +2,19 @@
 dependency:
   name: galaxy
 driver:
-  name: vagrant
-  provider:
-    name: virtualbox
+  name: docker
 lint:
   name: yamllint
+  options:
+    config-data:
+      line-length:
+        max: 120
 platforms:
   - name: instance
-    box: geerlingguy/ubuntu1804
-    memory: 1024
-    cpus: 1
+    image: leandelivery/docker-systemd:ubuntu-18.04
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
 provisioner:
   name: ansible
   lint:

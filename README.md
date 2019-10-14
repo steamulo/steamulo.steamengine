@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/STEAMULO/steamulo.steamengine.svg?branch=master)](https://travis-ci.com/STEAMULO/steamulo.steamengine)
+
 Steamengine
 =========
 
@@ -46,14 +48,15 @@ This role use the [molecule framework](https://molecule.readthedocs.io/en/stable
 
 Requirements:
 * [Python 2.7](https://www.python.org/download/releases/2.7/)
-* [VirtualBox](https://www.virtualbox.org/)
-* [Vagrant](https://www.vagrantup.com/)
+* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+
+**Before running any command, please make sure Docker service is enabled and running without Sudo.**
 
 Setup your local environnement with python virtualenv prior to using molecule :
 
 ```virtualenv ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
 
-Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type``` to log into the test machine.
+Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type>``` to log into the test machine.
 
 Before any commit ensure that every test are passing with ```molecule test --all```
 

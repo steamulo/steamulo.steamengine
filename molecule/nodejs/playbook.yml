@@ -10,6 +10,7 @@
     - role: geerlingguy.nodejs
       vars:
         nodejs_version: "10.x"
+        nodejs_install_npm_user: root
         nodejs_npm_global_packages:
           - "pm2"
     - role: steamulo.steamengine

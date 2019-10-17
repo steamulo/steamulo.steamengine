@@ -5,8 +5,11 @@
   roles:
     - role: lean_delivery.java
       vars:
-        transport: web
-        transport_web: https://delivery.steamulo.org/oracle-java/jdk-8u211-linux-x64.tar.gz
+        java_distribution: adoptopenjdk
+        transport: adoptopenjdk-fallback
+        java_major_version: 8
+        java_minor_version: 222
+        adoptopenjdk_impl: openj9
     - role: steamulo.steamengine
       vars:
         steamengine_project_name: test_tomcat7

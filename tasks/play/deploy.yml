@@ -43,8 +43,8 @@
 - name: Create tmp directory
   file:
     path: "{{ steamengine_project_root_path_tmp }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     state: directory
     mode: u=rw,g=r,o=
   when: get_url_build.changed
@@ -52,8 +52,8 @@
 - name: Create destination directory
   file:
     path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     state: directory
     mode: u=rwx,g=rx,o=
 
@@ -79,8 +79,8 @@
     path: "{{ steamengine_project_root_path_web }}"
     state: directory
     recurse: true
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: get_url_build.changed
 

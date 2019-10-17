@@ -15,8 +15,8 @@
 - name: Create www directory
   file:
     path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
   tags:
@@ -39,8 +39,8 @@
 - name: "Add read permission for {{ steamengine_app_user }}"
   file:
     path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
     recurse: true
     mode: u=rwx,g=rx,o=
   tags:

@@ -4,7 +4,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ steamengine_project_user }}"
+    owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0751
   with_items:
@@ -14,7 +14,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ steamengine_project_user }}"
+    owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0750
   with_items:
@@ -25,7 +25,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ steamengine_project_user }}"
+    owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_project_user }}"
     mode: 0750
   with_items:
@@ -35,7 +35,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ steamengine_project_user }}"
+    owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0770
   with_items:

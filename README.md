@@ -6,7 +6,7 @@ Steamengine
 This role provides production grade installation and deployment workflow for nodejs, tomcat7, play, springboot and static files.
 
 Role Variables
---------------
+------------
 
 Here are the main variables that should be set :
 
@@ -37,7 +37,7 @@ steamengine_project_ssh_keys: []
 ```
 
 Example Playbook
-----------------
+------------
 
 Examples for different project types can be found under the molecule folder.
 
@@ -50,8 +50,6 @@ Requirements:
 * [Python 2.7](https://www.python.org/download/releases/2.7/)
 * [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 
-**Before running any command, please make sure Docker service is enabled and running without Sudo.**
-
 Setup your local environnement with python virtualenv prior to using molecule :
 
 ```virtualenv ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
@@ -60,12 +58,17 @@ Use ```molecule converge -s <project_type>``` to create a local environnement an
 
 Before any commit ensure that every test are passing with ```molecule test --all```
 
+Known issues
+------------
+
+* Ansible Lint warning : https://github.com/ansible/ansible-lint/issues/540
+
 License
--------
+------------
 
 BSD
 
 Author Information
-------------------
+------------
 
 Steamulo - http://www.steamulo.com

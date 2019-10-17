@@ -12,6 +12,7 @@ lint:
 platforms:
   - name: instance
     image: leandelivery/docker-systemd:ubuntu-18.04
+    dockerfile: ../resources/Dockerfile.j2
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -19,6 +20,8 @@ provisioner:
   name: ansible
   lint:
     name: ansible-lint
+    options:
+      x: ["503", "204"]
 scenario:
   name: nodejs
 verifier:

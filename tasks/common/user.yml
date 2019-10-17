@@ -5,7 +5,7 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - "{{ steamengine_project_user }}"
+    - "{{ steamengine_project_user }}"
     - "{{ steamengine_app_user }}"
 
 - name: "Create project app user {{ steamengine_app_user }}"
@@ -28,9 +28,9 @@
     shell: "/bin/bash"
     append: true
 
-- name: "Ensure authorized_keys are present for user {{ steamengine_project_user }}"
+- name: "Ensure authorized_keys are present for user {{ steamengine_project_user }}"
   authorized_key:
-    user: "{{ steamengine_project_user }}"
+    user: "{{ steamengine_project_user }}"
     key: "{{ steamengine_project_ssh_keys | join('\n') }}"
     state: present
     manage_dir: true

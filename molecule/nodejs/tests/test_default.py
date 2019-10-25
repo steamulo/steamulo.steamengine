@@ -13,9 +13,9 @@ def test_app_running_and_enabled(host):
 
 
 def test_app_listening(host):
-    assert host.socket("tcp://0.0.0.0:3000").is_listening
+    assert host.socket("tcp://0.0.0.0:3300").is_listening
 
 
 def test_app_response(host):
-    resp = host.run("curl localhost:3000").stdout
+    resp = host.run("curl localhost:3300").stdout
     assert "Welcome to Express" in resp

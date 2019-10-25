@@ -23,6 +23,7 @@ steamengine_disable_rsyslog_escape_control_characters: true
 
 # NODEJS
 steamengine_nodejs_entrypoint: "bin/www"
+steamengine_nodejs_cluster_mode: true
 
 # TOMCAT7
 steamengine_tomcat7_tomcat_version: "7.0.93"

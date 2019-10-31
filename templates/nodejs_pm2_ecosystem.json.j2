@@ -1,0 +1,20 @@
+// {{ ansible_managed }}
+
+{
+    name: "{{ steamengine_project_name }}",
+    script: "{{ steamengine_nodejs_entrypoint }}",
+    cwd: "{{ steamengine_project_root_path_web }}",
+    error_file: "/dev/null",
+    out_file: "/dev/null",
+    {% if steamengine_project_configuration is defined %}
+    env: {
+      {% for key, value in steamengine_project_configuration.items() %}
+      "{{key}}": "{{value}}",
+      {% endfor %}
+    },
+    {% endif %}
+    {% if steamengine_nodejs_cluster_mode is defined and steamengine_nodejs_cluster_mode %}
+    instances: "max",
+    exec_mode: "cluster",
+    {% endif %}
+}

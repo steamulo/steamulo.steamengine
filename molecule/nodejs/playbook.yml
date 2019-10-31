@@ -9,7 +9,7 @@
   roles:
     - role: geerlingguy.nodejs
       vars:
-        nodejs_version: "10.x"
+        nodejs_version: "12.x"
         nodejs_install_npm_user: root
         nodejs_npm_global_packages:
           - "pm2"
@@ -18,4 +18,6 @@
         steamengine_project_name: test_nodejs
         steamengine_project_type: nodejs
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/nodejs-express-build.zip
-        steamengine_build_checksum: sha1:5ca5bebc8f3b770358732c90b20b94b710158d55.
+        steamengine_build_checksum: sha1:5ca5bebc8f3b770358732c90b20b94b710158d55
+        steamengine_project_configuration:
+          PORT: 3300

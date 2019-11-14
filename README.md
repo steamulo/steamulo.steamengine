@@ -15,7 +15,7 @@ Here are the main variables that should be set :
 # Default is default_project.
 steamengine_project_name: "default_project"
 
-# Project type, should be a value in "static", "springboot", "nodejs", "tomcat7".
+# Project type, should be a value in "static", "springboot", "nodejs", "tomcat7", "play".
 # No default value but mandatory
 steamengine_project_type:
 
@@ -31,6 +31,13 @@ steamengine_build_checksum:
 # No default value and not mandatory.
 steamengine_project_configuration:
 
+# Name of the project default configuration file.
+# File content is merged with steamengine_project_configuration variable.
+# Variables defined in steamengine_project_configuration override those defined in the base file.
+# Used only for tomcat7 and springboot project type
+# No default value and not mandatory.
+steamengine_project_configuration_base_name:
+
 # Public ssh keys that will be added to the project user.
 # Default is empty.
 steamengine_project_ssh_keys: []
@@ -39,7 +46,12 @@ steamengine_project_ssh_keys: []
 Example Playbook
 ------------
 
-Examples for different project types can be found under the molecule folder.
+Examples for different project types can be found under the molecule folder:
+* [Node.js](molecule/nodejs/playbook.yml)
+* [Play](molecule/play/playbook.yml)
+* [SpringBoot](molecule/springboot/playbook.yml)
+* [Static](molecule/static/playbook.yml)
+* [Tomcat7](molecule/tomcat7/playbook.yml) 
 
 Development
 ------------

@@ -20,8 +20,6 @@ provisioner:
   name: ansible
   lint:
     name: ansible-lint
-    options:
-      x: ["503", "204"]
 scenario:
   name: springboot
 verifier:

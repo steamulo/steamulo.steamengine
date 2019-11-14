@@ -50,6 +50,10 @@
   tags:
     - steamengine_deploy_tomcat7
 
+- name: "Is there a new tomcat version: {{ get_url_tomcat.changed }}"
+  set_fact:
+    new_tomcat_version: get_url_tomcat.changed
+
 - name: Unzip tomcat
   unarchive:
     src: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
@@ -59,7 +63,7 @@
     mode: u=rwx,g=rx,o=
     remote_src: true
     extra_opts: [--strip-components=1]
-  when: get_url_tomcat.changed
+  when: new_tomcat_version
   tags:
     - steamengine_deploy_tomcat7
 
@@ -67,7 +71,7 @@
   file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps"
     state: absent
-  when: get_url_tomcat.changed
+  when: new_tomcat_version
   tags:
     - steamengine_deploy_tomcat7
 
@@ -78,7 +82,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-  when: get_url_tomcat.changed
+  when: new_tomcat_version
   tags:
     - steamengine_deploy_tomcat7
 
@@ -89,7 +93,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-  when: get_url_tomcat.changed
+  when: new_tomcat_version
   tags:
     - steamengine_deploy_tomcat7
 
@@ -100,7 +104,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-  when: get_url_tomcat.changed
+  when: new_tomcat_version
   tags:
     - steamengine_deploy_tomcat7
 
@@ -111,7 +115,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-  when: get_url_tomcat.changed
+  when: new_tomcat_version
   tags:
     - steamengine_deploy_tomcat7
 
@@ -142,9 +146,13 @@
   tags:
     - steamengine_deploy_tomcat7
 
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  set_fact:
+    new_build_to_deploy: get_url_build.changed
+
 - name: "Fix permissions before updating source"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
-  when: get_url_build.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_tomcat7
 
@@ -153,12 +161,12 @@
     src: "{{ steamengine_project_root_path }}/project.war"
     dest: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
     remote_src: true
-  when: get_url_build.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_tomcat7
 
 - name: "Fix permissions after updating source"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
-  when: get_url_build.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_tomcat7

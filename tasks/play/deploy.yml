@@ -40,6 +40,10 @@
   tags:
     - steamengine_deploy_play2
 
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  set_fact:
+    new_build_to_deploy: get_url_build.changed
+
 - name: Create tmp directory
   file:
     path: "{{ steamengine_project_root_path_tmp }}"
@@ -47,7 +51,7 @@
     group: "{{ steamengine_app_user }}"
     state: directory
     mode: u=rw,g=r,o=
-  when: get_url_build.changed
+  when: new_build_to_deploy
 
 - name: Create destination directory
   file:
@@ -64,13 +68,13 @@
     remote_src: true
     list_files: true
   register: front_static_unzip_output
-  when: get_url_build.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2
 
 - name: "Move archive files to {{ steamengine_project_root_path_web }}"
   shell: "mv {{ steamengine_project_root_path_tmp }}/*/* {{ steamengine_project_root_path_web }}"
-  when: get_url_build.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2
 
@@ -82,7 +86,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-  when: get_url_build.changed
+  when: new_build_to_deploy
 
 - name: Remove tmp directory
   file:
@@ -98,12 +102,14 @@
   register: run_script_file
 
 - name: Move start_project script
-  command: "mv {{ run_script_file.files[0].path | dirname }}/{{ run_script_file.files[0].path | basename | splitext | first }} {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
-  when: get_url_build.changed
+  command: >
+    mv {{ run_script_file.files[0].path | dirname }}/{{ run_script_file.files[0].path | basename | splitext | first }}
+    {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}
+  when: new_build_to_deploy
 
 - name: Make script executable
   file:
     path: "{{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
     state: file
     mode: u=rwx,g=rx,o=x
-  when: get_url_build.changed
+  when: new_build_to_deploy

@@ -2,10 +2,6 @@
 - name: Converge
   hosts: instance
   become: true
-  pre_tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: true
   roles:
     - role: geerlingguy.nodejs
       vars:

@@ -1,6 +1,7 @@
 ---
 
 galaxy_info:
+  role_name: steamengine
   author: Steamulo
   description: Production grade installation and deployment workflow for nodejs, tomcat7, play, springboot and static files.
   company: Steamulo

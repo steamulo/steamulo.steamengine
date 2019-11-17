@@ -10,7 +10,7 @@
         java_major_version: 8
         java_minor_version: 222
         adoptopenjdk_impl: openj9
-    - role: steamulo.steamengine
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: test_springboot
         steamengine_project_type: springboot

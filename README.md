@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/STEAMULO/steamulo.steamengine.svg?branch=master)](https://travis-ci.com/STEAMULO/steamulo.steamengine)
+[![Build Status](https://travis-ci.com/STEAMULO/ansible-role-steamengine.svg?branch=master)](https://travis-ci.com/STEAMULO/ansible-role-steamengine)
 
 Steamengine
 =========

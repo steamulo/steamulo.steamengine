@@ -65,7 +65,7 @@ while [ $# -gt 0 ]; do
      exit $?
     ;;
     log)
-     tail -f {{ steamengine_project_root_path }}/pm2/pm2.log {{ steamengine_logs_path }}/application.log {{ steamengine_logs_path }}/node-app.log
+     tail -f {{ steamengine_logs_path }}/application.log
      exit $?
     ;;
     *)

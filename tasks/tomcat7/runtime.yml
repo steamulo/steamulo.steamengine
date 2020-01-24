@@ -12,6 +12,14 @@
   tags:
     - steamengine_runtime_tomcat7
 
+- name: "Add www-data in {{ steamengine_app_user }} group"
+  user:
+    name: www-data
+    groups: "{{ steamengine_app_user }}"
+    append: true
+  tags:
+    - steamengine_runtime_tomcat7
+
 - name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
   systemd:
     enabled: true

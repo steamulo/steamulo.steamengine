@@ -8,7 +8,7 @@
         java_distribution: adoptopenjdk
         transport: adoptopenjdk-fallback
         java_major_version: 8
-        java_minor_version: 222
+        java_minor_version: 242
         adoptopenjdk_impl: openj9
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:

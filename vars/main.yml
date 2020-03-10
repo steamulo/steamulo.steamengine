@@ -29,13 +29,10 @@ steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7
 
 # JAVA
 steamengine_java_base_opts:
-  - "-server"
-  - "-native"
+  - "-XX:+ExitOnOutOfMemory"
   - "-XX:+HeapDumpOnOutOfMemoryError"
-  - "-XX:HeapDumpPath={{ steamengine_logs_path }}/heap_dump"
-  - "-XX:+PrintGCDateStamps"
-  - "-XX:+PrintGCDetails"
-  - "-XX:+UseG1GC"
-  - "-Xloggc:{{ steamengine_logs_path }}/garbage-collector.log"
-  - "-XX:-OmitStackTraceInFastThrow"
+  - "-Xdump:directory={{ steamengine_logs_path }}"
+  - "-Xverbosegclog:{{ steamengine_logs_path }}/garbage-collector.log"
   - "-Dfile.encoding=UTF-8"
+  - "-verbose:gc"
+  - "-Xdump:heap:events=user"

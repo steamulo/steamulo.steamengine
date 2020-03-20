@@ -75,5 +75,6 @@
     group: "{{ steamengine_app_user }}"
     recurse: true
     mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_nodejs

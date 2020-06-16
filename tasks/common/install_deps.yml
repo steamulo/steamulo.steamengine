@@ -1,9 +1,9 @@
 ---
 
 - name: Install acl package
-  apt:
+  package:
     name: acl
 
 - name: Install unzip package
-  apt:
+  package:
     name: unzip

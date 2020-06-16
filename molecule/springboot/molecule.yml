@@ -11,11 +11,14 @@ lint:
         max: 120
 platforms:
   - name: instance
-    image: leandelivery/docker-systemd:ubuntu-18.04
-    dockerfile: ../resources/Dockerfile.j2
+    image: leandelivery/docker-systemd:${MOLECULE_DISTRO:-ubuntu-18.04}
+    pre_build_image: true
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tmpfs:
+      - /tmp
+      - /run
 provisioner:
   name: ansible
   lint:

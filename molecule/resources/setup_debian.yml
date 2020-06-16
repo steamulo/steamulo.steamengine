@@ -1,0 +1,19 @@
+---
+
+- name: Install dependencies (Debian)
+  apt:
+    name:
+      - apt-utils
+      - locales
+      - python-setuptools
+      - python-pip
+      - curl
+      - software-properties-common
+      - rsyslog
+      - systemd
+      - systemd-cron
+      - sudo
+      - iproute2
+    update_cache: true
+
+

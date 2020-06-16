@@ -1,8 +1,8 @@
 ---
 
-- name: "Add www-data in {{ steamengine_app_user }} group"
+- name: "Add nginx user in {{ steamengine_app_user }} group"
   user:
-    name: www-data
+    name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
     groups: "{{ steamengine_app_user }}"
     append: true
   tags:

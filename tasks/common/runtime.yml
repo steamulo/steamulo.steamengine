@@ -25,6 +25,7 @@
     etype: user
     permissions: rwx
     state: present
+  when: ansible_os_family == 'Debian'
 
 - name: Create rsyslog configuration
   template:

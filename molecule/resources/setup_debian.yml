@@ -15,5 +15,3 @@
       - sudo
       - iproute2
     update_cache: true
-
-

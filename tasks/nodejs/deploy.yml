@@ -31,6 +31,8 @@
 - name: "Is there a new build: {{ get_url_build.changed }}"
   set_fact:
     new_build_to_deploy: get_url_build.changed
+  tags:
+    - steamengine_deploy_nodejs
 
 - name: Create pm2 directory
   file:

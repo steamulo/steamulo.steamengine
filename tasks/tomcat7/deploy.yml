@@ -53,6 +53,8 @@
 - name: "Is there a new tomcat version: {{ get_url_tomcat.changed }}"
   set_fact:
     new_tomcat_version: get_url_tomcat.changed
+  tags:
+    - steamengine_deploy_tomcat7
 
 - name: Unzip tomcat
   unarchive:
@@ -151,6 +153,8 @@
 - name: "Is there a new build: {{ get_url_build.changed }}"
   set_fact:
     new_build_to_deploy: get_url_build.changed
+  tags:
+    - steamengine_deploy_tomcat7
 
 - name: "Fix permissions before updating source"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"

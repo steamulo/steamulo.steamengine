@@ -49,39 +49,44 @@
     - steamengine_deploy_play2
 
 - name: Create tmp directory
-  file:
-    path: "{{ steamengine_project_root_path_tmp }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+  tempfile:
     state: directory
-    mode: u=rw,g=r,o=
+    suffix: "{{ steamengine_project_name }}"
+  register: tempdir
   when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_play2
-
-- name: Create destination directory
-  file:
-    path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    state: directory
-    mode: u=rwx,g=rx,o=
   tags:
     - steamengine_deploy_play2
 
 - name: Unarchive build
   unarchive:
     src: "{{ steamengine_project_root_path }}/project.zip"
-    dest: "{{ steamengine_project_root_path_tmp }}"
+    dest: "{{ tempdir.path }}"
     remote_src: true
-    list_files: true
-  register: front_static_unzip_output
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
+
+- name: Clean www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: absent
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
+
+- name: Clean www directory (2)
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    state: directory
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2
 
 - name: "Move archive files to {{ steamengine_project_root_path_web }}"
-  shell: "mv {{ steamengine_project_root_path_tmp }}/*/* {{ steamengine_project_root_path_web }}"
+  shell: "mv {{ tempdir.path }}/*/* {{ steamengine_project_root_path_web }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2
@@ -100,23 +105,18 @@
 
 - name: Remove tmp directory
   file:
-    path: "{{ steamengine_project_root_path_tmp }}"
+    path: "{{ tempdir.path }}"
     state: absent
-  tags:
-    - steamengine_deploy_play2
-
-- name: Register run script name
-  find:
-    paths: "{{ steamengine_project_root_path_web }}/bin/"
-    patterns: "*.bat"
-  register: run_script_file
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2
 
 - name: Move start_project script
-  command: >
-    mv {{ run_script_file.files[0].path | dirname }}/{{ run_script_file.files[0].path | basename | splitext | first }}
-    {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}
+  shell: |
+    shopt -s extglob
+    mv {{ steamengine_project_root_path_web }}/bin/!(*.bat) {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}
+  args:
+    executable: /bin/bash
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2

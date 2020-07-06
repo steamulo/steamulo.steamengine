@@ -45,6 +45,8 @@
 - name: "Is there a new build: {{ get_url_build.changed }}"
   set_fact:
     new_build_to_deploy: get_url_build.changed
+  tags:
+    - steamengine_deploy_play2
 
 - name: Create tmp directory
   file:
@@ -54,6 +56,8 @@
     state: directory
     mode: u=rw,g=r,o=
   when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
 
 - name: Create destination directory
   file:
@@ -62,6 +66,8 @@
     group: "{{ steamengine_app_user }}"
     state: directory
     mode: u=rwx,g=rx,o=
+  tags:
+    - steamengine_deploy_play2
 
 - name: Unarchive build
   unarchive:
@@ -89,6 +95,8 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
 
 - name: Remove tmp directory
   file:
@@ -102,12 +110,16 @@
     paths: "{{ steamengine_project_root_path_web }}/bin/"
     patterns: "*.bat"
   register: run_script_file
+  tags:
+    - steamengine_deploy_play2
 
 - name: Move start_project script
   command: >
     mv {{ run_script_file.files[0].path | dirname }}/{{ run_script_file.files[0].path | basename | splitext | first }}
     {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}
   when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
 
 - name: Make script executable
   file:
@@ -115,3 +127,5 @@
     state: file
     mode: u=rwx,g=rx,o=x
   when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2

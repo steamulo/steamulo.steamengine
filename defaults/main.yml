@@ -48,3 +48,11 @@ steamengine_tomcat7_version_logger_listener_on: true
 steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"
+
+# Symfony 4/5
+steamengine_sf4_path_with_write_permission:
+  - "{{ steamengine_sf4_log_relative_path }}"
+  - "{{ steamengine_sf4_cache_relative_path }}"
+steamengine_sf4_link_directory: []
+steamengine_sf4_doctrine_enable: false
+steamengine_sf4_clear_cache: true

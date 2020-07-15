@@ -1,0 +1,94 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+
+  pre_tasks:
+    - include_tasks: "../resources/setup_{{ ansible_os_family | lower }}.yml"
+    - name: Add repository for PHP 7.4
+      apt_repository:
+        repo: ppa:ondrej/php
+
+  roles:
+    - role: geerlingguy.php
+      vars:
+        php_versions: "7.4"
+        php_default_version_debian: "7.4"
+        php_install_recommends: false
+        php_enable_php_fpm: true
+        php_fpm_listen: "/var/run/php/php7.4-fpm.sock"
+        php_webserver_daemon: "nginx"
+        php_date_timezone: "Europe/Paris"
+        php_expose_php: Off
+        php_memory_limit: "256M"
+    - role: geerlingguy.nginx
+      vars:
+        nginx_ppa_use: true
+        nginx_remove_default_vhost: true
+        nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+        nginx_vhosts:
+          - listen: "80"
+            server_name: "localhost"
+            index: "/"
+            extra_parameters: |
+
+              root /test_symfony4/project_root/www/public;
+
+              location / {
+                  # try to serve file directly, fallback to index.php
+                  try_files $uri /index.php$is_args$args;
+              }
+              # DEV
+              # This rule should only be placed on your development environment
+              # In production, don't include this and don't deploy index_dev.php or config.php
+              location ~ ^/(index_dev|config)\.php(/|$) {
+                  fastcgi_pass unix:/var/run/php7.4-fpm.sock;
+                  fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                  include fastcgi_params;
+                  # When you are using symlinks to link the document root to the
+                  # current version of your application, you should pass the real
+                  # application path instead of the path to the symlink to PHP
+                  # FPM.
+                  # Otherwise, PHP's OPcache may not properly detect changes to
+                  # your PHP files (see https://github.com/zendtech/ZendOptimizerPlus/issues/126
+                  # for more information).
+                  # Caveat: When PHP-FPM is hosted on a different machine from nginx
+                  #         $realpath_root may not resolve as you expect! In this case try using
+                  #         $document_root instead.
+                  fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                  fastcgi_param DOCUMENT_ROOT $realpath_root;
+              }
+              # PROD
+              location ~ ^/index\.php(/|$) {
+                  fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+                  fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                  include fastcgi_params;
+                # When you are using symlinks to link the document root to the
+                # current version of your application, you should pass the real
+                # application path instead of the path to the symlink to PHP
+                # FPM.
+                # Otherwise, PHP's OPcache may not properly detect changes to
+                # your PHP files (see https://github.com/zendtech/ZendOptimizerPlus/issues/126
+                # for more information).
+                fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                fastcgi_param DOCUMENT_ROOT $realpath_root;
+                # Prevents URIs that include the front controller. This will 404:
+                # http://domain.tld/app.php/some-path
+                # Remove the internal directive to allow URIs like this
+                internal;
+              }
+
+              # return 404 for all other php files not matching the front controller
+              # this prevents access to other php files you don't want to be accessible.
+              location ~ \.php$ {
+                return 404;
+              }
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        steamengine_project_name: test_symfony4
+        steamengine_project_type: symfony4
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/symfony5_test.zip
+        steamengine_build_checksum: sha1:ac336c6672f5b62f3b65b682311c9dd0a7a6654c
+        steamengine_project_configuration:
+          APP_ENV: "dev"
+          APP_DEBUG: "1"

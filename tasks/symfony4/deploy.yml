@@ -1,0 +1,127 @@
+---
+
+- name: Create configuration file
+  template:
+    src: "project_properties.env.j2"
+    dest: "{{ steamengine_conf_path }}/.env.local"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  when: steamengine_project_configuration is defined
+  tags:
+    - steamengine_deploy_sf4
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_project_root_path }}/project.zip"
+    checksum: "{{ steamengine_build_checksum }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    headers: "{{ steamengine_build_url_headers }}"
+    validate_certs: "{{ steamengine_build_url_validate_certs }}"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_sf4
+
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  set_fact:
+    new_build_to_deploy: "{{ get_url_build.changed }}"
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Create tmp directory
+  tempfile:
+    state: directory
+    suffix: "{{ steamengine_project_name }}"
+  register: tempdir
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Unarchive build
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ tempdir.path }}"
+    remote_src: true
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: "Ensure var directory exists"
+  file:
+    path: "{{ tempdir.path }}/{{ steamengine_sf4_var_relative_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Create logs link directory
+  file:
+    state: link
+    src: "{{ steamengine_sf4_global_logs_path }}"
+    dest: "{{ tempdir.path }}/{{ steamengine_sf4_log_relative_path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Create link directory
+  file:
+    state: link
+    src: "{{ steamengine_sf4_link_directory_path }}/{{ item.key }}"
+    dest: "{{ tempdir.path }}/{{ item.value }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  with_items: "{{ steamengine_sf4_link_directory }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Clean www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: absent
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: "Move archive files to {{ steamengine_project_root_path_web }}"
+  command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Remove tmp directory
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Migrate doctrine schema
+  command: "php console doctrine:migrations:migrate -n --allow-no-migration"
+  args:
+    chdir: "{{ steamengine_sf4_bin_path }}"
+  when: new_build_to_deploy and steamengine_sf4_doctrine_enable
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Cache clear symfony (prod)
+  command: "php console cache:clear --env=prod"
+  args:
+    chdir: "{{ steamengine_sf4_bin_path }}"
+  when: new_build_to_deploy and steamengine_sf4_clear_cache
+  tags:
+    - steamengine_deploy_sf4
+
+- name: "Fix permissions after updating source"
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4

@@ -1,0 +1,18 @@
+#!/bin/bash
+find {{ steamengine_project_root_path_web }} \
+
+{%- for value in steamengine_sf4_path_with_write_permission.items() -%}
+  -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
+{%- endfor -%}
+  -exec chown {{ symfony_project_user }}:{{ symfony_project_user }}app {} \; \
+  -exec chmod 'u=rwx,g=rx,o=' {} \;
+
+/usr/bin/setfacl -R -m u:www-data:rwX -m u:{{ symfony_project_user }}:rwX \
+{%- for value in steamengine_sf4_path_with_write_permission.items() -%}
+  {{steamengine_project_root_path_web}}/{{ value } \
+{%- endfor -%}
+
+/usr/bin/setfacl -dR -m u:www-data:rwX -m u:{{ symfony_project_user }}:rwX \
+{%- for value in steamengine_sf4_path_with_write_permission.items() -%}
+  {{steamengine_project_root_path_web}}/{{ value } \
+{%- endfor -%}

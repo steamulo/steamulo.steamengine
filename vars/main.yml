@@ -19,6 +19,7 @@ steamengine_project_types:
   - nodejs
   - tomcat7
   - play
+  - symfony4
 
 # PLAY
 steamengine_play2_run_script: "startproject"
@@ -35,3 +36,14 @@ steamengine_java_base_opts:
   - "-Dfile.encoding=UTF-8"
   - "-verbose:gc"
   - "-Xdump:heap:events=user"
+
+# Symfony 4/5
+steamengine_sf4_global_logs_path: "{{ steamengine_logs_path }}/symfony4"
+steamengine_sf4_public_path: "{{ steamengine_project_root_path_web }}/public"
+steamengine_sf4_bin_path: "{{ steamengine_project_root_path_web }}/bin"
+
+steamengine_sf4_var_relative_path: "var"
+steamengine_sf4_log_relative_path: "{{ steamengine_sf4_var_relative_path }}/log"
+steamengine_sf4_cache_relative_path: "{{ steamengine_sf4_var_relative_path }}/cache"
+
+steamengine_sf4_link_directory_path: "{{ steamengine_project_root_path }}/link"

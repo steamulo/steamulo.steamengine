@@ -23,7 +23,6 @@
         php_default_version_debian: "7.4"
         php_install_recommends: false
         php_enable_php_fpm: true
-        php_fpm_listen: "/var/run/php/php7.4-fpm.sock"
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
         php_expose_php: Off
@@ -43,7 +42,7 @@
                   try_files $uri /index.php$is_args$args;
               }
               location ~ ^/index\.php(/|$) {
-                  fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+                  fastcgi_pass 127.0.0.1:9000;
                   fastcgi_split_path_info ^(.+\.php)(/.*)$;
                   include fastcgi_params;
                 fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;

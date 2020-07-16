@@ -51,8 +51,8 @@ steamengine_java_opts:
 
 # Symfony 4/5
 steamengine_sf4_path_with_write_permission:
-  - "{{ steamengine_sf4_log_relative_path }}"
-  - "{{ steamengine_sf4_cache_relative_path }}"
+  - "var/log"
+  - "var/cache"
 steamengine_sf4_link_directory: []
 steamengine_sf4_doctrine_enable: false
 steamengine_sf4_clear_cache: true

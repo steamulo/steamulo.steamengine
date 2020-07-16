@@ -1,5 +1,24 @@
 ---
 
+- name: Create project folder structure (5)
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_items:
+    - "{{ steamengine_sf4_external_logs_path }}"
+
+- name: Create project folder structure (6)
+  file:
+    src: "{{ steamengine_sf4_link_directory_path }}/{{ item.key }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_items: "{{ steamengine_sf4_link_directory }}"
+
 - name: Create configuration file
   template:
     src: "project_properties.env.j2"
@@ -49,39 +68,6 @@
   tags:
     - steamengine_deploy_sf4
 
-- name: "Ensure var directory exists"
-  file:
-    path: "{{ tempdir.path }}/{{ steamengine_sf4_var_relative_path }}"
-    state: directory
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_sf4
-
-- name: Create logs link directory
-  file:
-    state: link
-    src: "{{ steamengine_sf4_global_logs_path }}"
-    dest: "{{ tempdir.path }}/{{ steamengine_sf4_log_relative_path }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_sf4
-
-- name: Create link directory
-  file:
-    state: link
-    src: "{{ steamengine_sf4_link_directory_path }}/{{ item.key }}"
-    dest: "{{ tempdir.path }}/{{ item.value }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-  with_items: "{{ steamengine_sf4_link_directory }}"
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_sf4
-
 - name: Clean www directory
   file:
     path: "{{ steamengine_project_root_path_web }}"
@@ -100,6 +86,39 @@
   file:
     path: "{{ tempdir.path }}"
     state: absent
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: "Ensure var directory exists"
+  file:
+    path: "{{ steamengine_sf4_var_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Create logs link directory
+  file:
+    state: link
+    src: "{{ steamengine_sf4_external_logs_path }}"
+    dest: "{{ steamengine_sf4_log_path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf4
+
+- name: Create link directory
+  file:
+    state: link
+    src: "{{ steamengine_sf4_link_directory_path }}/{{ item.key }}"
+    dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  with_items: "{{ steamengine_sf4_link_directory }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf4

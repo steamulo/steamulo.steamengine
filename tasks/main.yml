@@ -36,13 +36,6 @@
   tags: always
 
 - include_tasks:
-    file: "{{ steamengine_project_type }}/structure.yml"
-    apply:
-      tags:
-        - steamengine_structure
-  tags: always
-
-- include_tasks:
     file: common/runtime.yml
     apply:
       tags:

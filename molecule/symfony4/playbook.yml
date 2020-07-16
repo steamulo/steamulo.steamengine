@@ -5,14 +5,21 @@
 
   pre_tasks:
     - include_tasks: "../resources/setup_{{ ansible_os_family | lower }}.yml"
-    - name: Add repository for PHP 7.4
+
+    - name: Add ppa:ondrej/php repository
       apt_repository:
         repo: ppa:ondrej/php
+      when: ansible_os_family == 'Debian'
+
+    - name: Add remi-php74 repository
+      yum:
+        name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      when: ansible_os_family == 'RedHat'
 
   roles:
     - role: geerlingguy.php
       vars:
-        php_versions: "7.4"
+        php_enablerepo: "remi-php74"
         php_default_version_debian: "7.4"
         php_install_recommends: false
         php_enable_php_fpm: true

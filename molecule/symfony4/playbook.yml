@@ -59,5 +59,4 @@
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/symfony5_test.zip
         steamengine_build_checksum: sha1:ac336c6672f5b62f3b65b682311c9dd0a7a6654c
         steamengine_project_configuration:
-          APP_ENV: "dev"
-          APP_DEBUG: "1"
+          APP_ENV: prod

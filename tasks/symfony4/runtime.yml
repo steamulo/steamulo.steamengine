@@ -2,8 +2,21 @@
 
 - name: "Add nginx user in {{ steamengine_app_user }} group"
   user:
-    name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
+    name: "www-data"
     groups: "{{ steamengine_app_user }}"
     append: true
+  when: ansible_os_family != 'RedHat'
+  tags:
+    - steamengine_runtime_sf4
+
+- name: "Add nginx user in {{ steamengine_app_user }} group"
+  user:
+    name: "{{ item }}"
+    groups: "{{ steamengine_app_user }}"
+    append: true
+  when: ansible_os_family == 'RedHat'
+  loop:
+    - "nginx" # nginx user for statics
+    - "apache" # php-fpm process for php
   tags:
     - steamengine_runtime_sf4

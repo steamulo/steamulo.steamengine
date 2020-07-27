@@ -63,15 +63,16 @@ while [ $# -gt 0 ]; do
      {% for value in steamengine_sf4_path_with_write_permission %}
        -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
      {% endfor %}
+       -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
        -exec chmod 'u=rwx,g=rx,o=' {} \;
  
-     /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+     /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf4_path_with_write_permission %}
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}
  
-     /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+     /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf4_path_with_write_permission %}
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}

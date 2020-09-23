@@ -12,12 +12,12 @@
 
 - name: Create project folder structure (6)
   file:
-    src: "{{ steamengine_sf4_link_directory_path }}/{{ item.key }}"
+    path: "{{ steamengine_sf4_persistent_path }}/{{ item.key }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0770
-  with_items: "{{ steamengine_sf4_link_directory }}"
+  with_dict: "{{ steamengine_sf4_persistent_directory }}"
 
 - name: Create configuration file
   template:
@@ -123,11 +123,11 @@
 - name: Create link directory
   file:
     state: link
-    src: "{{ steamengine_sf4_link_directory_path }}/{{ item.key }}"
+    src: "{{ steamengine_sf4_persistent_path }}/{{ item.key }}"
     dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  with_items: "{{ steamengine_sf4_link_directory }}"
+  with_dict: "{{ steamengine_sf4_persistent_directory }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf4

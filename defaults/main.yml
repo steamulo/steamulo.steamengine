@@ -53,6 +53,8 @@ steamengine_java_opts:
 steamengine_sf4_path_with_write_permission:
   - "var/log"
   - "var/cache"
-steamengine_sf4_link_directory: []
+# List of path that should be persisted in a folder outside the projet
+# The key is the folder persisted outside the root project, the value is the name (path) of the folder inside the project. A link will be created on it to the persisted folder
+steamengine_sf4_persistent_directory: {}
 steamengine_sf4_doctrine_enable: false
 steamengine_sf4_clear_cache: true

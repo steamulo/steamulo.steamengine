@@ -18,6 +18,7 @@ steamengine_project_types:
   - static
   - nodejs
   - tomcat7
+  - drupal8
   - play
 
 # PLAY
@@ -35,3 +36,9 @@ steamengine_java_base_opts:
   - "-Dfile.encoding=UTF-8"
   - "-verbose:gc"
   - "-Xdump:heap:events=user"
+
+# DRUPAL8
+drupal_mysql_db_name: "drupal"
+drupal_mysql_db_user: "drupal"
+drupal_mysql_db_password: "password"
+drupal_mysql_db_port: 4806

@@ -38,7 +38,10 @@ steamengine_java_base_opts:
   - "-Xdump:heap:events=user"
 
 # DRUPAL8
-drupal_mysql_db_name: "drupal"
-drupal_mysql_db_user: "drupal"
-drupal_mysql_db_password: "password"
-drupal_mysql_db_port: 4806
+steamengine_drupal_mysql_db_name: "drupal"
+steamengine_drupal_mysql_db_user: "drupal"
+steamengine_drupal_mysql_db_password: "password"
+
+steamengine_drupal8_web_path: "{{ steamengine_project_root_path }}/web"
+steamengine_drupal8_sites_path: "{{ steamengine_project_root_path }}/sites"
+steamengine_drupal8_bin_path: "{{ steamengine_project_root_path }}/vendor/drupal/console/bin"

@@ -42,7 +42,7 @@
     - role: geerlingguy.drupal
       vars:
         drupal_deploy: false
-        drupal_deploy_dir: "/var/www/drupal"
+        drupal_deploy_dir: "/test_drupal/project_root/www"
         drupal_build_makefile: false
         drupal_build_composer: false
         drupal_install_site: false
@@ -68,116 +68,43 @@
             server_name: "localhost"
             index: "/"
             extra_parameters: |
-              root /var/www/drupal;
+              root /test_drupal/project_root/www/web;
 
-              location = /favicon.ico {
-                      log_not_found off;
-                      access_log off;
-                  }
+              location / {
+                  # Trying to upload the file, switch to Apache in case of failure
+                  try_files $uri @drupal;
+                }
 
-                  location = /robots.txt {
-                      allow all;
-                      log_not_found off;
-                      access_log off;
-                  }
+                location ~ \.php$ {
+                  fastcgi_pass   127.0.0.1:9000;
+                  fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+                  include        fastcgi_params;
+                }
 
-                  # Very rarely should these ever be accessed outside of your lan
-                  location ~* \.(txt|log)$ {
-                      allow 192.168.0.0/16;
-                      deny all;
-                  }
+                location @drupal {
+                  fastcgi_pass 127.0.0.1:9000;
+                  fastcgi_index  index.php;
+                  fastcgi_read_timeout 600;
+                  fastcgi_param  SCRIPT_FILENAME      $document_root/index.php;
+                  fastcgi_param  QUERY_STRING         q=$uri&$args;
+                  fastcgi_param  REQUEST_METHOD       $request_method;
+                  fastcgi_param  CONTENT_TYPE         $content_type;
+                  fastcgi_param  CONTENT_LENGTH       $content_length;
+                  fastcgi_param  REDIRECT_STATUS      200;
+                  fastcgi_param  SCRIPT_NAME          /index.php;
+                  fastcgi_param  REQUEST_URI          $request_uri;
+                  fastcgi_param  DOCUMENT_URI         $document_uri;
+                  fastcgi_param  DOCUMENT_ROOT        $document_root;
+                  fastcgi_param  SERVER_PROTOCOL      $server_protocol;
+                  fastcgi_param  GATEWAY_INTERFACE    CGI/1.1;
+                  fastcgi_param  SERVER_SOFTWARE      nginx/$nginx_version;
+                  fastcgi_param  REMOTE_ADDR          $remote_addr;
+                  fastcgi_param  REMOTE_PORT          $remote_port;
+                  fastcgi_param  SERVER_ADDR          $server_addr;
+                  fastcgi_param  SERVER_PORT          $server_port;
+                  fastcgi_param  SERVER_NAME          $server_name;
+                }
 
-                  location ~ \..*/.*\.php$ {
-                      return 403;
-                  }
-
-                  location ~ ^/sites/.*/private/ {
-                      return 403;
-                  }
-
-                  # Block access to scripts in site files directory
-                  location ~ ^/sites/[^/]+/files/.*\.php$ {
-                      deny all;
-                  }
-
-                  # Allow "Well-Known URIs" as per RFC 5785
-                  location ~* ^/.well-known/ {
-                      allow all;
-                  }
-
-                  # Block access to "hidden" files and directories whose names begin with a
-                  # period. This includes directories used by version control systems such
-                  # as Subversion or Git to store control files.
-                  location ~ (^|/)\. {
-                      return 403;
-                  }
-
-                  location / {
-                      # try_files $uri @rewrite; # For Drupal <= 6
-                      try_files $uri /index.php?$query_string; # For Drupal >= 7
-                  }
-
-                  location @rewrite {
-                      #rewrite ^/(.*)$ /index.php?q=$1; # For Drupal <= 6
-                      rewrite ^ /index.php; # For Drupal >= 7
-                  }
-
-                  # Don't allow direct access to PHP files in the vendor directory.
-                  location ~ /vendor/.*\.php$ {
-                      deny all;
-                      return 404;
-                  }
-
-                  # Protect files and directories from prying eyes.
-                  location ~* \.(engine|inc|install|make|module|profile|po|sh|.*sql|theme|twig|tpl(\.php)?|xtmpl|yml)(~|\.sw[op]|\.bak|\.orig|\.save)?$|composer\.(lock|json)$|web\.config$|^(\.(?!well-known).*|Entries.*|Repository|Root|Tag|Template)$|^#.*#$|\.php(~|\.sw[op]|\.bak|\.orig|\.save)$ {
-                      deny all;
-                      return 404;
-                  }
-
-                  location ~ '\.php$|^/update.php' {
-                      fastcgi_split_path_info ^(.+?\.php)(|/.*)$;
-                      # Ensure the php file exists. Mitigates CVE-2019-11043
-                      try_files $fastcgi_script_name =404;
-                      # Security note: If you're running a version of PHP older than the
-                      # latest 5.3, you should have "cgi.fix_pathinfo = 0;" in php.ini.
-                      # See http://serverfault.com/q/627903/94922 for details.
-                      include fastcgi_params;
-                      # Block httpoxy attacks. See https://httpoxy.org/.
-                      fastcgi_param HTTP_PROXY "";
-                      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                      fastcgi_param PATH_INFO $fastcgi_path_info;
-                      fastcgi_param QUERY_STRING $query_string;
-                      fastcgi_intercept_errors on;
-                      # PHP 5 socket location.
-                      #fastcgi_pass unix:/var/run/php5-fpm.sock;
-                      # PHP 7 socket location.
-                      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-                  }
-
-                  location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-                      try_files $uri @rewrite;
-                      expires max;
-                      log_not_found off;
-                  }
-
-                  # Fighting with Styles? This little gem is amazing.
-                  # location ~ ^/sites/.*/files/imagecache/ { # For Drupal <= 6
-                  location ~ ^/sites/.*/files/styles/ { # For Drupal >= 7
-                      try_files $uri @rewrite;
-                  }
-
-                  # Handle private files through Drupal. Private file's path can come
-                  # with a language prefix.
-                  location ~ ^(/[a-z\-]+)?/system/files/ { # For Drupal >= 7
-                      try_files $uri /index.php?$query_string;
-                  }
-
-                  # Enforce clean URLs
-                  # Removes index.php from urls like www.example.com/index.php/my-page --> www.example.com/my-page
-                  # Could be done with 301 for permanent or other redirect codes.
-                  if ($request_uri ~* "^(.*/)index\.php/(.*)") {
-                      return 307 $1$2;
-                  }
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: test_drupal

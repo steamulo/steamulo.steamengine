@@ -14,6 +14,8 @@ platforms:
     image: leandelivery/docker-systemd:${MOLECULE_DISTRO:-ubuntu-18.04}
     pre_build_image: true
     privileged: true
+    published_ports:
+      - 8123:80
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     tmpfs:

@@ -1,0 +1,160 @@
+---
+
+### Nginx Fix Permissions
+
+- name: Add www-data in all groups
+  user:
+    name: www-data
+    groups:
+      - "{{ steamengine_app_user }}"
+      - "{{ steamengine_project_user }}"
+    append: true
+
+
+### Build
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_home_path }}/project.zip"
+    checksum: "{{ steamengine_build_checksum }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+    headers: "{{ steamengine_build_url_headers }}"
+    validate_certs: "{{ steamengine_build_url_validate_certs }}"
+  notify:
+    - "{{ steamengine_project_name }} restart"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  set_fact:
+    new_build_to_deploy: get_url_build.changed
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Unzip project"
+  unarchive:
+    src: "{{ steamengine_home_path }}/project.zip"
+    dest: "{{ steamengine_project_root_path }}"
+    remote_src: yes
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Ensure settings"
+  copy:
+    src: "{{ steamengine_drupal8_sites_path }}/default/default.settings.php"
+    dest: "{{ steamengine_drupal8_sites_path }}/default/settings.php"
+    force: no
+    remote_src: true
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Customize drupal settings"
+  blockinfile:
+    dest: "{{ steamengine_drupal8_sites_path }}/default/settings.php"
+    block: |
+      $databases['default']['default'] = array (
+        'database' => '{{ steamengine_drupal_mysql_db_name }}',
+        'username' => '{{ steamengine_drupal_mysql_db_user }}',
+        'password' => '{{ steamengine_drupal_mysql_db_password }}',
+        'prefix' => '',
+        'host' => '172.17.0.1',
+        'port' => '4806',
+        'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+        'driver' => 'mysql',
+      );
+      $settings['hash_salt'] = '{{ steamengine_drupal_hash_salt }}';
+      $config_directories['sync'] = '../config';
+      $settings['php_storage']['twig']['directory'] = '/tmp';
+    mode: u=rwx,g=rwx,o=
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+### MySQL Database
+
+- name: "Download the MySQL Database inside MySQL Container"
+  get_url:
+    url: "{{ steamengine_db_dump_url }}"
+    dest: "{{ steamengine_home_path }}/db_dump.zip"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  register: get_url_db
+  when: steamengine_db_dump_url is defined and steamengine_db_dump_url
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Is there a new database: {{ get_url_db.changed }}"
+  set_fact:
+    new_db_to_deploy: get_url_db.changed
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Unzip the database"
+  unarchive:
+    src: "{{ steamengine_home_path }}/db_dump.zip"
+    dest: "{{ steamengine_home_path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+    remote_src: yes
+  when: new_db_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Drupal deploy db
+  shell: "drush sql:cli < {{ steamengine_home_path }}/{{ steamengine_db_dump_filename }}"
+  args:
+    chdir: "{{ steamengine_project_root_path }}"
+  when: new_db_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Update the database
+  shell: "drush updatedb -y"
+  args:
+    chdir: "{{ steamengine_project_root_path }}"
+  when: new_db_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: "Ensure files folder exist"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  with_items:
+    - "{{ steamengine_drupal8_web_path }}/sites/default/files"
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Drupal import config
+  shell: "drush config-import -y --source={{ steamengine_project_root_path }}/config"
+  args:
+    chdir: "{{ steamengine_project_root_path }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Clean drupal cache
+  shell: "drush cache:rebuild"
+  args:
+    chdir: "{{ steamengine_project_root_path }}"
+  tags:
+    - steamengine_deploy_drupal8

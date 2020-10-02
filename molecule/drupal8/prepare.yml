@@ -5,12 +5,17 @@
         name: mysql-drupal
         image: mysql:5.7
         volumes:
-          - /var/lib/mysql
+          - /var/lib/mysq
         published_ports:
           - "4806:3306"
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: drupal
-          MYSQL_USER: drupal
-          MYSQL_PASSWORD: drupal
+          MYSQL_DATABASE: hlm_drupal
+          MYSQL_USER: project-drupal
+          MYSQL_PASSWORD: passwordDrupal
         command: "mysqld --character-set-server=utf8mb4 --max_allowed_packet=32M"
+    - name: Add MySQL Service Container to inventory
+      add_host:
+        name: mysql-drupal
+        ansible_connection: docker
+        changed_when: false

@@ -31,9 +31,12 @@
         php_default_version_debian: "7.4"
         php_install_recommends: false
         php_enable_php_fpm: true
+        php_fpm_listen: "/var/run/php/php7.4-fpm.sock"
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
         php_expose_php: Off
+        php_packages_extra:
+          - php7.4-mysql
     - role: geerlingguy.git
     - role: geerlingguy.composer
       vars:
@@ -42,7 +45,7 @@
     - role: geerlingguy.drupal
       vars:
         drupal_deploy: false
-        drupal_deploy_dir: "/var/www/drupal"
+        drupal_deploy_dir: "/test_drupal/project_root"
         drupal_build_makefile: false
         drupal_build_composer: false
         drupal_install_site: false
@@ -58,6 +61,7 @@
         drupal_db_user: "{{ drupal_mysql_db_user }}"
         drupal_db_password: "{{ drupal_mysql_db_password }}"
         drupal_db_host: "172.17.0.1:4806"
+      when: not steamengine_build_url
     - role: geerlingguy.nginx
       vars:
         nginx_ppa_use: true
@@ -66,123 +70,30 @@
         nginx_vhosts:
           - listen: "80"
             server_name: "localhost"
-            index: "/"
+            root: /drupal/project_root/web
             extra_parameters: |
-              root /var/www/drupal;
 
-              location = /favicon.ico {
-                      log_not_found off;
-                      access_log off;
-                  }
+              location / {
+                  try_files $uri /index.php$is_args$args;
+              }
 
-                  location = /robots.txt {
-                      allow all;
-                      log_not_found off;
-                      access_log off;
-                  }
+              location ~ ^/index\.php(/|$) {
+                  fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+                  fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                  include fastcgi_params;
+                  fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                  fastcgi_param DOCUMENT_ROOT $realpath_root;
+                  internal;
+              }
+        tags:
+          - steamengine_nginx
 
-                  # Very rarely should these ever be accessed outside of your lan
-                  location ~* \.(txt|log)$ {
-                      allow 192.168.0.0/16;
-                      deny all;
-                  }
-
-                  location ~ \..*/.*\.php$ {
-                      return 403;
-                  }
-
-                  location ~ ^/sites/.*/private/ {
-                      return 403;
-                  }
-
-                  # Block access to scripts in site files directory
-                  location ~ ^/sites/[^/]+/files/.*\.php$ {
-                      deny all;
-                  }
-
-                  # Allow "Well-Known URIs" as per RFC 5785
-                  location ~* ^/.well-known/ {
-                      allow all;
-                  }
-
-                  # Block access to "hidden" files and directories whose names begin with a
-                  # period. This includes directories used by version control systems such
-                  # as Subversion or Git to store control files.
-                  location ~ (^|/)\. {
-                      return 403;
-                  }
-
-                  location / {
-                      # try_files $uri @rewrite; # For Drupal <= 6
-                      try_files $uri /index.php?$query_string; # For Drupal >= 7
-                  }
-
-                  location @rewrite {
-                      #rewrite ^/(.*)$ /index.php?q=$1; # For Drupal <= 6
-                      rewrite ^ /index.php; # For Drupal >= 7
-                  }
-
-                  # Don't allow direct access to PHP files in the vendor directory.
-                  location ~ /vendor/.*\.php$ {
-                      deny all;
-                      return 404;
-                  }
-
-                  # Protect files and directories from prying eyes.
-                  location ~* \.(engine|inc|install|make|module|profile|po|sh|.*sql|theme|twig|tpl(\.php)?|xtmpl|yml)(~|\.sw[op]|\.bak|\.orig|\.save)?$|composer\.(lock|json)$|web\.config$|^(\.(?!well-known).*|Entries.*|Repository|Root|Tag|Template)$|^#.*#$|\.php(~|\.sw[op]|\.bak|\.orig|\.save)$ {
-                      deny all;
-                      return 404;
-                  }
-
-                  location ~ '\.php$|^/update.php' {
-                      fastcgi_split_path_info ^(.+?\.php)(|/.*)$;
-                      # Ensure the php file exists. Mitigates CVE-2019-11043
-                      try_files $fastcgi_script_name =404;
-                      # Security note: If you're running a version of PHP older than the
-                      # latest 5.3, you should have "cgi.fix_pathinfo = 0;" in php.ini.
-                      # See http://serverfault.com/q/627903/94922 for details.
-                      include fastcgi_params;
-                      # Block httpoxy attacks. See https://httpoxy.org/.
-                      fastcgi_param HTTP_PROXY "";
-                      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                      fastcgi_param PATH_INFO $fastcgi_path_info;
-                      fastcgi_param QUERY_STRING $query_string;
-                      fastcgi_intercept_errors on;
-                      # PHP 5 socket location.
-                      #fastcgi_pass unix:/var/run/php5-fpm.sock;
-                      # PHP 7 socket location.
-                      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-                  }
-
-                  location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-                      try_files $uri @rewrite;
-                      expires max;
-                      log_not_found off;
-                  }
-
-                  # Fighting with Styles? This little gem is amazing.
-                  # location ~ ^/sites/.*/files/imagecache/ { # For Drupal <= 6
-                  location ~ ^/sites/.*/files/styles/ { # For Drupal >= 7
-                      try_files $uri @rewrite;
-                  }
-
-                  # Handle private files through Drupal. Private file's path can come
-                  # with a language prefix.
-                  location ~ ^(/[a-z\-]+)?/system/files/ { # For Drupal >= 7
-                      try_files $uri /index.php?$query_string;
-                  }
-
-                  # Enforce clean URLs
-                  # Removes index.php from urls like www.example.com/index.php/my-page --> www.example.com/my-page
-                  # Could be done with 301 for permanent or other redirect codes.
-                  if ($request_uri ~* "^(.*/)index\.php/(.*)") {
-                      return 307 $1$2;
-                  }
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
-        steamengine_project_name: test_drupal
+        steamengine_project_name: drupal
         steamengine_project_type: drupal8
-        steamengine_build_url:
-        steamengine_build_checksum: sha1:5ca5bebc8f3b770358732c90b20b94b710158d55
-        steamengine_project_configuration:
-
+        steamengine_db_dump_url: ""
+        steamengine_db_dump_filename: ""
+        steamengine_build_url: ""
+        steamengine_build_checksum: ""
+        steamengine_drupal_hash_salt:

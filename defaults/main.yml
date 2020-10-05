@@ -27,6 +27,7 @@ steamengine_build_url_headers: {}
 # NODEJS
 steamengine_nodejs_entrypoint: "bin/www"
 steamengine_nodejs_cluster_mode: true
+steamengine_nodejs_allowed_write_paths: []
 
 # TOMCAT7
 steamengine_tomcat7_tomcat_version: "7.0.93"

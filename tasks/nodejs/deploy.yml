@@ -82,3 +82,15 @@
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_nodejs
+
+- name: "Add write permission for {{ steamengine_app_user }} on {{ steamengine_nodejs_allowed_write_paths }}"
+  file:
+    path: "{{ steamengine_project_root_path_web }}/{{ item }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    recurse: true
+    mode: u=rwx,g=rwx,o=
+  when: new_build_to_deploy
+  loop: "{{ steamengine_nodejs_allowed_write_paths }}"
+  tags:
+    - steamengine_deploy_nodejs

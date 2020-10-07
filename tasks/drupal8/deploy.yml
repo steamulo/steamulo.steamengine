@@ -9,11 +9,11 @@
       - "{{ steamengine_app_user }}"
       - "{{ steamengine_project_user }}"
     append: true
-
-
+  tags:
+  - steamengine_deploy_drupal8
 ### Build
 
-- name: "Download build {{ steamengine_build_url }}"
+- name: Download build {{ steamengine_build_url }}
   get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_home_path }}/project.zip"
@@ -25,17 +25,12 @@
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
   notify:
     - "{{ steamengine_project_name }} restart"
-  register: get_url_build
+  register: build_project
+  when: steamengine_build_url is defined and steamengine_build_url
   tags:
     - steamengine_deploy_drupal8
 
-- name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
-    new_build_to_deploy: get_url_build.changed
-  tags:
-    - steamengine_deploy_drupal8
-
-- name: "Unzip project"
+- name: Unzip project
   unarchive:
     src: "{{ steamengine_home_path }}/project.zip"
     dest: "{{ steamengine_project_root_path }}"
@@ -43,11 +38,11 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-  when: new_build_to_deploy
+  when: build_project is defined and build_project.changed
   tags:
     - steamengine_deploy_drupal8
 
-- name: "Ensure settings"
+- name: Ensure settings
   copy:
     src: "{{ steamengine_drupal8_sites_path }}/default/default.settings.php"
     dest: "{{ steamengine_drupal8_sites_path }}/default/settings.php"
@@ -56,11 +51,11 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-  when: new_build_to_deploy
+  register: drupal_settings
   tags:
     - steamengine_deploy_drupal8
 
-- name: "Customize drupal settings"
+- name: Customize drupal settings
   blockinfile:
     dest: "{{ steamengine_drupal8_sites_path }}/default/settings.php"
     block: |
@@ -69,8 +64,8 @@
         'username' => '{{ steamengine_drupal_mysql_db_user }}',
         'password' => '{{ steamengine_drupal_mysql_db_password }}',
         'prefix' => '',
-        'host' => '172.17.0.1',
-        'port' => '4806',
+        'host' => '{{ steamengine_drupal_mysql_host }}',
+        'port' => '{{ steamengine_drupal_mysql_port }}',
         'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
         'driver' => 'mysql',
       );
@@ -80,31 +75,25 @@
     mode: u=rwx,g=rwx,o=
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy
+  when: drupal_settings.changed
   tags:
     - steamengine_deploy_drupal8
 
 ### MySQL Database
 
-- name: "Download the MySQL Database inside MySQL Container"
+- name: Download the Project DB dump
   get_url:
     url: "{{ steamengine_db_dump_url }}"
     dest: "{{ steamengine_home_path }}/db_dump.zip"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-  register: get_url_db
+  register: db_dump
   when: steamengine_db_dump_url is defined and steamengine_db_dump_url
   tags:
     - steamengine_deploy_drupal8
 
-- name: "Is there a new database: {{ get_url_db.changed }}"
-  set_fact:
-    new_db_to_deploy: get_url_db.changed
-  tags:
-    - steamengine_deploy_drupal8
-
-- name: "Unzip the database"
+- name: Unzip project db dump
   unarchive:
     src: "{{ steamengine_home_path }}/db_dump.zip"
     dest: "{{ steamengine_home_path }}"
@@ -112,7 +101,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
     remote_src: yes
-  when: new_db_to_deploy
+  when: db_dump is defined and db_dump.changed
   tags:
     - steamengine_deploy_drupal8
 
@@ -120,7 +109,7 @@
   shell: "drush sql:cli < {{ steamengine_home_path }}/{{ steamengine_db_dump_filename }}"
   args:
     chdir: "{{ steamengine_project_root_path }}"
-  when: new_db_to_deploy
+  when: db_dump is defined and db_dump.changed
   tags:
     - steamengine_deploy_drupal8
 
@@ -128,7 +117,7 @@
   shell: "drush updatedb -y"
   args:
     chdir: "{{ steamengine_project_root_path }}"
-  when: new_db_to_deploy
+  when: db_dump is defined and db_dump.changed
   tags:
     - steamengine_deploy_drupal8
 
@@ -144,17 +133,30 @@
   tags:
     - steamengine_deploy_drupal8
 
-- name: Drupal import config
-  shell: "drush config-import -y --source={{ steamengine_project_root_path }}/config"
-  args:
-    chdir: "{{ steamengine_project_root_path }}"
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_drupal8
-
 - name: Clean drupal cache
   shell: "drush cache:rebuild"
   args:
     chdir: "{{ steamengine_project_root_path }}"
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Set permissions and accesses
+  shell: >
+    chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_name }} &&
+    chmod -R 770 {{ steamengine_project_name }}
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Restart php-fpm
+  systemd:
+    name: php7.4-fpm
+    state: restarted
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Restart nginx
+  systemd:
+    name: nginx
+    state: restarted
   tags:
     - steamengine_deploy_drupal8

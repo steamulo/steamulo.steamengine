@@ -54,5 +54,4 @@
     apply:
       tags:
         - steamengine_deploy
-  when: steamengine_build_url is defined and steamengine_build_url
   tags: always

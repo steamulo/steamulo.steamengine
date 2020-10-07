@@ -38,9 +38,6 @@ steamengine_java_base_opts:
   - "-Xdump:heap:events=user"
 
 # DRUPAL8
-steamengine_drupal_mysql_db_name: "hlm_drupal"
-steamengine_drupal_mysql_db_user: "project-drupal"
-steamengine_drupal_mysql_db_password: "passwordDrupal"
 
 steamengine_drupal8_web_path: "{{ steamengine_project_root_path }}/web"
 steamengine_drupal8_sites_path: "{{ steamengine_drupal8_web_path }}/sites"

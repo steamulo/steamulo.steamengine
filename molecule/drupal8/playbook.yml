@@ -42,26 +42,6 @@
       vars:
         composer_path: /usr/local/bin/composer
     - role: geerlingguy.drush
-    - role: geerlingguy.drupal
-      vars:
-        drupal_deploy: false
-        drupal_deploy_dir: "/test_drupal/project_root"
-        drupal_build_makefile: false
-        drupal_build_composer: false
-        drupal_install_site: false
-
-        drupal_build_composer_project: true
-        drupal_composer_project_package: "drupal/recommended-project:^8"
-        drupal_composer_project_options: "--prefer-dist --stability dev --no-interaction"
-
-        drupal_core_path: "{{ drupal_deploy_dir }}/web"
-        drupal_core_owner: "{{ ansible_ssh_user | default(ansible_env.SUDO_USER, true) | default(ansible_env.USER, true) | default(ansible_user_id) }}"
-        drupal_core_owner_become: false
-        drupal_db_name: "{{ drupal_mysql_db_name }}"
-        drupal_db_user: "{{ drupal_mysql_db_user }}"
-        drupal_db_password: "{{ drupal_mysql_db_password }}"
-        drupal_db_host: "172.17.0.1:4806"
-      when: not steamengine_build_url
     - role: geerlingguy.nginx
       vars:
         nginx_ppa_use: true
@@ -71,29 +51,16 @@
           - listen: "80"
             server_name: "localhost"
             root: /drupal/project_root/web
-            extra_parameters: |
-
-              location / {
-                  try_files $uri /index.php$is_args$args;
-              }
-
-              location ~ ^/index\.php(/|$) {
-                  fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
-                  fastcgi_split_path_info ^(.+\.php)(/.*)$;
-                  include fastcgi_params;
-                  fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-                  fastcgi_param DOCUMENT_ROOT $realpath_root;
-                  internal;
-              }
+            template: "{{ playbook_dir }}/../../templates/drupal8_vhost.j2"
         tags:
           - steamengine_nginx
-
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: drupal
         steamengine_project_type: drupal8
-        steamengine_db_dump_url: ""
-        steamengine_db_dump_filename: ""
-        steamengine_build_url: ""
-        steamengine_build_checksum: ""
-        steamengine_drupal_hash_salt:
+        steamengine_drupal_hash_salt: drupal
+        steamengine_drupal_mysql_host: 172.17.0.1
+        steamengine_drupal_mysql_port: 4806
+        steamengine_drupal_mysql_db_name: "drupal"
+        steamengine_drupal_mysql_db_user: "drupal"
+        steamengine_drupal_mysql_db_password: "drupal"

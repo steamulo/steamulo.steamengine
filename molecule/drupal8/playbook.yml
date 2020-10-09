@@ -9,6 +9,28 @@
       apt:
         name: mysql-client
         state: present
+      when: ansible_os_family == 'Debian'
+    - name: Download mysql rpm for RedHat
+      get_url:
+        url: "https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm"
+        dest: "/"
+      when: ansible_os_family == 'RedHat'
+    - name: Add mysql rpm
+      shell: >
+        rpm -Uvh mysql57-community-release-el7-9.noarch.rpm &&
+        yum-config-manager --disable mysql80-community &&
+        yum-config-manager --enable mysql57-community
+      when: ansible_os_family == 'RedHat'
+    - name: Add mysql-client
+      yum:
+        name: mysql-community-server
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Remove downloaded mysql rpm
+      file:
+        path: "/mysql57-community-release-el7-9.noarch.rpm"
+        state: absent
+      when: ansible_os_family == 'RedHat'
 
     - name: Add ppa:ondrej/php repository
       apt_repository:
@@ -31,12 +53,10 @@
         php_default_version_debian: "7.4"
         php_install_recommends: false
         php_enable_php_fpm: true
-        php_fpm_listen: "/var/run/php/php7.4-fpm.sock"
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
         php_expose_php: Off
-        php_packages_extra:
-          - php7.4-mysql
+        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-mysql'], []) }}"
     - role: geerlingguy.git
     - role: geerlingguy.composer
       vars:
@@ -50,15 +70,56 @@
         nginx_vhosts:
           - listen: "80"
             server_name: "localhost"
-            root: /drupal/project_root/web
-            template: "{{ playbook_dir }}/../../templates/drupal8_vhost.j2"
+            root: /drupal/project_root/www/web
+            extra_parameters: |
+              client_max_body_size 4096M;
+
+              location / {
+                  try_files $uri /index.php?$query_string; # For Drupal >= 7
+              }
+
+              location @rewrite {
+                rewrite ^ /index.php; # For Drupal >= 7
+              }
+
+              location ~ '\.php$|^/update.php' {
+                fastcgi_split_path_info ^(.+?\.php)(|/.*)$;
+                try_files $fastcgi_script_name =404;
+                include fastcgi_params;
+                fastcgi_param HTTP_PROXY "";
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param PATH_INFO $fastcgi_path_info;
+                fastcgi_param QUERY_STRING $query_string;
+                fastcgi_intercept_errors on;
+                fastcgi_pass 127.0.0.1:9000;
+              }
+
+              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+                try_files $uri @rewrite;
+                expires max;
+                log_not_found off;
+              }
+
+              location ~ ^/sites/.*/files/styles/ { # For Drupal >= 7
+                try_files $uri @rewrite;
+              }
+
+              location ~ ^(/[a-z\-]+)?/system/files/ { # For Drupal >= 7
+                try_files $uri /index.php?$query_string;
+              }
+
+              if ($request_uri ~* "^(.*/)index\.php/(.*)") {
+                return 307 $1$2;
+              }
+
+              error_log /var/log/nginx/project_error.log;
+              access_log /var/log/nginx/project_access.log;
         tags:
           - steamengine_nginx
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: drupal
         steamengine_project_type: drupal8
-        steamengine_drupal_hash_salt: drupal
         steamengine_drupal_mysql_host: 172.17.0.1
         steamengine_drupal_mysql_port: 4806
         steamengine_drupal_mysql_db_name: "drupal"

@@ -6,13 +6,10 @@
   version: 2.7.0
 
 - src: geerlingguy.git
-  version:
+  version: 3.0.0
 
 - src: geerlingguy.composer
-  version:
+  version: 1.8.0
 
 - src: geerlingguy.drush
-  version:
-
-- src: geerlingguy.drupal
-  version: 4.1.0
+  version: 3.1.2

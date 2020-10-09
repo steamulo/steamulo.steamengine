@@ -48,3 +48,16 @@ steamengine_tomcat7_version_logger_listener_on: true
 steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"
+
+# DRUPAL8
+steamengine_drupal_mysql_db_name: "drupal"
+steamengine_drupal_mysql_db_user: "drupal"
+steamengine_drupal_mysql_db_password: "drupal"
+steamengine_drupal_admin_name: "admin"
+steamengine_drupal_admin_password: "admin"
+steamengine_drupal_site_name: "{{ steamengine_project_name }}"
+steamengine_drupal_site_locale: "fr"
+steamengine_drupal_hash_salt: "drupal"
+steamengine_drupal_mysql_host: "localhost"
+steamengine_drupal_mysql_port: 3306
+steamengine_drupal_version: 8.9.x #9.x

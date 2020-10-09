@@ -1,16 +1,5 @@
 ---
 
-### Nginx Fix Permissions
-
-- name: Add www-data in all groups
-  user:
-    name: www-data
-    groups:
-      - "{{ steamengine_app_user }}"
-      - "{{ steamengine_project_user }}"
-    append: true
-  tags:
-  - steamengine_deploy_drupal8
 ### Build
 
 - name: Download build {{ steamengine_build_url }}
@@ -20,7 +9,7 @@
     checksum: "{{ steamengine_build_checksum }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
+    mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
   notify:
@@ -30,34 +19,45 @@
   tags:
     - steamengine_deploy_drupal8
 
+- name: Create www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    state: directory
+  tags:
+    - steamengine_deploy_drupal8
+
 - name: Unzip project
   unarchive:
     src: "{{ steamengine_home_path }}/project.zip"
-    dest: "{{ steamengine_project_root_path }}"
+    dest: "{{ steamengine_project_root_path_web }}"
     remote_src: yes
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
-  when: build_project is defined and build_project.changed
+    mode: u=rwx,g=rx,o=
+  when: build_project.changed
   tags:
     - steamengine_deploy_drupal8
 
 - name: Ensure settings
   copy:
-    src: "{{ steamengine_drupal8_sites_path }}/default/default.settings.php"
-    dest: "{{ steamengine_drupal8_sites_path }}/default/settings.php"
+    src: "{{ steamengine_project_root_path_web }}/web/sites/default/default.settings.php"
+    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
     force: no
     remote_src: true
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
+    mode: u=rwx,g=rx,o=
   register: drupal_settings
+  when: build_project.changed
   tags:
     - steamengine_deploy_drupal8
 
 - name: Customize drupal settings
   blockinfile:
-    dest: "{{ steamengine_drupal8_sites_path }}/default/settings.php"
+    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
     block: |
       $databases['default']['default'] = array (
         'database' => '{{ steamengine_drupal_mysql_db_name }}',
@@ -72,7 +72,7 @@
       $settings['hash_salt'] = '{{ steamengine_drupal_hash_salt }}';
       $config_directories['sync'] = '../config';
       $settings['php_storage']['twig']['directory'] = '/tmp';
-    mode: u=rwx,g=rwx,o=
+    mode: u=rwx,g=rx,o=
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
   when: drupal_settings.changed
@@ -87,7 +87,7 @@
     dest: "{{ steamengine_home_path }}/db_dump.zip"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
+    mode: u=rwx,g=rx,o=
   register: db_dump
   when: steamengine_db_dump_url is defined and steamengine_db_dump_url
   tags:
@@ -99,64 +99,106 @@
     dest: "{{ steamengine_home_path }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
+    mode: u=rwx,g=rx,o=
     remote_src: yes
-  when: db_dump is defined and db_dump.changed
+  when: db_dump.changed
   tags:
     - steamengine_deploy_drupal8
 
 - name: Drupal deploy db
   shell: "drush sql:cli < {{ steamengine_home_path }}/{{ steamengine_db_dump_filename }}"
   args:
-    chdir: "{{ steamengine_project_root_path }}"
-  when: db_dump is defined and db_dump.changed
+    chdir: "{{ steamengine_project_root_path_web }}"
+  when: db_dump.changed
   tags:
     - steamengine_deploy_drupal8
 
 - name: Update the database
   shell: "drush updatedb -y"
   args:
-    chdir: "{{ steamengine_project_root_path }}"
-  when: db_dump is defined and db_dump.changed
+    chdir: "{{ steamengine_project_root_path_web }}"
+  when: db_dump.changed
   tags:
     - steamengine_deploy_drupal8
 
-- name: "Ensure files folder exist"
+### Installing
+
+- name: Check if database is empty
+  shell: "drush sql-query 'show tables'"
+  args:
+    chdir: "{{ steamengine_project_root_path_web }}"
+  register: database_table_number
+  when: build_project.changed or db_dump.changed
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: If database is empty, remove settings
   file:
-    path: "{{ item }}"
+    path: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+    state: absent
+  when: (build_project.changed or db_dump.changed) and database_table_number.stdout == ""
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: If database is empty, install Drupal with drush.
+  shell: >
+    drush site-install standard -y  \
+    --site-name="{{ steamengine_drupal_site_name }}" \
+    --account-name="{{ steamengine_drupal_admin_name }}" \
+    --account-pass="{{ steamengine_drupal_admin_password }}" \
+    --locale="{{ steamengine_drupal_site_locale }}" \
+    --db-url="mysql://{{ steamengine_drupal_mysql_db_user }}:{{ steamengine_drupal_mysql_db_password }}@{{ steamengine_drupal_mysql_host }}:{{ steamengine_drupal_mysql_port }}/{{ steamengine_drupal_mysql_db_name }}"
+  args:
+    chdir: "{{ steamengine_project_root_path_web }}"
+  when: (build_project.changed or db_dump.changed) and database_table_number.stdout == ""
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Ensure files folder exists
+  file:
+    path: "{{ steamengine_project_root_path_web }}/web/sites/default/files"
     state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
-  with_items:
-    - "{{ steamengine_drupal8_web_path }}/sites/default/files"
+    mode: u=rwx,g=rx,o=
+  when: build_project.changed
   tags:
     - steamengine_deploy_drupal8
+
+- name: Check if there is existing config
+  stat:
+    path: "{{ steamengine_project_root_path_web }}/config"
+  register: config_dir
+  when: build_project.changed
+  tags:
+    - steamengine_deploy_drupal8
+
+- name: Drupal import config
+  shell: "drush config-import -y --source={{ steamengine_project_root_path_web }}/config"
+  args:
+    chdir: "{{ steamengine_project_root_path_web }}"
+  when: build_project.changed and config_dir.stat.exists
+  tags:
+    - steamengine_deploy_drupal8
+
+### Cleaning up and restarting
 
 - name: Clean drupal cache
   shell: "drush cache:rebuild"
   args:
-    chdir: "{{ steamengine_project_root_path }}"
+    chdir: "{{ steamengine_project_root_path_web }}"
+  when: build_project.changed
   tags:
     - steamengine_deploy_drupal8
 
-- name: Set permissions and accesses
-  shell: >
-    chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_name }} &&
-    chmod -R 770 {{ steamengine_project_name }}
+- name: "Fix permissions"
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  when: build_project.changed
   tags:
     - steamengine_deploy_drupal8
 
-- name: Restart php-fpm
-  systemd:
-    name: php7.4-fpm
-    state: restarted
-  tags:
-    - steamengine_deploy_drupal8
-
-- name: Restart nginx
-  systemd:
-    name: nginx
-    state: restarted
+- name: "Restart http server"
+  command: "/{{ steamengine_project_name }}/bin/steamengine restart"
+  when: build_project.changed
   tags:
     - steamengine_deploy_drupal8

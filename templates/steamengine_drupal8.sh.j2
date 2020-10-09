@@ -10,6 +10,7 @@ display_usage() {
     echo -e "  restart\n\t\t\tRestart the http server"
     echo -e "  status\n\t\t\tDisplay the http server status"
     echo -e "  reload\n\t\t\tReload the http server configuration"
+    echo -e "  fixpermissions\n\t\tFix permissions of project's files"
     echo -e "  -h, --help\n\t\t\tShow Usages"
     echo ""
 }
@@ -38,14 +39,17 @@ while [ $# -gt 0 ]; do
   shift
   case $arg in
     start)
+     systemctl start {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
      systemctl start nginx
      exit $?
     ;;
     stop)
+     systemctl stop {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
      systemctl stop nginx
      exit $?
     ;;
     restart)
+     systemctl restart {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
      systemctl restart nginx
      exit $?
     ;;
@@ -56,6 +60,11 @@ while [ $# -gt 0 ]; do
     reload)
      systemctl reload nginx
      exit $?
+    ;;
+    fixpermissions)
+      chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}
+      chmod -R 770 {{ steamengine_project_root_path_web }}/web
+      exit $?
     ;;
     *)
      echo "Wrong option"

@@ -38,7 +38,4 @@ steamengine_java_base_opts:
   - "-Xdump:heap:events=user"
 
 # DRUPAL8
-
-steamengine_drupal8_web_path: "{{ steamengine_project_root_path }}/web"
-steamengine_drupal8_sites_path: "{{ steamengine_drupal8_web_path }}/sites"
-steamengine_drupal8_bin_path: "{{ steamengine_drupal8_web_path }}/vendor/drupal/console/bin"
+drupal_project_bin_path: "{{ steamengine_project_root_path_web }}/vendor/drupal/console/bin"

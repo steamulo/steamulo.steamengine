@@ -11,7 +11,7 @@ lint:
         max: 120
 platforms:
   - name: instance
-    image: leandelivery/docker-systemd:${MOLECULE_DISTRO:-ubuntu-18.04}
+    image: leandelivery/docker-systemd:${MOLECULE_DISTRO:-centos7}
     pre_build_image: true
     privileged: true
     published_ports:

@@ -63,7 +63,7 @@ while [ $# -gt 0 ]; do
     ;;
     fixpermissions)
       chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}
-      chmod -R 770 {{ steamengine_project_root_path_web }}/web
+      chmod -R 770 {{ steamengine_project_root_path_web }}/web {{ steamengine_home_path }}/default
       exit $?
     ;;
     *)

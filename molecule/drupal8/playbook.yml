@@ -10,32 +10,12 @@
         name: mysql-client
         state: present
       when: ansible_os_family == 'Debian'
-    - name: Download mysql rpm for RedHat
-      get_url:
-        url: "https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm"
-        dest: "/"
-      when: ansible_os_family == 'RedHat'
-    - name: Add mysql rpm
-      shell: >
-        rpm -Uvh mysql57-community-release-el7-9.noarch.rpm &&
-        yum-config-manager --disable mysql80-community &&
-        yum-config-manager --enable mysql57-community
-      when: ansible_os_family == 'RedHat'
-    - name: Add mysql-client
-      yum:
-        name: mysql-community-server
-        state: present
-      when: ansible_os_family == 'RedHat'
-    - name: Remove downloaded mysql rpm
-      file:
-        path: "/mysql57-community-release-el7-9.noarch.rpm"
-        state: absent
-      when: ansible_os_family == 'RedHat'
 
     - name: Add ppa:ondrej/php repository
       apt_repository:
         repo: ppa:ondrej/php
       when: ansible_os_family == 'Debian'
+
     - name: Add mysql repository
       apt_repository:
         repo: ppa:ondrej/php
@@ -45,6 +25,30 @@
       yum:
         name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
       when: ansible_os_family == 'RedHat'
+
+    - name: Enable remi-php74 repository
+      shell: yum-config-manager --enable remi-php74
+      when: ansible_os_family == 'RedHat'
+
+    - name: Download mysql rpm for RedHat
+      get_url:
+        url: "https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm"
+        dest: "/"
+      register: mysql_rpm_package
+      when: ansible_os_family == 'RedHat'
+
+    - name: Add and enable mysql rpm
+      shell: >
+        rpm -Uvh mysql57-community-release-el7-9.noarch.rpm &&
+        yum-config-manager --disable mysql80-community &&
+        yum-config-manager --enable mysql57-community
+      when: ansible_os_family == 'RedHat' and mysql_rpm_package.changed
+
+    - name: Add mysql-client
+      yum:
+        name: mysql-community-server
+        state: present
+      when: ansible_os_family == 'RedHat' and mysql_rpm_package.changed
 
   roles:
     - role: geerlingguy.php
@@ -56,7 +60,7 @@
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
         php_expose_php: Off
-        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-mysql'], []) }}"
+        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-mysql'], ['php-mysql']) }}"
     - role: geerlingguy.git
     - role: geerlingguy.composer
       vars:
@@ -75,11 +79,11 @@
               client_max_body_size 4096M;
 
               location / {
-                  try_files $uri /index.php?$query_string; # For Drupal >= 7
+                  try_files $uri /index.php?$query_string;
               }
 
               location @rewrite {
-                rewrite ^ /index.php; # For Drupal >= 7
+                rewrite ^ /index.php;
               }
 
               location ~ '\.php$|^/update.php' {
@@ -100,11 +104,11 @@
                 log_not_found off;
               }
 
-              location ~ ^/sites/.*/files/styles/ { # For Drupal >= 7
+              location ~ ^/sites/.*/files/styles/ {
                 try_files $uri @rewrite;
               }
 
-              location ~ ^(/[a-z\-]+)?/system/files/ { # For Drupal >= 7
+              location ~ ^(/[a-z\-]+)?/system/files/ {
                 try_files $uri /index.php?$query_string;
               }
 
@@ -125,3 +129,5 @@
         steamengine_drupal_mysql_db_name: "drupal"
         steamengine_drupal_mysql_db_user: "drupal"
         steamengine_drupal_mysql_db_password: "drupal"
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
+        steamengine_build_checksum: sha1:4c2b8420fca1fb2fb4f367696b126dceac1cccd2

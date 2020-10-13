@@ -38,4 +38,5 @@ steamengine_java_base_opts:
   - "-Xdump:heap:events=user"
 
 # DRUPAL8
-drupal_project_bin_path: "{{ steamengine_project_root_path_web }}/vendor/drupal/console/bin"
+steamengine_drupal_project_bin_path: "{{ steamengine_project_root_path_web }}/web/vendor/drupal/console/bin"
+steamengine_drupal_drush_path: "/usr/local/bin/drush"

@@ -62,4 +62,3 @@ steamengine_drupal_site_locale: "fr"
 steamengine_drupal_hash_salt: "drupal"
 steamengine_drupal_mysql_host: "localhost"
 steamengine_drupal_mysql_port: 3306
-steamengine_drupal_version: 8.9.x #9.x

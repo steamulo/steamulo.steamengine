@@ -59,3 +59,10 @@ steamengine_sf4_path_with_write_permission:
 steamengine_sf4_persistent_directory: {}
 steamengine_sf4_doctrine_enable: false
 steamengine_sf4_clear_cache: true
+# Directory name to store logs outside the project
+steamengine_sf4_external_logs_directory: "symfony"
+steamengine_sf4_public_directory: "public"
+steamengine_sf4_bin_directory: "bin"
+steamengine_sf4_var_directory: "var"
+steamengine_sf4_log_directory: "log"
+steamengine_sf4_cache_directory: "cache"

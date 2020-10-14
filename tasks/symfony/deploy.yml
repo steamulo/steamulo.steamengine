@@ -30,6 +30,17 @@
   tags:
     - steamengine_deploy_sf
 
+- name: Create custom configuration file
+  template:
+    src: "{{ item.key }}"
+    dest: "{{ steamengine_conf_path }}/{{ item.value }} "
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  with_dict: "{{ steamengine_sf_persistent_directory }}"
+  tags:
+    - steamengine_deploy_sf
+
 - name: "Download build {{ steamengine_build_url }}"
   get_url:
     url: "{{ steamengine_build_url }}"
@@ -109,6 +120,16 @@
   tags:
     - steamengine_deploy_sf
 
+- name: Create custom configuration link
+  file:
+    state: link
+    src: "{{ steamengine_conf_path }}/{{ item.value }}"
+    dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
+  with_dict: "{{ steamengine_sf_persistent_directory }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
 - name: Create logs link directory
   file:
     state: link
@@ -132,19 +153,12 @@
   tags:
     - steamengine_deploy_sf
 
-- name: Migrate doctrine schema
-  command: "php console doctrine:migrations:migrate -n --allow-no-migration"
+- name: Run php console command
+  command: "php console {{ item }}"
   args:
     chdir: "{{ steamengine_sf_bin_path }}"
-  when: new_build_to_deploy and steamengine_sf_doctrine_enable
-  tags:
-    - steamengine_deploy_sf
-
-- name: Cache clear symfony (prod)
-  command: "php console cache:clear --env=prod"
-  args:
-    chdir: "{{ steamengine_sf_bin_path }}"
-  when: new_build_to_deploy and steamengine_sf_clear_cache
+  with_items: "{{ steamengine_sf_php_console_command_deployment }}"
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
 

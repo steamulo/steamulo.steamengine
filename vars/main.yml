@@ -19,7 +19,7 @@ steamengine_project_types:
   - nodejs
   - tomcat7
   - play
-  - symfony4
+  - symfony
 
 # PLAY
 steamengine_play2_run_script: "startproject"
@@ -37,11 +37,11 @@ steamengine_java_base_opts:
   - "-verbose:gc"
   - "-Xdump:heap:events=user"
 
-# Symfony 4/5
-steamengine_sf4_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf4_public_directory }}"
-steamengine_sf4_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf4_public_directory }}"
-steamengine_sf4_bin_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf4_bin_directory }}"
-steamengine_sf4_var_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf4_var_directory }}"
-steamengine_sf4_log_path: "{{ steamengine_sf4_var_path }}/{{ steamengine_sf4_log_directory }}"
-steamengine_sf4_cache_path: "{{ steamengine_sf4_var_path }}/{{ steamengine_sf4_cache_directory }}"
-steamengine_sf4_persistent_path: "{{ steamengine_project_root_path }}/link"
+# Symfony
+steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_public_directory }}"
+steamengine_sf_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_public_directory }}"
+steamengine_sf_bin_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_bin_directory }}"
+steamengine_sf_var_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_var_directory }}"
+steamengine_sf_log_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_log_directory }}"
+steamengine_sf_cache_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_cache_directory }}"
+steamengine_sf_persistent_path: "{{ steamengine_project_root_path }}/link"

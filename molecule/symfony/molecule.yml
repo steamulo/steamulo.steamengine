@@ -24,7 +24,7 @@ provisioner:
   lint:
     name: ansible-lint
 scenario:
-  name: symfony4
+  name: symfony
 verifier:
   name: testinfra
   options:

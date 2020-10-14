@@ -52,7 +52,7 @@ Examples for different project types can be found under the molecule folder:
 * [SpringBoot](molecule/springboot/playbook.yml)
 * [Static](molecule/static/playbook.yml)
 * [Tomcat7](molecule/tomcat7/playbook.yml) 
-* [Symfony4/5](molecule/symfony4/playbook.yml) 
+* [Symfony](molecule/symfony/playbook.yml) 
 
 Development
 ------------

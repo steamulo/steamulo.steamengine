@@ -36,7 +36,7 @@
             server_name: "localhost"
             index: "/"
             extra_parameters: |
-              root /test_symfony4/project_root/www/public;
+              root /test_symfony/project_root/www/public;
               location / {
                 try_files $uri /index.php$is_args$args;
               }
@@ -53,8 +53,8 @@
               }
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
-        steamengine_project_name: test_symfony4
-        steamengine_project_type: symfony4
+        steamengine_project_name: test_symfony
+        steamengine_project_type: symfony
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/symfony5_test.zip
         steamengine_build_checksum: sha1:ac336c6672f5b62f3b65b682311c9dd0a7a6654c
         steamengine_project_configuration:

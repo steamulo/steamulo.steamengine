@@ -38,7 +38,7 @@ steamengine_java_base_opts:
   - "-Xdump:heap:events=user"
 
 # Symfony
-steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_public_directory }}"
+steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf4_external_logs_directory }}"
 steamengine_sf_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_public_directory }}"
 steamengine_sf_bin_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_bin_directory }}"
 steamengine_sf_var_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_var_directory }}"

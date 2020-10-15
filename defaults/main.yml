@@ -56,7 +56,6 @@ steamengine_sf_php_console_command_deployment:
   - "cache:clear --env=prod"
 # List of directory we need write permission (modify for symfony < 4)
 steamengine_sf_path_with_write_permission:
-  - "var/log"
   - "var/cache"
 # List of source template and target path for configuration to put inside the projet (for example for symfony < 4 : parameters.yml.j2: app/config/parameters.yml )
 steamengine_sf_project_custom_configurations_template_path: {}

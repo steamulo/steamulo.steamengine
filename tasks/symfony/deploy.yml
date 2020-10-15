@@ -30,16 +30,14 @@
   tags:
     - steamengine_deploy_sf
 
-- name: Create custom configuration file
-  template:
-    src: "{{ item.key }}"
-    dest: "{{ steamengine_conf_path }}/{{ item.value }} "
+- name: Ensure custom configuration directory exists
+  file:
+    path: "{{ steamengine_conf_path }}/{{ item.value | dirname }}"
+    state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rw,g=r,o=
-  with_dict: "{{ steamengine_sf_persistent_directory }}"
-  tags:
-    - steamengine_deploy_sf
+    mode: 0770
+  with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
 
 - name: "Download build {{ steamengine_build_url }}"
   get_url:
@@ -58,6 +56,18 @@
 - name: "Is there a new build: {{ get_url_build.changed }}"
   set_fact:
     new_build_to_deploy: "{{ get_url_build.changed }}"
+  tags:
+    - steamengine_deploy_sf
+
+- name: Create custom configuration file
+  template:
+    src: "{{ item.key }}"
+    dest: "{{ steamengine_conf_path }}/{{ item.value }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
 
@@ -125,7 +135,7 @@
     state: link
     src: "{{ steamengine_conf_path }}/{{ item.value }}"
     dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
-  with_dict: "{{ steamengine_sf_persistent_directory }}"
+  with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf

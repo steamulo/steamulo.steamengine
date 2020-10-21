@@ -1,0 +1,39 @@
+---
+
+- name: Download the Project DB dump
+  get_url:
+    url: "{{ steamengine_db_dump_url }}"
+    dest: "{{ steamengine_home_path }}/db_dump.zip"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  register: db_dump
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Unzip project db dump
+  unarchive:
+    src: "{{ steamengine_home_path }}/db_dump.zip"
+    dest: "{{ steamengine_home_path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    remote_src: yes
+  when: db_dump.changed
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Drupal deploy db
+  shell: "{{ steamengine_drupal_drush_path }} sql:cli < {{ steamengine_home_path }}/{{ steamengine_db_dump_filename }}"
+  args:
+    chdir: "{{ steamengine_project_root_path_web }}"
+  when: db_dump.changed
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Update the database
+  shell: "{{ steamengine_drupal_drush_path }} updatedb -y"
+  args:
+    chdir: "{{ steamengine_project_root_path_web }}"
+  tags:
+    - steamengine_deploy_drupal

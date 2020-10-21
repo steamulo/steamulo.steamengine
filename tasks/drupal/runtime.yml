@@ -7,7 +7,7 @@
     append: true
   when: ansible_os_family != 'RedHat'
   tags:
-    - steamengine_runtime_drupal8
+    - steamengine_runtime_drupal
 
 - name: "Add nginx user in {{ steamengine_app_user }} group"
   user:
@@ -19,4 +19,4 @@
     - "nginx" # nginx user for statics
     - "apache" # php-fpm process for php
   tags:
-    - steamengine_runtime_drupal8
+    - steamengine_runtime_drupal

@@ -52,6 +52,7 @@ Examples for different project types can be found under the molecule folder:
 * [SpringBoot](molecule/springboot/playbook.yml)
 * [Static](molecule/static/playbook.yml)
 * [Tomcat7](molecule/tomcat7/playbook.yml) 
+* [Drupal](molecule/drupal/playbook.yml)
 
 Development
 ------------

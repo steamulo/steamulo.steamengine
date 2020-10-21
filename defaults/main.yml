@@ -51,7 +51,7 @@ steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"
 
-# DRUPAL8
+# DRUPAL
 steamengine_drupal_mysql_db_name: "drupal"
 steamengine_drupal_mysql_db_user: "drupal"
 steamengine_drupal_mysql_db_password: "drupal"

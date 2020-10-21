@@ -17,7 +17,7 @@
   register: build_project
   when: steamengine_build_url is defined and steamengine_build_url
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Create www directory
   file:
@@ -27,26 +27,25 @@
     mode: u=rwx,g=rx,o=
     state: directory
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Ensure drupal project exists
   stat:
     path: "{{ steamengine_project_root_path_web }}/web"
   register: drupal_exists
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Link files in drupal
   file:
     state: link
     src: "{{ steamengine_home_path }}/default/files"
     dest: "{{ steamengine_project_root_path_web }}/web/sites/default/files"
-    force: yes
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
   when: drupal_exists.stat.exists
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Ensure files folder exists
   file:
@@ -55,8 +54,9 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
     state: directory
+  when: drupal_exists.stat.exists
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Unzip project
   unarchive:
@@ -68,7 +68,7 @@
     mode: u=rwx,g=rx,o=
   when: build_project.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Ensure settings
   copy:
@@ -82,7 +82,7 @@
   register: drupal_settings
   when: build_project.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Customize drupal settings
   blockinfile:
@@ -106,7 +106,7 @@
     group: "{{ steamengine_app_user }}"
   when: drupal_settings.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 ### MySQL Database
 
@@ -120,7 +120,7 @@
   register: db_dump
   when: steamengine_db_dump_url is defined and steamengine_db_dump_url
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Unzip project db dump
   unarchive:
@@ -132,7 +132,7 @@
     remote_src: yes
   when: db_dump.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Drupal deploy db
   shell: "{{ steamengine_drupal_drush_path }} sql:cli < {{ steamengine_home_path }}/{{ steamengine_db_dump_filename }}"
@@ -140,7 +140,7 @@
     chdir: "{{ steamengine_project_root_path_web }}"
   when: db_dump.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Update the database
   shell: "{{ steamengine_drupal_drush_path }} updatedb -y"
@@ -148,7 +148,7 @@
     chdir: "{{ steamengine_project_root_path_web }}"
   when: db_dump.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 ### Installing
 
@@ -159,7 +159,7 @@
   register: database_table_number
   when: build_project.changed or db_dump.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: If database is empty, remove settings
   file:
@@ -167,7 +167,42 @@
     state: absent
   when: (build_project.changed or db_dump.changed) and database_table_number.stdout == ""
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
+
+
+- name: Create files folder
+  file:
+    path: "{{ steamengine_project_root_path_web }}/web/sites/default/files"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+    state: directory
+  when: database_table_number.stdout == ""
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Link files in drupal
+  file:
+    state: link
+    src: "{{ steamengine_home_path }}/default/files"
+    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/files"
+    force: yes
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: database_table_number.stdout == ""
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Ensure files folder exists
+  file:
+    path: "{{ steamengine_home_path }}/default/files"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+    state: directory
+  when: database_table_number.stdout == ""
+  tags:
+    - steamengine_deploy_drupal
 
 - name: If database is empty, install Drupal with drush.
   shell: >
@@ -181,7 +216,7 @@
     chdir: "{{ steamengine_project_root_path_web }}"
   when: (build_project.changed or db_dump.changed) and database_table_number.stdout == ""
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Check if there is existing config
   stat:
@@ -189,7 +224,7 @@
   register: config_dir
   when: build_project.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: Drupal import config
   shell: "{{ steamengine_drupal_drush_path }} config-import -y --source={{ steamengine_project_root_path_web }}/config"
@@ -197,7 +232,7 @@
     chdir: "{{ steamengine_project_root_path_web }}"
   when: build_project.changed and config_dir.stat.exists
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 ### Cleaning up and restarting
 
@@ -207,16 +242,16 @@
     chdir: "{{ steamengine_project_root_path_web }}"
   when: build_project.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: "Fix permissions"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: build_project.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal
 
 - name: "Restart http server"
   command: "/{{ steamengine_project_name }}/bin/steamengine restart"
   when: build_project.changed
   tags:
-    - steamengine_deploy_drupal8
+    - steamengine_deploy_drupal

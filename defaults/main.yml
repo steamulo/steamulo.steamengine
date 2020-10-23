@@ -77,7 +77,7 @@ steamengine_sf_log_directory: "log"
 steamengine_sf_cache_directory: "cache"
 # Custom PHP command to put into steamengine bin (cf steamengine_symfony.sh.j2)
 steamengine_sf_command:
-  - cmd_name: "clear_cache" # param to use for steamengine to launch this command
+  - cmd_name: "cache_clear" # param to use for steamengine to launch this command
     description: "Clear symfony cache" # description of this command into steamengine bin
     cmd: "cache:clear --env=prod" # PHP command to put into steamengine bin
 # List of PHP command to put into a cron. This command will be automatically put into steamengine and call from cron

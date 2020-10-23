@@ -97,14 +97,14 @@ while [ $# -gt 0 ]; do
 {% for item in steamengine_sf_command %}
     {{ item.cmd_name }})
      echo "`date -u` : {{ item.description }}"
-     sudo -u www-data php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
+     php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
      exit $?
     ;;
 {% endfor %}
 {% for item in steamengine_sf_crons %}
     {{ item.cmd_name }})
      echo "`date -u` : {{ item.description }}"
-     sudo -u www-data php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
+     php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
      exit $?
     ;;
 {% endfor %}

@@ -11,6 +11,9 @@ display_usage() {
     echo -e "  status\n\t\t\tDisplay the http server status"
     echo -e "  reload\n\t\t\tReload the http server configuration"
     echo -e "  fixpermissions\n\t\t\tFix permissions of project's files"
+{% for item in steamengine_sf_crons %}
+    echo -e "  {{ item.cmd_name }}\n\t\t\t{{ item.description }}"
+{% endfor %}
     echo -e "  -h, --help\n\t\t\tShow Usages"
     echo ""
 }
@@ -88,6 +91,20 @@ while [ $# -gt 0 ]; do
  
      exit $?
     ;;
+{% for item in steamengine_sf_command %}
+    {{ item.cmd_name }})
+     echo "`date -u` : {{ item.description }}"
+     sudo -u www-data php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
+     exit $?
+    ;;
+{% endfor %}
+{% for item in steamengine_sf_crons %}
+    {{ item.cmd_name }})
+     echo "`date -u` : {{ item.description }}"
+     sudo -u www-data php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
+     exit $?
+    ;;
+{% endfor %}
     *)
      echo "Wrong option"
      display_usage

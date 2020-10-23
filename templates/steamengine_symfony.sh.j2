@@ -11,6 +11,9 @@ display_usage() {
     echo -e "  status\n\t\t\tDisplay the http server status"
     echo -e "  reload\n\t\t\tReload the http server configuration"
     echo -e "  fixpermissions\n\t\t\tFix permissions of project's files"
+{% for item in steamengine_sf_command %}
+    echo -e "  {{ item.cmd_name }}\n\t\t\t{{ item.description }}"
+{% endfor %}
 {% for item in steamengine_sf_crons %}
     echo -e "  {{ item.cmd_name }}\n\t\t\t{{ item.description }}"
 {% endfor %}

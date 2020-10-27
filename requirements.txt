@@ -21,7 +21,7 @@ colorama==0.4.1
 configparser==4.0.2
 contextlib2==0.6.0.post1
 cookiecutter==1.6.0
-cryptography==2.7
+cryptography==3.2
 docker==4.1.0
 entrypoints==0.3
 enum34==1.1.6

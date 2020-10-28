@@ -13,8 +13,16 @@
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
   notify:
+    - "{{ steamengine_project_name }} fixpermissions"
     - "{{ steamengine_project_name }} restart"
   register: build_project
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Clean www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: absent
   tags:
     - steamengine_deploy_drupal
 
@@ -28,6 +36,12 @@
   tags:
     - steamengine_deploy_drupal
 
+- name: "Is there a new build: {{ build_project.changed }}"
+  set_fact:
+    new_build_to_deploy: (build_project.changed|bool)
+  tags:
+    - steamengine_deploy_drupal
+
 - name: Unzip project
   unarchive:
     src: "{{ steamengine_home_path }}/project.zip"
@@ -36,7 +50,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-  when: build_project.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
@@ -81,7 +95,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   register: drupal_settings
-  when: build_project.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
@@ -105,7 +119,7 @@
     mode: u=rwx,g=rx,o=
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: drupal_settings.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
@@ -120,19 +134,40 @@
 ### Installing
 
 - name: Check if database is empty
-  shell: "{{ steamengine_drupal_drush_path }} sql-query 'show tables'"
-  args:
-    chdir: "{{ steamengine_project_root_path_web }}"
+  command: >
+    {{ steamengine_drupal_drush_path }} -r \
+    {{ steamengine_project_root_path_web }}/web sql-query 'show tables'
   register: database_table_number
-  when: build_project.changed
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
-- include_tasks:
-    file: "./deploy_empty_project.yml"
-  when: not database_table_number.stdout
+- name: "Is a new deploy: {{ database_table_number.changed and not database_table_number.stdout }}"
+  set_fact:
+    new_deploy: database_table_number.changed and not database_table_number.stdout
   tags:
-    - steamengine_deploy
+    - steamengine_deploy_drupal
+
+- name: Remove settings
+  file:
+    path: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+    state: absent
+  when: new_deploy
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Install Drupal with drush.
+  command: >
+    {{ steamengine_drupal_drush_path }} site-install standard -y  \
+    -r {{ steamengine_project_root_path_web }}/web \
+    --site-name="{{ steamengine_drupal_site_name }}" \
+    --account-name="{{ steamengine_drupal_admin_name }}" \
+    --account-pass="{{ steamengine_drupal_admin_password }}" \
+    --locale="{{ steamengine_drupal_site_locale }}" \
+    --db-url="{{ steamengine_drupal_database_url }}"
+  when: new_deploy
+  tags:
+    - steamengine_deploy_drupal
 
 - name: Check if there is existing config
   stat:
@@ -142,28 +177,17 @@
     - steamengine_deploy_drupal
 
 - name: Drupal import config
-  shell: "{{ steamengine_drupal_drush_path }} config-import -y --source={{ steamengine_project_root_path_web }}/config"
-  args:
-    chdir: "{{ steamengine_project_root_path_web }}"
-  when: config_dir.stat.exists and config_dir.changed
+  command: >
+    {{ steamengine_drupal_drush_path }} -r {{ steamengine_project_root_path_web }}/web \
+    config-import -y --source={{ steamengine_project_root_path_web }}/config
+  when: config_dir.stat.exists and new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
-### Cleaning up and restarting
+### Cleaning up
 
 - name: Clean drupal cache
-  shell: "{{ steamengine_drupal_drush_path }} cache:rebuild"
-  args:
-    chdir: "{{ steamengine_project_root_path_web }}"
-  tags:
-    - steamengine_deploy_drupal
-
-- name: Fix permissions
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
-  tags:
-    - steamengine_deploy_drupal
-
-- name: Restart http server
-  command: "/{{ steamengine_project_name }}/bin/steamengine restart"
+  command: "{{ steamengine_drupal_drush_path }} -r {{ steamengine_project_root_path_web }}/web cache:rebuild"
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal

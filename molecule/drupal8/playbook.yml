@@ -24,31 +24,31 @@
     - name: Add remi-php74 repository
       yum:
         name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+        state: present
       when: ansible_os_family == 'RedHat'
 
-    - name: Enable remi-php74 repository
-      shell: yum-config-manager --enable remi-php74
+    - name: Install mysql community package
+      yum:
+        name: https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+        state: present
+      register: mysql_package
       when: ansible_os_family == 'RedHat'
 
-    - name: Download mysql rpm for RedHat
-      get_url:
-        url: "https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm"
-        dest: "/"
-      register: mysql_rpm_package
+    - name: Disable mysql8
+      yum:
+        disablerepo: mysql80-community
       when: ansible_os_family == 'RedHat'
 
-    - name: Add and enable mysql rpm
-      shell: >
-        rpm -Uvh mysql57-community-release-el7-9.noarch.rpm &&
-        yum-config-manager --disable mysql80-community &&
-        yum-config-manager --enable mysql57-community
-      when: ansible_os_family == 'RedHat' and mysql_rpm_package.changed
+    - name: Enable mysql57
+      yum:
+        enablerepo: mysql57-community
+      when: ansible_os_family == 'RedHat'
 
     - name: Add mysql-client
       yum:
         name: mysql-community-server
         state: present
-      when: ansible_os_family == 'RedHat' and mysql_rpm_package.changed
+      when: ansible_os_family == 'RedHat'
 
   roles:
     - role: geerlingguy.php

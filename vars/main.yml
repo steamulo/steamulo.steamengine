@@ -40,3 +40,4 @@ steamengine_java_base_opts:
 # DRUPAL
 steamengine_drupal_project_bin_path: "{{ steamengine_project_root_path_web }}/web/vendor/drupal/console/bin"
 steamengine_drupal_drush_path: "/usr/local/bin/drush"
+steamengine_drupal_database_url: "mysql://{{ steamengine_drupal_mysql_user }}:{{ steamengine_drupal_mysql_password }}@{{ steamengine_drupal_mysql_host }}:{{ steamengine_drupal_mysql_port }}/{{ steamengine_drupal_mysql_name }}"

@@ -19,10 +19,17 @@
   tags:
     - steamengine_deploy_drupal
 
+- name: "Is there a new build: {{ build_project.changed }}"
+  set_fact:
+    new_build_to_deploy: (build_project.changed|bool)
+  tags:
+    - steamengine_deploy_drupal
+
 - name: Clean www directory
   file:
     path: "{{ steamengine_project_root_path_web }}"
     state: absent
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
@@ -33,12 +40,7 @@
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
-  tags:
-    - steamengine_deploy_drupal
-
-- name: "Is there a new build: {{ build_project.changed }}"
-  set_fact:
-    new_build_to_deploy: (build_project.changed|bool)
+  when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 

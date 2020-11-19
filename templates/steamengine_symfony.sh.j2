@@ -70,7 +70,7 @@ while [ $# -gt 0 ]; do
        -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
      {% endfor %}
      {% for value in steamengine_sf_persistent_directory %}
-       -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
+       -not -path '{{steamengine_project_root_path_web}}/{{ steamengine_sf_persistent_directory[value] }}*' \
      {% endfor %}
        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
@@ -81,7 +81,7 @@ while [ $# -gt 0 ]; do
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}
      {% for value in steamengine_sf_persistent_directory %}
-       {{ steamengine_project_root_path_web }}/{{ value }} \
+       {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
      {% endfor %}
  
      /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
@@ -89,7 +89,7 @@ while [ $# -gt 0 ]; do
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}
      {% for value in steamengine_sf_persistent_directory %}
-       {{ steamengine_project_root_path_web }}/{{ value }} \
+       {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
      {% endfor %}
  
      exit $?

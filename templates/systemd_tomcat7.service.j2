@@ -9,7 +9,7 @@ Type=simple
 
 Environment='CATALINA_OPTS=-D{{ steamengine_tomcat7_configuration_key }}={{ steamengine_conf_path }}/project_env.conf
 {%- for opt in steamengine_java_base_opts | union(steamengine_java_opts | default ([])) -%}
-    {{ ' ' + opt }}
+    {{ ' ' ~ opt }}
 {%- endfor %}'
 Environment=CATALINA_HOME={{ steamengine_project_root_path }}/tomcat
 Environment=CATALINA_BASE={{ steamengine_project_root_path }}/tomcat

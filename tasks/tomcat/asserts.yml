@@ -5,10 +5,10 @@
     that: (steamengine_build_url | basename | splitext)[1] == ".war"
   when: steamengine_build_url is defined and steamengine_build_url
   tags:
-    - steamengine_deploy_tomcat7
+    - steamengine_deploy_tomcat
 
 - name: Verify conf sources
   assert:
     that: steamengine_project_configuration_template_path is undefined or steamengine_project_configuration is undefined
   tags:
-    - steamengine_deploy_tomcat7
+    - steamengine_deploy_tomcat

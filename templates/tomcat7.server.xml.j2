@@ -4,7 +4,7 @@
 
 <Server port="-1" shutdown="SHUTDOWN">
 
-    {% if steamengine_tomcat7_version_logger_listener_on %}
+    {% if steamengine_tomcat_version_logger_listener_on %}
     <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
     {% endif %}
 
@@ -15,18 +15,18 @@
     <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
     <Service name="Catalina">
 
-        <Connector port="{{ steamengine_tomcat7_http_port }}"
-                   {% if steamengine_tomcat7_reverse_https %}
+        <Connector port="{{ steamengine_tomcat_http_port }}"
+                   {% if steamengine_tomcat_reverse_https %}
                    secure="true"
                    scheme="https"
                    {% endif %}
                    protocol="org.apache.coyote.http11.Http11NioProtocol"
-                   connectionTimeout="{{ steamengine_tomcat7_connection_timeout }}"
-                   maxThreads="{{ steamengine_tomcat7_max_threads }}"
-                   acceptCount="{{ steamengine_tomcat7_accept_count }}"
-                   acceptorThreadCount="{{ steamengine_tomcat7_acceptor_thread_count }}"
-                   maxConnections="{{ steamengine_tomcat7_max_connections }}"
-                   minSpareThreads="{{ steamengine_tomcat7_min_spare_threads }}"
+                   connectionTimeout="{{ steamengine_tomcat_connection_timeout }}"
+                   maxThreads="{{ steamengine_tomcat_max_threads }}"
+                   acceptCount="{{ steamengine_tomcat_accept_count }}"
+                   acceptorThreadCount="{{ steamengine_tomcat_acceptor_thread_count }}"
+                   maxConnections="{{ steamengine_tomcat_max_connections }}"
+                   minSpareThreads="{{ steamengine_tomcat_min_spare_threads }}"
                    server="Apache Tomcat" />
 
         <Engine name="Catalina" defaultHost="localhost">

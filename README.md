@@ -3,7 +3,7 @@
 Steamengine
 =========
 
-This role provides production grade installation and deployment workflow for nodejs, tomcat7, play, springboot and static files.
+This role provides production grade installation and deployment workflow for nodejs, tomcat, play, springboot and static files.
 
 Role Variables
 ------------
@@ -15,7 +15,7 @@ Here are the main variables that should be set :
 # Default is default_project.
 steamengine_project_name: "default_project"
 
-# Project type, should be a value in "static", "springboot", "nodejs", "tomcat7", "play".
+# Project type, should be a value in "static", "springboot", "nodejs", "tomcat", "play".
 # No default value but mandatory
 steamengine_project_type:
 
@@ -34,7 +34,7 @@ steamengine_project_configuration:
 # Name of the project default configuration file.
 # File content is merged with steamengine_project_configuration variable.
 # Variables defined in steamengine_project_configuration override those defined in the base file.
-# Used only for tomcat7 and springboot project type
+# Used only for tomcat and springboot project type
 # No default value and not mandatory.
 steamengine_project_configuration_base_name:
 
@@ -51,7 +51,7 @@ Examples for different project types can be found under the molecule folder:
 * [Play](molecule/play/playbook.yml)
 * [SpringBoot](molecule/springboot/playbook.yml)
 * [Static](molecule/static/playbook.yml)
-* [Tomcat7](molecule/tomcat7/playbook.yml) 
+* [Tomcat](molecule/tomcat/playbook.yml) 
 
 Development
 ------------

@@ -24,7 +24,7 @@ provisioner:
   lint:
     name: ansible-lint
 scenario:
-  name: tomcat7
+  name: tomcat
 verifier:
   name: testinfra
   options:

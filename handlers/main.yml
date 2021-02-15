@@ -6,7 +6,7 @@
     name: "rsyslog"
     state: restarted
 
-# This is done this way in order to support steamengine_tomcat7_allow_insecure_write_*
+# This is done this way in order to support steamengine_tomcat_allow_insecure_write_*
 #  application might have created directory on which steamengine_project_user doesn't have ownership
 - name: "{{ steamengine_project_name }} fixpermissions"
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"

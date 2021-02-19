@@ -1,4 +1,4 @@
-properties ([gitLabConnection('jenkins'), pipelineTriggers([cron('H 1 * * *')]), disableConcurrentBuilds(), buildDiscarder(logRotator(artifactDaysToKeepStr: '5', artifactNumToKeepStr: '10', daysToKeepStr: '10', numToKeepStr: '5'))])
+properties ([gitLabConnection('jenkins'), disableConcurrentBuilds(), buildDiscarder(logRotator(artifactDaysToKeepStr: '5', artifactNumToKeepStr: '10', daysToKeepStr: '10', numToKeepStr: '5'))])
 
 node ('docker') {
     try {

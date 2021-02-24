@@ -20,10 +20,3 @@
   tags:
     - steamengine_runtime_tomcat
 
-- name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
-  systemd:
-    enabled: true
-    daemon_reload: true
-    name: "{{ steamengine_project_name }}"
-  tags:
-    - steamengine_runtime_tomcat

@@ -9,12 +9,24 @@
     {% endif %}
 
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    {% if steamengine_tomcat_major_tomcat_version == "7" %}
     <Listener className="org.apache.catalina.core.JasperListener" />
+    {% endif %}
     <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
     <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
     <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
-    <Service name="Catalina">
 
+    {% if steamengine_tomcat_major_tomcat_version == "9" %}
+      <GlobalNamingResources>
+        <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+      </GlobalNamingResources>
+    {% endif %}
+
+    <Service name="Catalina">
         <Connector port="{{ steamengine_tomcat_http_port }}"
                    {% if steamengine_tomcat_reverse_https %}
                    secure="true"
@@ -30,6 +42,14 @@
                    server="Apache Tomcat" />
 
         <Engine name="Catalina" defaultHost="localhost">
+
+          {% if steamengine_tomcat_major_tomcat_version == "9" %}
+            <Realm className="org.apache.catalina.realm.LockOutRealm">
+              <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                 resourceName="UserDatabase"/>
+            </Realm>
+          {% endif %}
+
             <Host name="localhost"
                   appBase="webapps"
                   unpackWARs="false"

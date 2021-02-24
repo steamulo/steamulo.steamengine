@@ -121,27 +121,14 @@
   tags:
     - steamengine_deploy_tomcat
 
-- name: Create tomcat7-8 configuration file
+- name: Create tomcat configuration file
   template:
-    src: "tomcat7.server.xml.j2"
+    src: "tomcat.server.xml.j2"
     dest: "{{ steamengine_project_root_path }}/tomcat/conf/server.xml"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
   when: steamengine_tomcat_major_tomcat_version != "9"
-  notify:
-    - "{{ steamengine_project_name }} restart"
-  tags:
-    - steamengine_deploy_tomcat
-
-- name: Create tomcat9 configuration file
-  template:
-    src: "tomcat9.server.xml.j2"
-    dest: "{{ steamengine_project_root_path }}/tomcat/conf/server.xml"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rx,o=
-  when: steamengine_tomcat_major_tomcat_version == "9"
   notify:
     - "{{ steamengine_project_name }} restart"
   tags:

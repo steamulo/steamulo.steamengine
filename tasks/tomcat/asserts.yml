@@ -12,3 +12,9 @@
     that: steamengine_project_configuration_template_path is undefined or steamengine_project_configuration is undefined
   tags:
     - steamengine_deploy_tomcat
+
+- name: Verify tomcat version
+  assert:
+    that: steamengine_tomcat_major_tomcat_version == "7" or steamengine_tomcat_major_tomcat_version == "9"
+  tags:
+    - steamengine_deploy_tomcat

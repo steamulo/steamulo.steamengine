@@ -12,7 +12,7 @@ node ('docker') {
                     gitlabCommitStatus('Testing') {
                         sh "pip install -r requirements.txt"
                         sshagent (credentials: ['gitlab-key']) {
-                            sh "molecule test -s tomcat"
+                            sh "molecule test --all"
                         }
                     }
                 }

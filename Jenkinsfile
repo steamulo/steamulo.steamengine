@@ -1,4 +1,4 @@
-properties ([gitLabConnection('jenkins'), disableConcurrentBuilds(), buildDiscarder(logRotator(artifactDaysToKeepStr: '5', artifactNumToKeepStr: '10', daysToKeepStr: '10', numToKeepStr: '5'))])
+properties ([disableConcurrentBuilds(), buildDiscarder(logRotator(artifactDaysToKeepStr: '5', artifactNumToKeepStr: '10', daysToKeepStr: '10', numToKeepStr: '5'))])
 
 node ('docker') {
     try {
@@ -9,11 +9,9 @@ node ('docker') {
                 sh "mkdir src"
                 dir('src') {
                     checkout scm
-                    gitlabCommitStatus('Testing') {
-                        sh "pip install -r requirements.txt"
-                        sshagent (credentials: ['gitlab-key']) {
-                            sh "molecule test --all"
-                        }
+                    sh "pip install -r requirements.txt"
+                    sshagent (credentials: ['gitlab-key']) {
+                        sh "molecule test --all"
                     }
                 }
             }

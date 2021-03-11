@@ -27,16 +27,6 @@ steamengine_play2_run_script: "startproject"
 # TOMCAT7
 steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7/v{{ steamengine_tomcat7_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
 
-# JAVA
-steamengine_java_base_opts:
-  - "-XX:+ExitOnOutOfMemory"
-  - "-XX:+HeapDumpOnOutOfMemoryError"
-  - "-Xdump:directory={{ steamengine_logs_path }}"
-  - "-Xverbosegclog:{{ steamengine_logs_path }}/garbage-collector.log"
-  - "-Dfile.encoding=UTF-8"
-  - "-verbose:gc"
-  - "-Xdump:heap:events=user"
-
 # Symfony
 steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_external_logs_directory }}"
 steamengine_sf_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_public_directory }}"

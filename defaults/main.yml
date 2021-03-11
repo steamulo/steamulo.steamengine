@@ -47,6 +47,15 @@ steamengine_tomcat7_reverse_https: false
 steamengine_tomcat7_version_logger_listener_on: true
 
 # JAVA
+steamengine_java_base_opts:
+  - "-XX:+ExitOnOutOfMemory"
+  - "-XX:+HeapDumpOnOutOfMemoryError"
+  - "-Xdump:directory={{ steamengine_logs_path }}"
+  - "-Xverbosegclog:{{ steamengine_logs_path }}/garbage-collector.log"
+  - "-Dfile.encoding=UTF-8"
+  - "-verbose:gc"
+  - "-Xdump:heap:events=user"
+
 steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"

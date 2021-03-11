@@ -94,14 +94,7 @@ while [ $# -gt 0 ]; do
  
      exit $?
     ;;
-{% for item in steamengine_sf_command %}
-    {{ item.cmd_name }})
-     echo "`date -u` : {{ item.description }}"
-     php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
-     exit $?
-    ;;
-{% endfor %}
-{% for item in steamengine_sf_crons %}
+{% for item in steamengine_sf_command | union(steamengine_sf_crons) %}
     {{ item.cmd_name }})
      echo "`date -u` : {{ item.description }}"
      php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}

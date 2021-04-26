@@ -2,8 +2,8 @@
 
 - name: Create configuration file
   template:
-    src: "nodejs_pm2_ecosystem.json.j2"
-    dest: "{{ steamengine_conf_path }}/nodejs_pm2_ecosystem.json"
+    src: "nodejs_pm2_ecosystem.config.js.j2"
+    dest: "{{ steamengine_conf_path }}/nodejs_pm2_ecosystem.config.js"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rw,g=r,o=

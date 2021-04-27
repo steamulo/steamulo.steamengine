@@ -11,7 +11,7 @@ module.exports = {
             {% if steamengine_project_configuration is defined %}
             env: {
               {% for key, value in steamengine_project_configuration.items() %}
-              "{{key}}": "{{value}}",
+              {{key}}: "{{value}}",
               {% endfor %}
             },
             {% endif %}
@@ -23,5 +23,17 @@ module.exports = {
             interpreter_args: "{{ steamengine_nodejs_node_args }}",
             {% endif %}
         }
+        {% if steamengine_nodejs_crons is defined%}
+        ,
+        {% for cron in steamengine_nodejs_crons %}
+        {
+            name: "{{cron.name}}",
+            script: "{{cron.entrypoint}}",
+            cron_restart: "{{cron.expression}}",
+            watch: false,
+            autorestart: false
+        },
+        {% endfor %}
+        {% endif %}
     ]
 }

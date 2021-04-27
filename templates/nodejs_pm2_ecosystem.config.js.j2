@@ -23,7 +23,7 @@ module.exports = {
             interpreter_args: "{{ steamengine_nodejs_node_args }}",
             {% endif %}
         }
-        {% if steamengine_nodejs_crons is defined%}
+        {% if steamengine_nodejs_crons is defined %}
         ,
         {% for cron in steamengine_nodejs_crons %}
         {

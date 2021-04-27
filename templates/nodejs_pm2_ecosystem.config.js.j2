@@ -1,25 +1,27 @@
 // {{ ansible_managed }}
 
-module.exports = {[
-    {
-        name: "{{ steamengine_project_name }}",
-        script: "{{ steamengine_nodejs_entrypoint }}",
-        cwd: "{{ steamengine_project_root_path_web }}",
-        error_file: "/dev/null",
-        out_file: "/dev/null",
-        {% if steamengine_project_configuration is defined %}
-        env: {
-          {% for key, value in steamengine_project_configuration.items() %}
-          "{{key}}": "{{value}}",
-          {% endfor %}
-        },
-        {% endif %}
-        {% if steamengine_nodejs_cluster_mode is defined and steamengine_nodejs_cluster_mode %}
-        instances: "max",
-        exec_mode: "cluster_mode",
-        {% endif %}
-        {% if steamengine_nodejs_node_args is defined and steamengine_nodejs_node_args %}
-        interpreter_args: "{{ steamengine_nodejs_node_args }}",
-        {% endif %}
-    }
-]}
+module.exports = {
+    apps: [
+        {
+            name: "{{ steamengine_project_name }}",
+            script: "{{ steamengine_nodejs_entrypoint }}",
+            cwd: "{{ steamengine_project_root_path_web }}",
+            error_file: "/dev/null",
+            out_file: "/dev/null",
+            {% if steamengine_project_configuration is defined %}
+            env: {
+              {% for key, value in steamengine_project_configuration.items() %}
+              "{{key}}": "{{value}}",
+              {% endfor %}
+            },
+            {% endif %}
+            {% if steamengine_nodejs_cluster_mode is defined and steamengine_nodejs_cluster_mode %}
+            instances: "max",
+            exec_mode: "cluster_mode",
+            {% endif %}
+            {% if steamengine_nodejs_node_args is defined and steamengine_nodejs_node_args %}
+            interpreter_args: "{{ steamengine_nodejs_node_args }}",
+            {% endif %}
+        }
+    ]
+}

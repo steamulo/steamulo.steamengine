@@ -2,10 +2,19 @@
 
 ### Build
 
+- name: Create project folder structure Drupal
+  file:
+    path: "{{ steamengine_drupal_persistent_path }}/{{ item.key }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_dict: "{{ steamengine_drupal_persistent_directory }}"
+
 - name: Download build {{ steamengine_build_url }}
   get_url:
     url: "{{ steamengine_build_url }}"
-    dest: "{{ steamengine_home_path }}/project.zip"
+    dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ steamengine_build_checksum }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -15,82 +24,40 @@
   notify:
     - "{{ steamengine_project_name }} fixpermissions"
     - "{{ steamengine_project_name }} restart"
-  register: build_project
+  register: get_url_build
   tags:
     - steamengine_deploy_drupal
 
-- name: "Is there a new build: {{ build_project.changed }}"
+- name: "Is there a new build: {{ get_url_build.changed }}"
   set_fact:
-    new_build_to_deploy: (build_project.changed|bool)
+    new_build_to_deploy: "{{ get_url_build.changed|bool }}"
   tags:
     - steamengine_deploy_drupal
 
-- name: Clean www directory
-  file:
-    path: "{{ steamengine_project_root_path_web }}"
-    state: absent
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_drupal
-
-- name: Create www directory
-  file:
-    path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rx,o=
+- name: Create tmp directory
+  tempfile:
     state: directory
+    suffix: "{{ steamengine_project_name }}"
+  register: tempdir
   when: new_build_to_deploy
   tags:
-    - steamengine_deploy_drupal
+    - steamengine_deploy_sf
 
-- name: Unzip project
+- name: Unarchive build
   unarchive:
-    src: "{{ steamengine_home_path }}/project.zip"
-    dest: "{{ steamengine_project_root_path_web }}"
-    remote_src: yes
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ tempdir.path }}"
+    remote_src: true
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rx,o=
   when: new_build_to_deploy
   tags:
-    - steamengine_deploy_drupal
-
-- name: Ensure files folder exists
-  file:
-    path: "{{ steamengine_project_root_path_web }}/web/sites/default/files"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
-    state: directory
-  tags:
-    - steamengine_deploy_drupal
-
-- name: Link files in drupal
-  file:
-    state: link
-    src: "{{ steamengine_home_path }}/default/files"
-    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/files"
-    force: yes
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-  tags:
-    - steamengine_deploy_drupal
-
-- name: Ensure files folder exists
-  file:
-    path: "{{ steamengine_home_path }}/default/files"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rwx,o=
-    state: directory
-  tags:
-    - steamengine_deploy_drupal
+    - steamengine_deploy_sf
 
 - name: Ensure settings
   copy:
-    src: "{{ steamengine_project_root_path_web }}/web/sites/default/default.settings.php"
-    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+    src: "{{ tempdir.path }}/web/sites/default/default.settings.php"
+    dest: "{{ steamengine_conf_path }}/settings.php"
     force: no
     remote_src: true
     owner: "{{ steamengine_project_user }}"
@@ -103,21 +70,8 @@
 
 - name: Customize drupal settings
   blockinfile:
-    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
-    block: |
-      $databases['default']['default'] = array (
-        'database' => '{{ steamengine_drupal_mysql_name }}',
-        'username' => '{{ steamengine_drupal_mysql_user }}',
-        'password' => '{{ steamengine_drupal_mysql_password }}',
-        'prefix' => '',
-        'host' => '{{ steamengine_drupal_mysql_host }}',
-        'port' => '{{ steamengine_drupal_mysql_port }}',
-        'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-        'driver' => 'mysql',
-      );
-      $settings['hash_salt'] = '{{ steamengine_drupal_hash_salt }}';
-      $config_directories['sync'] = '../config';
-      $settings['php_storage']['twig']['directory'] = '/tmp';
+    dest: "{{ steamengine_conf_path }}/settings.php"
+    block: "{{ steamengine_drupal_project_setting_block }}"
     mode: u=rwx,g=rx,o=
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -125,20 +79,54 @@
   tags:
     - steamengine_deploy_drupal
 
-### MySQL Database
-
-- include_tasks:
-    file: "./deploy_database.yml"
-  when: steamengine_db_dump_url is defined and steamengine_db_dump_url
+- name: Clean www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: absent
+  when: new_build_to_deploy
   tags:
-    - steamengine_deploy
+    - steamengine_deploy_drupal
 
-### Installing
+- name: "Move archive files to {{ steamengine_project_root_path_web }}"
+  command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Remove tmp directory
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Create configuration link
+  file:
+    state: link
+    src: "{{ steamengine_conf_path }}/settings.php"
+    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Create link directory
+  file:
+    state: link
+    src: "{{ steamengine_drupal_persistent_path }}/{{ item.key }}"
+    dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
+    force: yes
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  with_dict: "{{ steamengine_drupal_persistent_directory }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
 
 - name: Check if database is empty
   command: >
-    {{ steamengine_drupal_drush_path }} -r \
-    {{ steamengine_project_root_path_web }}/web sql-query 'show tables'
+    {{ drush_launcher_path }} -r \
+    {{ steamengine_project_root_path_web }} sql-query 'show tables'
   register: database_table_number
   when: new_build_to_deploy
   tags:
@@ -146,50 +134,30 @@
 
 - name: "Is a new deploy: {{ database_table_number.changed and not database_table_number.stdout }}"
   set_fact:
-    new_deploy: database_table_number.changed and not database_table_number.stdout
+    new_deploy: "{{ database_table_number.changed and not database_table_number.stdout }}"
   tags:
     - steamengine_deploy_drupal
 
-- name: Remove settings
-  file:
-    path: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
-    state: absent
-  when: new_deploy
-  tags:
-    - steamengine_deploy_drupal
+### Install with MySQL Database
 
-- name: Install Drupal with drush.
-  command: >
-    {{ steamengine_drupal_drush_path }} site-install standard -y  \
-    -r {{ steamengine_project_root_path_web }}/web \
-    --site-name="{{ steamengine_drupal_site_name }}" \
-    --account-name="{{ steamengine_drupal_admin_name }}" \
-    --account-pass="{{ steamengine_drupal_admin_password }}" \
-    --locale="{{ steamengine_drupal_site_locale }}" \
-    --db-url="{{ steamengine_drupal_database_url }}"
-  when: new_deploy
+- include_tasks:
+    file: "./deploy_database.yml"
+  when: new_deploy and not steamengine_drupal_install_from_drush and steamengine_db_dump_url is defined and steamengine_db_dump_url
   tags:
-    - steamengine_deploy_drupal
+    - steamengine_deploy
 
-- name: Check if there is existing config
-  stat:
-    path: "{{ steamengine_project_root_path_web }}/config"
-  register: config_dir
-  tags:
-    - steamengine_deploy_drupal
+### Install with Drush
 
-- name: Drupal import config
-  command: >
-    {{ steamengine_drupal_drush_path }} -r {{ steamengine_project_root_path_web }}/web \
-    config-import -y --source={{ steamengine_project_root_path_web }}/config
-  when: config_dir.stat.exists and new_build_to_deploy
+- include_tasks:
+    file: "./install_from_drush.yml"
+  when: new_deploy and steamengine_drupal_install_from_drush
   tags:
-    - steamengine_deploy_drupal
+    - steamengine_deploy
 
 ### Cleaning up
 
 - name: Clean drupal cache
-  command: "{{ steamengine_drupal_drush_path }} -r {{ steamengine_project_root_path_web }}/web cache:rebuild"
+  command: "{{ drush_launcher_path }} -r {{ steamengine_project_root_path_web }} cache:rebuild"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal

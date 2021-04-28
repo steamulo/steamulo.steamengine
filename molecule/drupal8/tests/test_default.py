@@ -18,4 +18,4 @@ def test_app_listening(host):
 
 def test_app_index_page(host):
     resp = host.run("curl localhost").stdout
-    assert "drupal" in resp
+    assert "<title>Bienvenue sur drupal | drupal</title>" in resp

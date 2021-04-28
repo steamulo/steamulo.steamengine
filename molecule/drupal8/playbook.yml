@@ -5,18 +5,7 @@
   pre_tasks:
     - include_tasks: "../resources/setup_{{ ansible_os_family | lower }}.yml"
 
-    - name: Add mysql-client
-      apt:
-        name: mysql-client
-        state: present
-      when: ansible_os_family == 'Debian'
-
     - name: Add ppa:ondrej/php repository
-      apt_repository:
-        repo: ppa:ondrej/php
-      when: ansible_os_family == 'Debian'
-
-    - name: Add mysql repository
       apt_repository:
         repo: ppa:ondrej/php
       when: ansible_os_family == 'Debian'
@@ -27,30 +16,17 @@
         state: present
       when: ansible_os_family == 'RedHat'
 
-    - name: Install mysql community package
-      yum:
-        name: https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
-        state: present
-      register: mysql_package
-      when: ansible_os_family == 'RedHat'
-
-    - name: Disable mysql8
-      yum:
-        disablerepo: mysql80-community
-      when: ansible_os_family == 'RedHat'
-
-    - name: Enable mysql57
-      yum:
-        enablerepo: mysql57-community
-      when: ansible_os_family == 'RedHat'
-
-    - name: Add mysql-client
-      yum:
-        name: mysql-community-server
-        state: present
-      when: ansible_os_family == 'RedHat'
-
   roles:
+    - role: steamulo.mysql
+      become: yes
+      vars:
+        mysql_databases:
+        - name: "drupal"
+        mysql_users:
+        - name: "drupal"
+          host: "%"
+          password: "drupal"
+          priv: "drupal.*:ALL,GRANT"
     - role: geerlingguy.php
       vars:
         php_enablerepo: "remi-php74"
@@ -124,11 +100,8 @@
       vars:
         steamengine_project_name: drupal
         steamengine_project_type: drupal
-        steamengine_drupal_mysql_host: 172.17.0.1
-        steamengine_drupal_mysql_port: 4806
-        steamengine_drupal_mysql_name: drupal
-        steamengine_drupal_mysql_user: drupal
-        steamengine_drupal_mysql_password: drupal
+        steamengine_drupal_install_from_drush: false
+        steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_8.zip
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
         steamengine_build_checksum: sha1:4c2b8420fca1fb2fb4f367696b126dceac1cccd2
 

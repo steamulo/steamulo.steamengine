@@ -52,13 +52,41 @@ steamengine_java_opts:
   - "-Xms512M"
 
 # DRUPAL
-steamengine_drupal_mysql_name: "drupal"
-steamengine_drupal_mysql_user: "drupal"
-steamengine_drupal_mysql_password: "drupal"
-steamengine_drupal_admin_name: "admin"
-steamengine_drupal_admin_password: "admin"
-steamengine_drupal_site_name: "{{ steamengine_project_name }}"
-steamengine_drupal_site_locale: "fr"
-steamengine_drupal_hash_salt: "drupal"
-steamengine_drupal_mysql_host: "localhost"
-steamengine_drupal_mysql_port: 3306
+# If is new install of drupal, launch a drush's install
+steamengine_drupal_install_from_drush: true
+# Username for admin account for a drush's install
+steamengine_drupal_install_admin_name: "admin"
+# Password for admin account for a drush's install
+steamengine_drupal_install_admin_password: "admin"
+# Site name for admin account for a drush's install
+steamengine_drupal_install_site_name: "{{ steamengine_project_name }}"
+# Locale for admin account for a drush's install
+steamengine_drupal_install_site_locale: "fr"
+# Url for the dump of database for an install
+steamengine_db_dump_url:
+# Url for the database for a drush's install
+steamengine_drupal_database_url: "mysql://drupal:drupal@localhost:3306/drupal"
+# List of directory we need write permission
+steamengine_drupal_path_with_write_permission:
+  - "web/sites/default/files"
+# List of source template and target path for configuration to put inside the projet (setting.php.j2: web/site/default/setting.php )
+steamengine_drupal_project_setting_block: |
+  $databases['default']['default'] = array (
+    'database' => 'drupal',
+    'username' => 'drupal',
+    'password' => 'drupal',
+    'prefix' => '',
+    'host' => 'localhost',
+    'port' => '3306',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+  );
+  $settings['hash_salt'] = 'ChangeMe';
+  $config_directories['sync'] = '../config';
+  $settings['php_storage']['twig']['directory'] = '/tmp'; 
+# List of path that should be persisted in a folder outside the projet
+# The key is the folder persisted outside the root project, the value is the name (path) of the folder inside the project. A link will be created on it to the persisted folder
+steamengine_drupal_persistent_directory: 
+  files: "web/sites/default/files"
+# Directory for public file
+steamengine_drupal_public_directory: "web"

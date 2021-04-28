@@ -65,7 +65,7 @@ Requirements:
 
 Setup your local environnement with python virtualenv prior to using molecule :
 
-```virtualenv ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
+```virtualenv -p `which python2.7` ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
 
 Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type>``` to log into the test machine.
 

@@ -62,9 +62,33 @@ while [ $# -gt 0 ]; do
      exit $?
     ;;
     fixpermissions)
-      chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}
-      chmod -R 770 {{ steamengine_project_root_path_web }}/web {{ steamengine_home_path }}/default
-      exit $?
+    find {{ steamengine_project_root_path_web }} \
+     {% for value in steamengine_drupal_path_with_write_permission %}
+       -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
+     {% endfor %}
+     {% for value in steamengine_drupal_persistent_directory %}
+       -not -path '{{steamengine_project_root_path_web}}/{{ steamengine_drupal_persistent_directory[value] }}*' \
+     {% endfor %}
+       -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
+       -exec chmod 'u=rwx,g=rx,o=' {} \;
+ 
+     /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+     {% for value in steamengine_drupal_path_with_write_permission %}
+       {{ steamengine_project_root_path_web }}/{{ value }} \
+     {% endfor %}
+     {% for value in steamengine_drupal_persistent_directory %}
+       {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
+     {% endfor %}
+ 
+     /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+     {% for value in steamengine_drupal_path_with_write_permission %}
+       {{ steamengine_project_root_path_web }}/{{ value }} \
+     {% endfor %}
+     {% for value in steamengine_drupal_persistent_directory %}
+       {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
+     {% endfor %}
+ 
+     exit $?
     ;;
     *)
      echo "Wrong option"

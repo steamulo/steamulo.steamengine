@@ -7,7 +7,7 @@
   tags:
     - steamengine_deploy_drupal
 
-- name: Remove settings 
+- name: Remove settings
   file:
     path: "{{ steamengine_conf_path }}/settings.php"
     state: absent
@@ -23,11 +23,13 @@
     --account-pass="{{ steamengine_drupal_install_admin_password }}" \
     --locale="{{ steamengine_drupal_install_site_locale }}" \
     --db-url="{{ steamengine_drupal_database_url }}"
+  when: new_deploy and steamengine_drupal_install_from_drush
   tags:
     - steamengine_deploy_drupal
 
 - name: "Move setting files to {{ steamengine_conf_path }}"
   command: "mv {{ steamengine_project_root_path_web }}/web/sites/default/settings.php {{ steamengine_conf_path }}/settings.php"
+  when: new_deploy and steamengine_drupal_install_from_drush
   tags:
     - steamengine_deploy_drupal
 

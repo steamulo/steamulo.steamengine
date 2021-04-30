@@ -16,16 +16,8 @@
 
 - name: Install Drupal with drush.
   command: >
-    {{ steamengine_drush_launcher_path }} site-install {{ steamengine_drupal_install_profile }} -y  \
-    -r {{ steamengine_project_root_path_web }} \
-    --site-name="{{ steamengine_drupal_install_site_name }}" \
-    --site-mail="{{ steamengine_drupal_install_site_mail }}" \
-    --account-name="{{ steamengine_drupal_install_admin_name }}" \
-    --account-pass="{{ steamengine_drupal_install_admin_password }}" \
-    --account-mail="{{ steamengine_drupal_install_account_mail }}" \
-    --locale="{{ steamengine_drupal_install_site_locale }}" \
-    --db-url="{{ steamengine_drupal_install_database_url }}" \
-    --config-dir="{{ steamengine_drupal_install_config_dir }}"
+    {{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} \
+     site-install {{ steamengine_drupal_install_profile }} -y {{ steamengine_drupal_install_option }}
   when: new_deploy and steamengine_drupal_install_from_drush
   tags:
     - steamengine_deploy_drupal

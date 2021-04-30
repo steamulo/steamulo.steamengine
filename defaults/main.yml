@@ -89,19 +89,11 @@ steamengine_db_dump_url:
 steamengine_drupal_install_from_drush: false
 # Profile type for a drush's install (standard|minimal|expert)
 steamengine_drupal_install_profile: "minimal"
-# Username for admin account for a drush's install
-steamengine_drupal_install_admin_name: "admin"
-# Password for admin account for a drush's install
-steamengine_drupal_install_admin_password: "admin"
-# Email for admin accoun for a drush's install
-steamengine_drupal_install_account_mail: "admin@example.com"
-# Site name for admin account for a drush's install
-steamengine_drupal_install_site_name: "{{ steamengine_project_name }}"
-# Site mail for a drush's install
-steamengine_drupal_install_site_mail: "admin@example.com"
-# Locale for admin account for a drush's install
-steamengine_drupal_install_site_locale: "fr"
-# Config dir for a drush's install
-steamengine_drupal_install_config_dir: "../config"
-# Url for the database for a drush's install
-steamengine_drupal_install_database_url: "mysql://drupal:drupal@localhost:3306/drupal"
+steamengine_drupal_install_option: |
+  --site-name="{{ steamengine_project_name }}" \
+  --site-mail="admin@example.com" \
+  --account-name="admin" \
+  --account-pass="admin" \
+  --account-mail="admin@example.com" \
+  --locale="fr" \
+  --existing-config

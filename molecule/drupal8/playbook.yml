@@ -100,10 +100,11 @@
       vars:
         steamengine_project_name: drupal
         steamengine_project_type: drupal
-        steamengine_drupal_install_from_drush: false
+        steamengine_drupal_install_from_drush: true
+        steamengine_drupal_install_from_db_dump: false
         steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_8.zip
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
-        steamengine_build_checksum: sha1:4c2b8420fca1fb2fb4f367696b126dceac1cccd2
+        steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
 
 #Drupal 9: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_9.zip
 #Drupal 9 : d6d2a3e93857b97b6c8b914b28e9a3766fe56bf8

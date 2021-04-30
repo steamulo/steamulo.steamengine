@@ -4,6 +4,7 @@
   file:
     path: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
     state: absent
+  when: not steamengine_drupal_install_use_existing_config
   tags:
     - steamengine_deploy_drupal
 
@@ -11,20 +12,22 @@
   file:
     path: "{{ steamengine_conf_path }}/settings.php"
     state: absent
+  when: not steamengine_drupal_install_use_existing_config
   tags:
     - steamengine_deploy_drupal
 
 - name: Install Drupal with drush.
   command: >
-    {{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} \
-     site-install {{ steamengine_drupal_install_profile }} -y {{ steamengine_drupal_install_option }}
+    {{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }}
+    site-install {{ steamengine_drupal_install_profile }} -y {{ steamengine_drupal_install_option }}
+    {{ steamengine_drupal_install_use_existing_config | ternary('--existing-config', '') }}
   when: new_deploy and steamengine_drupal_install_from_drush
   tags:
     - steamengine_deploy_drupal
 
 - name: "Move setting files to {{ steamengine_conf_path }}"
   command: "mv {{ steamengine_project_root_path_web }}/web/sites/default/settings.php {{ steamengine_conf_path }}/settings.php"
-  when: new_deploy and steamengine_drupal_install_from_drush
+  when: not steamengine_drupal_install_use_existing_config
   tags:
     - steamengine_deploy_drupal
 
@@ -33,5 +36,6 @@
     state: link
     src: "{{ steamengine_conf_path }}/settings.php"
     dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+  when: not steamengine_drupal_install_use_existing_config
   tags:
     - steamengine_deploy_drupal

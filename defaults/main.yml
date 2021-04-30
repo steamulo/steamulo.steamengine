@@ -89,11 +89,11 @@ steamengine_db_dump_url:
 steamengine_drupal_install_from_drush: false
 # Profile type for a drush's install (standard|minimal|expert)
 steamengine_drupal_install_profile: "minimal"
-steamengine_drupal_install_option: |
-  --site-name="{{ steamengine_project_name }}" \
-  --site-mail="admin@example.com" \
-  --account-name="admin" \
-  --account-pass="admin" \
-  --account-mail="admin@example.com" \
-  --locale="fr" \
-  --existing-config
+steamengine_drupal_install_use_existing_config: true
+steamengine_drupal_install_option: >
+  --site-name="{{ steamengine_project_name }}"
+  --site-mail="admin@example.com"
+  --account-name="admin"
+  --account-pass="admin"
+  --account-mail="admin@example.com"
+  --locale="fr"

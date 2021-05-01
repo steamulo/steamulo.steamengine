@@ -49,6 +49,8 @@
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
+  notify:
+    - "{{ steamengine_project_name }} fixpermissions"
   register: get_url_build
   tags:
     - steamengine_deploy_sf
@@ -85,6 +87,8 @@
     src: "{{ steamengine_project_root_path }}/project.zip"
     dest: "{{ tempdir.path }}"
     remote_src: true
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
@@ -126,6 +130,8 @@
     state: link
     src: "{{ steamengine_conf_path }}/.env.local"
     dest: "{{ steamengine_project_root_path_web }}/.env.local"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
   when: new_build_to_deploy and steamengine_project_configuration is defined
   tags:
     - steamengine_deploy_sf
@@ -135,6 +141,8 @@
     state: link
     src: "{{ steamengine_conf_path }}/{{ item.value }}"
     dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
   with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
   when: new_build_to_deploy
   tags:
@@ -168,12 +176,6 @@
   args:
     chdir: "{{ steamengine_sf_bin_path }}"
   with_items: "{{ steamengine_sf_php_console_command_deployment }}"
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_sf
-
-- name: "Fix permissions after updating source"
-  command: "{{ steamengine_bin_path }}/steamengine fixpermissions"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf

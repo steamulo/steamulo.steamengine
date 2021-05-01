@@ -1,0 +1,9 @@
+---
+
+- hosts: localhost
+  tasks:
+    - name: Delete local MySQL service
+      docker_container:
+        name: mysql-drupal
+        state: absent
+        keep_volumes: no

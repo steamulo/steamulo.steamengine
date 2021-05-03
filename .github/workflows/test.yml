@@ -1,0 +1,31 @@
+---
+name: Molecule Test
+on: [push, pull_request]
+defaults:
+  run:
+    shell: bash
+    working-directory: steamulo.steamengine
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+        distribution: [centos7, centos8, ubuntu1804, ubuntu2004]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: steamulo.steamengine
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+      - name: Run all molecule scenarios
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distribution }}
+        run: |
+          molecule test --all

@@ -26,7 +26,7 @@ provisioner:
   lint:
     name: ansible-lint
 scenario:
-  name: drupal9
+  name: drupal
 verifier:
   name: testinfra
   options:

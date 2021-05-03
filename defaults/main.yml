@@ -74,7 +74,6 @@ steamengine_drupal_project_setting_block: |
   );
   $settings['hash_salt'] = 'ChangeMe';
   $config_directories['sync'] = '../config';
-  $settings['php_storage']['twig']['directory'] = '/tmp'; 
 # List of path that should be persisted in a folder outside the projet
 # The key is the folder persisted outside the root project, the value is the name (path) of the folder inside the project. A link will be created on it to the persisted folder
 steamengine_drupal_persistent_directory: 

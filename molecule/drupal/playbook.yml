@@ -1,0 +1,229 @@
+- name: Converge
+  hosts: instance
+  become: true
+
+  pre_tasks:
+    - include_tasks: "../resources/setup_{{ ansible_os_family | lower }}.yml"
+
+    - name: Add ppa:ondrej/php repository
+      apt_repository:
+        repo: ppa:ondrej/php
+      when: ansible_os_family == 'Debian'
+
+    - name: Add remi-php74 repository
+      yum:
+        name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: "Set nginx extra_parameters"
+      set_fact:
+        nginx_extra_parameters: |
+          client_max_body_size 4096M;
+
+          location / {
+              try_files $uri /index.php?$query_string;
+          }
+
+          location @rewrite {
+            rewrite ^ /index.php;
+          }
+
+          location ~ '\.php$|^/update.php' {
+            fastcgi_split_path_info ^(.+?\.php)(|/.*)$;
+            try_files $fastcgi_script_name =404;
+            include fastcgi_params;
+            fastcgi_param HTTP_PROXY "";
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+            fastcgi_param QUERY_STRING $query_string;
+            fastcgi_intercept_errors on;
+            fastcgi_pass 127.0.0.1:9000;
+          }
+
+          location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+            try_files $uri @rewrite;
+            expires max;
+            log_not_found off;
+          }
+
+          location ~ ^/sites/.*/files/styles/ {
+            try_files $uri @rewrite;
+          }
+
+          location ~ ^(/[a-z\-]+)?/system/files/ {
+            try_files $uri /index.php?$query_string;
+          }
+
+          if ($request_uri ~* "^(.*/)index\.php/(.*)") {
+            return 307 $1$2;
+          }
+
+          error_log /var/log/nginx/project_error.log;
+          access_log /var/log/nginx/project_access.log;
+
+    - name: "Set steamengine_deployments var"
+      set_fact:
+        steamengine_deployments:
+          drupal8-drush-install:
+            steamengine_drupal_install_from_drush: true
+            steamengine_drupal_install_use_existing_config: true
+            steamengine_drupal_install_from_db_dump: false
+            steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
+            steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
+            steamengine_drupal_project_setting_block: |
+              $databases['default']['default'] = array (
+                'database' => 'drupal8-drush-install',
+                'username' => 'drupal8-drush-install',
+                'password' => 'drupal',
+                'prefix' => '',
+                'host' => 'localhost',
+                'port' => '3306',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+                'driver' => 'mysql',
+              );
+              $settings['hash_salt'] = 'ChangeMe';
+              $config_directories['sync'] = '../config';
+          drupal8-db-dump:
+            steamengine_drupal_install_from_drush: false
+            steamengine_drupal_install_from_db_dump: true
+            steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_8.zip
+            steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
+            steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
+            steamengine_drupal_project_setting_block: |
+              $databases['default']['default'] = array (
+                'database' => 'drupal8-db-dump',
+                'username' => 'drupal8-db-dump',
+                'password' => 'drupal',
+                'prefix' => '',
+                'host' => 'localhost',
+                'port' => '3306',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+                'driver' => 'mysql',
+              );
+              $settings['hash_salt'] = 'ChangeMe';
+              $config_directories['sync'] = '../config';
+          drupal9-drush-install:
+            steamengine_drupal_install_from_drush: true
+            steamengine_drupal_install_use_existing_config: true
+            steamengine_drupal_install_from_db_dump: false
+            steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_9.zip
+            steamengine_build_checksum: sha1:d5914515d2e6aeec5dae06c3476cd198792abbbe
+            steamengine_drupal_project_setting_block: |
+              $databases['default']['default'] = array (
+                'database' => 'drupal9-drush-install',
+                'username' => 'drupal9-drush-install',
+                'password' => 'drupal',
+                'prefix' => '',
+                'host' => 'localhost',
+                'port' => '3306',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+                'driver' => 'mysql',
+              );
+              $settings['hash_salt'] = 'ChangeMe';
+              $settings['config_sync_directory'] = '../config';
+          drupal9-db-dump:
+            steamengine_drupal_install_from_drush: false
+            steamengine_drupal_install_from_db_dump: true
+            steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_9.zip
+            steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_9.zip
+            steamengine_build_checksum: sha1:d5914515d2e6aeec5dae06c3476cd198792abbbe
+            steamengine_drupal_project_setting_block: |
+              $databases['default']['default'] = array (
+                'database' => 'drupal9-db-dump',
+                'username' => 'drupal9-db-dump',
+                'password' => 'drupal',
+                'prefix' => '',
+                'host' => 'localhost',
+                'port' => '3306',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+                'driver' => 'mysql',
+              );
+              $settings['hash_salt'] = 'ChangeMe';
+              $settings['config_sync_directory'] = '../config';
+
+  tasks:
+    - include_role:
+        name: steamulo.mysql
+      vars:
+        mysql_databases:
+        - name: "drupal8-drush-install"
+        - name: "drupal8-db-dump"
+        - name: "drupal9-drush-install"
+        - name: "drupal9-db-dump"
+        mysql_users:
+        - name: "drupal8-drush-install"
+          host: "%"
+          password: "drupal"
+          priv: "drupal8-drush-install.*:ALL,GRANT"
+        - name: "drupal8-db-dump"
+          host: "%"
+          password: "drupal"
+          priv: "drupal8-db-dump.*:ALL,GRANT"
+        - name: "drupal9-drush-install"
+          host: "%"
+          password: "drupal"
+          priv: "drupal9-drush-install.*:ALL,GRANT"
+        - name: "drupal9-db-dump"
+          host: "%"
+          password: "drupal"
+          priv: "drupal9-db-dump.*:ALL,GRANT"
+    - include_role:
+        name: geerlingguy.php
+      vars:
+        php_enablerepo: "remi-php74"
+        php_default_version_debian: "7.4"
+        php_install_recommends: false
+        php_enable_php_fpm: true
+        php_webserver_daemon: "nginx"
+        php_date_timezone: "Europe/Paris"
+        php_expose_php: Off
+        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-mysql'], ['php-mysql']) }}"
+    - include_role:
+        name: geerlingguy.git
+    - include_role:
+        name: geerlingguy.composer
+      vars:
+        composer_path: /usr/local/bin/composer
+    - include_role:
+        name: geerlingguy.drush
+    - include_role:
+        name: geerlingguy.nginx
+      vars:
+        nginx_ppa_use: true
+        nginx_remove_default_vhost: true
+        nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+        nginx_vhosts:
+          - listen: "80"
+            server_name: "drupal8-drush-install.test"
+            root: /drupal8-drush-install/project_root/www/web
+            extra_parameters: "{{ nginx_extra_parameters }}"
+          - listen: "80"
+            server_name: "drupal8-db-dump.test"
+            root: /drupal8-db-dump/project_root/www/web
+            extra_parameters: "{{ nginx_extra_parameters }}"
+          - listen: "80"
+            server_name: "drupal9-drush-install.test"
+            root: /drupal9-drush-install/project_root/www/web
+            extra_parameters: "{{ nginx_extra_parameters }}"
+          - listen: "80"
+            server_name: "drupal9-db-dump.test"
+            root: /drupal9-db-dump/project_root/www/web
+            extra_parameters: "{{ nginx_extra_parameters }}"
+        tags:
+          - steamengine_nginx
+    - include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        steamengine_project_name: "{{ stm_dpt.key }}"
+        steamengine_project_type: drupal
+        steamengine_drupal_install_from_drush: "{{ stm_dpt.value.steamengine_drupal_install_from_drush | default(false) }}"
+        steamengine_drupal_install_use_existing_config: "{{ stm_dpt.value.steamengine_drupal_install_use_existing_config | default(false) }}"
+        steamengine_drupal_install_from_db_dump: "{{ stm_dpt.value.steamengine_drupal_install_from_db_dump | default(false) }}"
+        steamengine_db_dump_url: "{{ stm_dpt.value.steamengine_db_dump_url | default('') }}"
+        steamengine_build_url: "{{ stm_dpt.value.steamengine_build_url }}"
+        steamengine_build_checksum: "{{ stm_dpt.value.steamengine_build_checksum }}"
+        steamengine_drupal_project_setting_block: "{{ stm_dpt.value.steamengine_drupal_project_setting_block }}"
+      loop: "{{ steamengine_deployments | dict2items }}"
+      loop_control:
+        loop_var: stm_dpt

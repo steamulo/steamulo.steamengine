@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/STEAMULO/ansible-role-steamengine.svg?branch=master)](https://travis-ci.com/STEAMULO/ansible-role-steamengine)
+![Build Status](https://github.com/STEAMULO/ansible-role-steamengine/actions/workflows/test.yml/badge.svg?branch=master)
 
 Steamengine
 =========
@@ -59,12 +59,12 @@ Development
 This role use the [molecule framework](https://molecule.readthedocs.io/en/stable/) in order to simplify the development process.
 
 Requirements:
-* [Python 2.7](https://www.python.org/download/releases/2.7/)
-* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+* [Python 3](https://www.python.org/download)
+* [Docker](https://docs.docker.com/get-docker/)
 
-Setup your local environnement with python virtualenv prior to using molecule :
+Setup your local environnement with python virtualenv prior to using molecule : `. venv.sh`
 
-```virtualenv ~/.virtualenv/steamengine && source ~/.virtualenv/steamengine/bin/activate && pip install -r requirements.txt```
+This command will create a virtual env, activate it and download python dependencies.
 
 Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type>``` to log into the test machine.
 
@@ -84,3 +84,6 @@ Author Information
 ------------
 
 Steamulo - http://www.steamulo.com
+
+
+

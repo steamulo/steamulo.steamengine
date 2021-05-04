@@ -52,7 +52,7 @@
 
 - name: "Is there a new tomcat version: {{ get_url_tomcat.changed }}"
   set_fact:
-    new_tomcat_version: get_url_tomcat.changed
+    new_tomcat_version: "{{ get_url_tomcat.changed }}"
   tags:
     - steamengine_deploy_tomcat7
 

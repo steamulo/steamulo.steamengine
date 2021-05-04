@@ -41,4 +41,7 @@
   template:
     src: logrotate.conf.j2
     dest: "/etc/logrotate.d/{{ item.name }}"
+    owner: root
+    group: root
+    mode: 0644
   with_items: "{{ steamengine_logrotate_scripts }}"

@@ -70,11 +70,6 @@ Use ```molecule converge -s <project_type>``` to create a local environnement an
 
 Before any commit ensure that every test are passing with ```molecule test --all```
 
-Known issues
-------------
-
-* Ansible Lint warning : https://github.com/ansible/ansible-lint/issues/540
-
 License
 ------------
 

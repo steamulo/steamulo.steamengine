@@ -15,5 +15,5 @@
   version: 3.1.2
 
 - src: https://github.com/STEAMULO/ansible-role-mysql-1.git
-  version: "2.5.7"
+  version: 2.9.5
   name: steamulo.mysql

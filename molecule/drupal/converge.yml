@@ -1,21 +1,17 @@
+---
 - name: Converge
   hosts: instance
   become: true
-
   pre_tasks:
-    - include_tasks: "../resources/setup_{{ ansible_os_family | lower }}.yml"
-
     - name: Add ppa:ondrej/php repository
       apt_repository:
         repo: ppa:ondrej/php
       when: ansible_os_family == 'Debian'
-
     - name: Add remi-php74 repository
       yum:
         name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
         state: present
       when: ansible_os_family == 'RedHat'
-
     - name: "Set nginx extra_parameters"
       set_fact:
         nginx_extra_parameters: |
@@ -61,7 +57,6 @@
 
           error_log /var/log/nginx/project_error.log;
           access_log /var/log/nginx/project_access.log;
-
     - name: "Set steamengine_deployments var"
       set_fact:
         steamengine_deployments:
@@ -141,34 +136,35 @@
               );
               $settings['hash_salt'] = 'ChangeMe';
               $settings['config_sync_directory'] = '../config';
-
   tasks:
-    - include_role:
+    - name: Include steamulo.mysql
+      include_role:
         name: steamulo.mysql
       vars:
         mysql_databases:
-        - name: "drupal8-drush-install"
-        - name: "drupal8-db-dump"
-        - name: "drupal9-drush-install"
-        - name: "drupal9-db-dump"
+          - name: "drupal8-drush-install"
+          - name: "drupal8-db-dump"
+          - name: "drupal9-drush-install"
+          - name: "drupal9-db-dump"
         mysql_users:
-        - name: "drupal8-drush-install"
-          host: "%"
-          password: "drupal"
-          priv: "drupal8-drush-install.*:ALL,GRANT"
-        - name: "drupal8-db-dump"
-          host: "%"
-          password: "drupal"
-          priv: "drupal8-db-dump.*:ALL,GRANT"
-        - name: "drupal9-drush-install"
-          host: "%"
-          password: "drupal"
-          priv: "drupal9-drush-install.*:ALL,GRANT"
-        - name: "drupal9-db-dump"
-          host: "%"
-          password: "drupal"
-          priv: "drupal9-db-dump.*:ALL,GRANT"
-    - include_role:
+          - name: "drupal8-drush-install"
+            host: "%"
+            password: "drupal"
+            priv: "drupal8-drush-install.*:ALL,GRANT"
+          - name: "drupal8-db-dump"
+            host: "%"
+            password: "drupal"
+            priv: "drupal8-db-dump.*:ALL,GRANT"
+          - name: "drupal9-drush-install"
+            host: "%"
+            password: "drupal"
+            priv: "drupal9-drush-install.*:ALL,GRANT"
+          - name: "drupal9-db-dump"
+            host: "%"
+            password: "drupal"
+            priv: "drupal9-db-dump.*:ALL,GRANT"
+    - name: Include geerlingguy.php
+      include_role:
         name: geerlingguy.php
       vars:
         php_enablerepo: "remi-php74"
@@ -177,17 +173,21 @@
         php_enable_php_fpm: true
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
-        php_expose_php: Off
+        php_expose_php: false
         php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-mysql'], ['php-mysql']) }}"
-    - include_role:
+    - name: Include geerlingguy.git
+      include_role:
         name: geerlingguy.git
-    - include_role:
+    - name: Include geerlingguy.composer
+      include_role:
         name: geerlingguy.composer
       vars:
         composer_path: /usr/local/bin/composer
-    - include_role:
+    - name: Include geerlingguy.drush
+      include_role:
         name: geerlingguy.drush
-    - include_role:
+    - name: Include geerlingguy.nginx
+      include_role:
         name: geerlingguy.nginx
       vars:
         nginx_ppa_use: true
@@ -212,7 +212,8 @@
             extra_parameters: "{{ nginx_extra_parameters }}"
         tags:
           - steamengine_nginx
-    - include_role:
+    - name: Include steamulo.steamengine
+      include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: "{{ stm_dpt.key }}"

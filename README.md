@@ -78,7 +78,7 @@ BSD
 Author Information
 ------------
 
-Steamulo - http://www.steamulo.com
+Steamulo - www.steamulo.com
 
 
 

@@ -7,10 +7,21 @@
       apt_repository:
         repo: ppa:ondrej/php
       when: ansible_os_family == 'Debian'
+    - name: Import remi GPG key.
+      rpm_key:
+        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+        state: present
+      when: ansible_os_family == 'RedHat'
     - name: Add remi-php74 repository
       yum:
-        name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+        name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
+        state: present
       when: ansible_os_family == 'RedHat'
+    - name: Enable module php7.4 for Centos8
+      dnf:
+        name: '@php:remi-7.4'
+        state: present
+      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
   roles:
     - role: geerlingguy.php
       vars:

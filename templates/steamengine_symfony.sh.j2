@@ -21,11 +21,6 @@ display_usage() {
     echo ""
 }
 
-if [ "$EUID" -ne 0 ]
-then
-    exec sudo "$0" "$@"
-fi
-
 # if less than two arguments supplied, display usage
 if [  $# -le 0 ]
 then
@@ -38,6 +33,30 @@ if [[ ( $# == "--help") ||  $# == "-h" ]]
 then
     display_usage
     exit 0
+fi
+
+
+while [ $# -gt 0 ]; do
+  arg=$1
+  case $arg in
+{% for item in steamengine_sf_command | union(steamengine_sf_crons) %}
+    {{ item.cmd_name }})
+    if [ "$(whoami)" != "{{ steamengine_project_user }}" ]; then
+        exec su {{ steamengine_project_user }} "$0" "$arg"
+    fi
+    echo "`date -u` : {{ item.description }}"
+    php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
+    exit $?
+    ;;
+{% endfor %}
+    *)
+    break
+  esac
+done
+
+if [ "$EUID" -ne 0 ]
+then
+    exec sudo "$0" "$@"
 fi
 
 while [ $# -gt 0 ]; do
@@ -73,8 +92,11 @@ while [ $# -gt 0 ]; do
        -not -path '{{steamengine_project_root_path_web}}/{{ steamengine_sf_persistent_directory[value] }}*' \
      {% endfor %}
        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
-       -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
        -exec chmod 'u=rwx,g=rx,o=' {} \;
+
+     find {{ steamengine_project_root_path_web }} \
+       -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+       -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
  
      /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf_path_with_write_permission %}
@@ -94,13 +116,6 @@ while [ $# -gt 0 ]; do
  
      exit $?
     ;;
-{% for item in steamengine_sf_command | union(steamengine_sf_crons) %}
-    {{ item.cmd_name }})
-     echo "`date -u` : {{ item.description }}"
-     php {{ steamengine_sf_bin_path }}/console {{ item.cmd }}
-     exit $?
-    ;;
-{% endfor %}
     *)
      echo "Wrong option"
      display_usage

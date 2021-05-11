@@ -128,7 +128,6 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-  when: steamengine_tomcat_major_tomcat_version != "9"
   notify:
     - "{{ steamengine_project_name }} restart"
   tags:

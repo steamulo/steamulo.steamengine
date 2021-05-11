@@ -7,8 +7,8 @@ node ('docker') {
                 sh "python3 -m pip install --upgrade pip"
                 // We use another dir, outside the python env
                 // so that molecule doesn't lint python lib
-                sh "mkdir src"
-                dir('src') {
+                sh "mkdir steamulo.steamengine"
+                dir('steamulo.steamengine') {
                     checkout scm
                     sh "python3 -m pip install -r requirements.txt"
                     ansiColor('xterm') {

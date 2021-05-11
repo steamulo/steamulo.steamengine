@@ -151,9 +151,9 @@
               $settings['hash_salt'] = 'ChangeMe';
               $settings['config_sync_directory'] = '../config';
   tasks:
-    - name: Include steamulo.mysql
+    - name: Include geerlingguy.mysql
       include_role:
-        name: steamulo.mysql
+        name: geerlingguy.mysql
       vars:
         mysql_databases:
           - name: "drupal8-drush-install"

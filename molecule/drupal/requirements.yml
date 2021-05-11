@@ -14,6 +14,5 @@
 - src: geerlingguy.drush
   version: 3.1.2
 
-- src: https://github.com/STEAMULO/ansible-role-mysql-1.git
-  version: 2.9.5
-  name: steamulo.mysql
+- src: geerlingguy.mysql
+  version: 3.3.1

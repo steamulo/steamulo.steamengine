@@ -12,6 +12,10 @@
         name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
         state: present
       when: ansible_os_family == 'RedHat'
+    - name: Install python3 pymysql
+      apt:
+        name: python3-pymysql
+      when: ansible_os_family == 'Debian'
     - name: "Set nginx extra_parameters"
       set_fact:
         nginx_extra_parameters: |

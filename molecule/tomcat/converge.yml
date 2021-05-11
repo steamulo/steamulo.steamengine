@@ -3,9 +3,6 @@
   hosts: instance
   become: true
 
-  pre_tasks:
-    - include_tasks: "../resources/setup_{{ ansible_os_family | lower }}.yml"
-
   roles:
     - role: lean_delivery.java
       vars:

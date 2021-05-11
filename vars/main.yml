@@ -23,6 +23,6 @@ steamengine_project_types:
 # PLAY
 steamengine_play2_run_script: "startproject"
 
-# TOMCAT7
+# TOMCAT
 steamengine_tomcat_tomcat_version: "{{ steamengine_tomcat_major_tomcat_version }}.{{ steamengine_tomcat_minor_tomcat_version }}"
 steamengine_tomcat_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ steamengine_tomcat_major_tomcat_version }}/v{{ steamengine_tomcat_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat_tomcat_version }}.tar.gz"

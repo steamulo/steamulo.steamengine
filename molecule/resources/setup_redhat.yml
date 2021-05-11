@@ -1,9 +1,0 @@
----
-
-- name: Install dependencies (RedHat)
-  yum:
-    name:
-      - rsyslog
-      - curl
-      - systemd
-      - sudo

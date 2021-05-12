@@ -31,9 +31,9 @@ steamengine_nodejs_allowed_write_paths: []
 steamengine_nodejs_add_nginx_app_group: false
 
 # TOMCAT7
-steamengine_tomcat_major_tomcat_version: "7"
-steamengine_tomcat_minor_tomcat_version: "0.93"
-steamengine_tomcat_tomcat_sha512: "7ae5186f63df7821b7de4e4c92780a27ccc678119614ad074349c3d02bd2f764ac08fa72f776e880e98aad2617de01521eb3de6fe57e4a749c8c04f28e042f0a"
+steamengine_tomcat_major_version: "7"
+steamengine_tomcat_minor_version: "0.93"
+steamengine_tomcat_archive_sha512: "7ae5186f63df7821b7de4e4c92780a27ccc678119614ad074349c3d02bd2f764ac08fa72f776e880e98aad2617de01521eb3de6fe57e4a749c8c04f28e042f0a"
 steamengine_tomcat_http_port: 8080
 steamengine_tomcat_max_threads: 200
 steamengine_tomcat_accept_count: 100

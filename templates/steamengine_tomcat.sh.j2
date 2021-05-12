@@ -61,11 +61,11 @@ while [ $# -gt 0 ]; do
      if [ -d "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT" ]; then
          chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
 
-         {% if steamengine_tomcat7_allow_insecure_write_root %}
+         {% if steamengine_tomcat_allow_insecure_write_root %}
             chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
          {% else %}
              chmod -R u=rwx,g=rx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
-             {% if steamengine_tomcat7_allow_insecure_write_web_inf %}
+             {% if steamengine_tomcat_allow_insecure_write_web_inf %}
                  if [ -d "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF" ]; then
                     chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF
                  fi

@@ -29,7 +29,7 @@
         baseurl: http://yum.mariadb.org/10.3/centos7-amd64
         gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
         gpgcheck: true
-        state: present 
+        state: present
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
     - name: Create mariadb directory for CentOS 7
       command: install -dpm777 /var/run/mariadb

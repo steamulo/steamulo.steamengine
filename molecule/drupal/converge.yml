@@ -31,8 +31,11 @@
         gpgcheck: true
         state: present
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
-    - name: Create mariadb directory for CentOS 7
-      command: install -dpm777 /var/run/mariadb
+    - name: Create MariaDB directory for CentOS 7
+      file:
+        path: /var/run/mariadb
+        state: directory
+        mode: '0777'
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
     - name: Install python3 pymysql
       apt:

@@ -22,6 +22,18 @@
         name: '@php:remi-7.4'
         state: present
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+    - name: Add repo MariaDB 10.3 directory for CentOS 7
+      yum_repository:
+        name: mariadb
+        description: MariaDB
+        baseurl: http://yum.mariadb.org/10.3/centos7-amd64
+        gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+        gpgcheck: true
+        state: present 
+      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
+    - name: Create mariadb directory for CentOS 7
+      command: install -dpm777 /var/run/mariadb
+      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
     - name: Install python3 pymysql
       apt:
         name: python3-pymysql
@@ -82,8 +94,8 @@
             steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
             steamengine_drupal_project_setting_block: |
               $databases['default']['default'] = array (
-                'database' => 'drupal8-drush-install',
-                'username' => 'drupal8-drush-install',
+                'database' => 'dp8-drush',
+                'username' => 'dp8-drush',
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
@@ -101,8 +113,8 @@
             steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
             steamengine_drupal_project_setting_block: |
               $databases['default']['default'] = array (
-                'database' => 'drupal8-db-dump',
-                'username' => 'drupal8-db-dump',
+                'database' => 'dp8-db-dump',
+                'username' => 'dp8-db-dump',
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
@@ -120,8 +132,8 @@
             steamengine_build_checksum: sha1:d5914515d2e6aeec5dae06c3476cd198792abbbe
             steamengine_drupal_project_setting_block: |
               $databases['default']['default'] = array (
-                'database' => 'drupal9-drush-install',
-                'username' => 'drupal9-drush-install',
+                'database' => 'dp9-drush',
+                'username' => 'dp9-drush',
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
@@ -139,8 +151,8 @@
             steamengine_build_checksum: sha1:d5914515d2e6aeec5dae06c3476cd198792abbbe
             steamengine_drupal_project_setting_block: |
               $databases['default']['default'] = array (
-                'database' => 'drupal9-db-dump',
-                'username' => 'drupal9-db-dump',
+                'database' => 'dp9-db-dump',
+                'username' => 'dp9-db-dump',
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
@@ -156,27 +168,27 @@
         name: geerlingguy.mysql
       vars:
         mysql_databases:
-          - name: "drupal8-drush-install"
-          - name: "drupal8-db-dump"
-          - name: "drupal9-drush-install"
-          - name: "drupal9-db-dump"
+          - name: "dp8-drush"
+          - name: "dp8-db-dump"
+          - name: "dp9-drush"
+          - name: "dp9-db-dump"
         mysql_users:
-          - name: "drupal8-drush-install"
+          - name: "dp8-drush"
             host: "%"
             password: "drupal"
-            priv: "drupal8-drush-install.*:ALL,GRANT"
-          - name: "drupal8-db-dump"
+            priv: "dp8-drush.*:ALL,GRANT"
+          - name: "dp8-db-dump"
             host: "%"
             password: "drupal"
-            priv: "drupal8-db-dump.*:ALL,GRANT"
-          - name: "drupal9-drush-install"
+            priv: "dp8-db-dump.*:ALL,GRANT"
+          - name: "dp9-drush"
             host: "%"
             password: "drupal"
-            priv: "drupal9-drush-install.*:ALL,GRANT"
-          - name: "drupal9-db-dump"
+            priv: "dp9-drush.*:ALL,GRANT"
+          - name: "dp9-db-dump"
             host: "%"
             password: "drupal"
-            priv: "drupal9-db-dump.*:ALL,GRANT"
+            priv: "dp9-db-dump.*:ALL,GRANT"
     - name: Include geerlingguy.php
       include_role:
         name: geerlingguy.php

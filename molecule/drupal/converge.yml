@@ -155,6 +155,18 @@
               $settings['hash_salt'] = 'ChangeMe';
               $settings['config_sync_directory'] = '../config';
   tasks:
+    - name: Include geerlingguy.php
+      include_role:
+        name: geerlingguy.php
+      vars:
+        php_enablerepo: "remi-php74"
+        php_default_version_debian: "7.4"
+        php_install_recommends: false
+        php_enable_php_fpm: true
+        php_webserver_daemon: "nginx"
+        php_date_timezone: "Europe/Paris"
+        php_expose_php: false
+        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
     - name: Include anxs.postgresql
       include_role:
         name: anxs.postgresql
@@ -177,18 +189,6 @@
             owner: "dp9-drush"
           - name: "dp9-db-dump"
             owner: "dp9-db-dump"
-    - name: Include geerlingguy.php
-      include_role:
-        name: geerlingguy.php
-      vars:
-        php_enablerepo: "remi-php74"
-        php_default_version_debian: "7.4"
-        php_install_recommends: false
-        php_enable_php_fpm: true
-        php_webserver_daemon: "nginx"
-        php_date_timezone: "Europe/Paris"
-        php_expose_php: false
-        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
     - name: Include geerlingguy.git
       include_role:
         name: geerlingguy.git

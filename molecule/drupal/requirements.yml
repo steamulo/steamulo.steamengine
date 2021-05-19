@@ -1,4 +1,8 @@
 ---
+- src: https://github.com/ANXS/postgresql.git
+  version: e3f22bf58446039f24312583532280c7d9032e96
+  name: anxs.postgresql
+
 - src: geerlingguy.php
   version: 4.3.1
 
@@ -13,6 +17,3 @@
 
 - src: geerlingguy.drush
   version: 3.1.2
-
-- src: geerlingguy.mysql
-  version: 3.3.1

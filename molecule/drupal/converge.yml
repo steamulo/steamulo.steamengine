@@ -22,24 +22,9 @@
         name: '@php:remi-7.4'
         state: present
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
-    - name: Add repo MariaDB 10.3 directory for CentOS 7
-      yum_repository:
-        name: mariadb
-        description: MariaDB
-        baseurl: http://yum.mariadb.org/10.3/centos7-amd64
-        gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-        gpgcheck: true
-        state: present
-      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
-    - name: Create MariaDB directory for CentOS 7
-      file:
-        path: /var/run/mariadb
-        state: directory
-        mode: '0777'
-      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
-    - name: Install python3 pymysql
+    - name: Install python3 Psycopg2
       apt:
-        name: python3-pymysql
+        name: python3-psycopg2
       when: ansible_os_family == 'Debian'
     - name: "Set nginx extra_parameters"
       set_fact:
@@ -102,9 +87,9 @@
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
-                'port' => '3306',
-                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-                'driver' => 'mysql',
+                'port' => '5432',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
+                'driver' => 'pgsql',
               );
               $settings['hash_salt'] = 'ChangeMe';
               $config_directories['sync'] = '../config';
@@ -121,9 +106,9 @@
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
-                'port' => '3306',
-                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-                'driver' => 'mysql',
+                'port' => '5432',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
+                'driver' => 'pgsql',
               );
               $settings['hash_salt'] = 'ChangeMe';
               $config_directories['sync'] = '../config';
@@ -140,9 +125,9 @@
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
-                'port' => '3306',
-                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-                'driver' => 'mysql',
+                'port' => '5432',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
+                'driver' => 'pgsql',
               );
               $settings['hash_salt'] = 'ChangeMe';
               $settings['config_sync_directory'] = '../config';
@@ -159,39 +144,35 @@
                 'password' => 'drupal',
                 'prefix' => '',
                 'host' => 'localhost',
-                'port' => '3306',
-                'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-                'driver' => 'mysql',
+                'port' => '5432',
+                'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
+                'driver' => 'pgsql',
               );
               $settings['hash_salt'] = 'ChangeMe';
               $settings['config_sync_directory'] = '../config';
   tasks:
-    - name: Include geerlingguy.mysql
+    - name: Include anxs.postgresql
       include_role:
-        name: geerlingguy.mysql
+        name: anxs.postgresql
       vars:
-        mysql_databases:
+        postgresql_users:
           - name: "dp8-drush"
+            pass: "drupal"
           - name: "dp8-db-dump"
+            pass: "drupal"
           - name: "dp9-drush"
+            pass: "drupal"
           - name: "dp9-db-dump"
-        mysql_users:
+            pass: "drupal"
+        postgresql_databases:
           - name: "dp8-drush"
-            host: "%"
-            password: "drupal"
-            priv: "dp8-drush.*:ALL,GRANT"
+            owner: "dp8-drush"
           - name: "dp8-db-dump"
-            host: "%"
-            password: "drupal"
-            priv: "dp8-db-dump.*:ALL,GRANT"
+            owner: "dp8-db-dump"
           - name: "dp9-drush"
-            host: "%"
-            password: "drupal"
-            priv: "dp9-drush.*:ALL,GRANT"
+            owner: "dp9-drush"
           - name: "dp9-db-dump"
-            host: "%"
-            password: "drupal"
-            priv: "dp9-db-dump.*:ALL,GRANT"
+            owner: "dp9-db-dump"
     - name: Include geerlingguy.php
       include_role:
         name: geerlingguy.php
@@ -203,7 +184,7 @@
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
         php_expose_php: false
-        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-mysql'], ['php-mysql']) }}"
+        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
     - name: Include geerlingguy.git
       include_role:
         name: geerlingguy.git

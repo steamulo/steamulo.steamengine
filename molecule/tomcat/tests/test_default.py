@@ -7,7 +7,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_app_running_and_enabled(host):
-    app_service = host.service("test_tomcat7")
+    app_service = host.service("test_tomcat")
     assert app_service.is_running
     assert app_service.is_enabled
 
@@ -22,7 +22,7 @@ def test_app_response(host):
 
 
 def test_configuration_file(host):
-    conf = host.file("/test_tomcat7/conf/project_env.conf").content_string
+    conf = host.file("/test_tomcat/conf/project_env.conf").content_string
     assert "test_conf.item1=test1" in conf
     assert "test_conf.item2.item2_sub1=test2" in conf
     assert "test_conf.item2.item2_sub2=test3" in conf

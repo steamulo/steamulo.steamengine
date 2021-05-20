@@ -20,6 +20,6 @@ include "{{ steamengine_project_configuration_base_name }}"
     {{ display_keys(key, value) }}
 {%- endfor -%}
 
-{% if steamengine_project_configuration_base_name is defined and steamengine_project_type == 'tomcat7' %}
+{% if steamengine_project_configuration_base_name is defined and steamengine_project_type == 'tomcat' %}
 include {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF/{{ steamengine_project_configuration_base_name }}
 {% endif %}

@@ -2,7 +2,7 @@
 
 - name: Create systemd unit file
   template:
-    src: systemd_tomcat7.service.j2
+    src: systemd_tomcat.service.j2
     dest: "/etc/systemd/system/{{ steamengine_project_name }}.service"
     owner: root
     group: root
@@ -10,15 +10,15 @@
   notify:
     - "{{ steamengine_project_name }} restart"
   tags:
-    - steamengine_runtime_tomcat7
+    - steamengine_runtime_tomcat
 
-- name: "Add www-data in {{ steamengine_app_user }} group"
+- name: "Add nginx user in {{ steamengine_app_user }} group"
   user:
-    name: www-data
+    name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
     groups: "{{ steamengine_app_user }}"
     append: true
   tags:
-    - steamengine_runtime_tomcat7
+    - steamengine_runtime_tomcat
 
 - name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
   systemd:
@@ -26,4 +26,4 @@
     daemon_reload: true
     name: "{{ steamengine_project_name }}"
   tags:
-    - steamengine_runtime_tomcat7
+    - steamengine_runtime_tomcat

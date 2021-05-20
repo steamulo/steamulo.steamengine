@@ -17,15 +17,16 @@ steamengine_project_types:
   - springboot
   - static
   - nodejs
-  - tomcat7
+  - tomcat
   - play
   - symfony
 
 # PLAY
 steamengine_play2_run_script: "startproject"
 
-# TOMCAT7
-steamengine_tomcat7_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-7/v{{ steamengine_tomcat7_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat7_tomcat_version }}.tar.gz"
+# TOMCAT
+steamengine_tomcat_version: "{{ steamengine_tomcat_major_version }}.{{ steamengine_tomcat_minor_version }}"
+steamengine_tomcat_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ steamengine_tomcat_major_version }}/v{{ steamengine_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat_version }}.tar.gz"
 
 # Symfony
 steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_external_logs_directory }}"

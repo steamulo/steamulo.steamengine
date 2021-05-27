@@ -34,6 +34,12 @@
   tags:
     - steamengine_deploy_nodejs
 
+- name: Fix permissions before updating source
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_nodejs
+
 - name: Create pm2 directory
   file:
     path: "{{ steamengine_project_root_path }}/pm2"
@@ -72,25 +78,8 @@
   tags:
     - steamengine_deploy_nodejs
 
-- name: "Add read permission for {{ steamengine_app_user }}"
-  file:
-    path: "{{ steamengine_project_root_path_web }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    recurse: true
-    mode: u=rwx,g=rx,o=
+- name: Fix permissions after updating source
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_nodejs
-
-- name: "Add write permission for {{ steamengine_app_user }} on {{ steamengine_nodejs_allowed_write_paths }}"
-  file:
-    path: "{{ steamengine_project_root_path_web }}/{{ item }}"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    recurse: true
-    mode: u=rwx,g=rwx,o=
-  when: new_build_to_deploy
-  loop: "{{ steamengine_nodejs_allowed_write_paths }}"
   tags:
     - steamengine_deploy_nodejs

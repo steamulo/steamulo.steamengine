@@ -10,6 +10,7 @@ display_usage() {
     echo -e "  restart\n\t\t\tRestart the SteamEngine project"
     echo -e "  status\n\t\t\tDisplay the SteamEngine project status"
     echo -e "  log\n\t\t\tDisplay and follow the SteamEngine project logs"
+    echo -e "  fixpermissions\n\t\t\tRestore project files and folders permissions"
     echo -e "  -h, --help\n\t\t\tShow Usages"
     echo ""
 }
@@ -62,17 +63,17 @@ while [ $# -gt 0 ]; do
          chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
 
          {% if steamengine_tomcat_allow_insecure_write_root %}
-            chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
+             chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
          {% else %}
              chmod -R u=rwx,g=rx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
              {% if steamengine_tomcat_allow_insecure_write_web_inf %}
-                 if [ -d "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF" ]; then
-                    chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF
-                 fi
+             if [ -d "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF" ]; then
+                 chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF
+             fi
              {% endif %}
          {% endif %}
-     fi
 
+     fi
      exit $?
     ;;
     *)

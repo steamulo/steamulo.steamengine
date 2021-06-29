@@ -81,10 +81,9 @@
           drupal8-drush-install:
             steamengine_drupal_install_from_drush: true
             steamengine_drupal_install_use_existing_config: true
-            steamengine_drupal_install_from_db_dump: false
             steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
             steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
-            steamengine_drupal_project_setting_block: |
+            steamengine_drupal_project_setting: |
               $databases['default']['default'] = array (
                 'database' => 'dp8-drush',
                 'username' => 'dp8-drush',
@@ -99,11 +98,10 @@
               $config_directories['sync'] = '../config';
           drupal8-db-dump:
             steamengine_drupal_install_from_drush: false
-            steamengine_drupal_install_from_db_dump: true
             steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_8.zip
             steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
             steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
-            steamengine_drupal_project_setting_block: |
+            steamengine_drupal_project_setting: |
               $databases['default']['default'] = array (
                 'database' => 'dp8-db-dump',
                 'username' => 'dp8-db-dump',
@@ -119,10 +117,9 @@
           drupal9-drush-install:
             steamengine_drupal_install_from_drush: true
             steamengine_drupal_install_use_existing_config: true
-            steamengine_drupal_install_from_db_dump: false
             steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_9.zip
             steamengine_build_checksum: sha1:d5914515d2e6aeec5dae06c3476cd198792abbbe
-            steamengine_drupal_project_setting_block: |
+            steamengine_drupal_project_setting: |
               $databases['default']['default'] = array (
                 'database' => 'dp9-drush',
                 'username' => 'dp9-drush',
@@ -137,11 +134,10 @@
               $settings['config_sync_directory'] = '../config';
           drupal9-db-dump:
             steamengine_drupal_install_from_drush: false
-            steamengine_drupal_install_from_db_dump: true
             steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_9.zip
             steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_9.zip
             steamengine_build_checksum: sha1:d5914515d2e6aeec5dae06c3476cd198792abbbe
-            steamengine_drupal_project_setting_block: |
+            steamengine_drupal_project_setting: |
               $databases['default']['default'] = array (
                 'database' => 'dp9-db-dump',
                 'username' => 'dp9-db-dump',
@@ -192,11 +188,6 @@
     - name: Include geerlingguy.git
       include_role:
         name: geerlingguy.git
-    - name: Include geerlingguy.composer
-      include_role:
-        name: geerlingguy.composer
-      vars:
-        composer_path: /usr/local/bin/composer
     - name: Include geerlingguy.drush
       include_role:
         name: geerlingguy.drush
@@ -234,11 +225,10 @@
         steamengine_project_type: drupal
         steamengine_drupal_install_from_drush: "{{ stm_dpt.value.steamengine_drupal_install_from_drush | default(false) }}"
         steamengine_drupal_install_use_existing_config: "{{ stm_dpt.value.steamengine_drupal_install_use_existing_config | default(false) }}"
-        steamengine_drupal_install_from_db_dump: "{{ stm_dpt.value.steamengine_drupal_install_from_db_dump | default(false) }}"
         steamengine_db_dump_url: "{{ stm_dpt.value.steamengine_db_dump_url | default('') }}"
         steamengine_build_url: "{{ stm_dpt.value.steamengine_build_url }}"
         steamengine_build_checksum: "{{ stm_dpt.value.steamengine_build_checksum }}"
-        steamengine_drupal_project_setting_block: "{{ stm_dpt.value.steamengine_drupal_project_setting_block }}"
+        steamengine_drupal_project_setting: "{{ stm_dpt.value.steamengine_drupal_project_setting }}"
       loop: "{{ steamengine_deployments | dict2items }}"
       loop_control:
         loop_var: stm_dpt

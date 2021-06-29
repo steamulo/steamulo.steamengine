@@ -7,6 +7,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
+    headers: "{{ steamengine_db_dump_url_headers }}"
   register: db_dump
   tags:
     - steamengine_deploy_drupal

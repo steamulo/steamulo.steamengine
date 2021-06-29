@@ -70,8 +70,8 @@ steamengine_drupal_drush_command_deployment:
 # List of directory we need write permission
 steamengine_drupal_path_with_write_permission:
   - "web/sites/default/files"
-# List of source template and target path for configuration to put inside the projet (setting.php.j2: web/site/default/setting.php )
-steamengine_drupal_project_setting_block: |
+# Content to add to the setting.php
+steamengine_drupal_project_setting: |
   $databases['default']['default'] = array (
     'database' => 'drupal',
     'username' => 'drupal',
@@ -90,10 +90,9 @@ steamengine_drupal_persistent_directory:
   files: "web/sites/default/files"
 # Directory for public file
 steamengine_drupal_public_directory: "web"
-# If is new install of drupal, deploy db dump
-steamengine_drupal_install_from_db_dump: false
 # Url for the dump of database for an install
 steamengine_db_dump_url:
+steamengine_db_dump_url_headers: {}
 # If is new install of drupal, launch a drush's install
 steamengine_drupal_install_from_drush: false
 # Profile type for a drush's install (standard|minimal|expert)

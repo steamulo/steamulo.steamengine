@@ -1,0 +1,140 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+  pre_tasks:
+    - name: Add ppa:ondrej/php repository
+      apt_repository:
+        repo: ppa:ondrej/php
+      when: ansible_os_family == 'Debian'
+    - name: Import remi GPG key.
+      rpm_key:
+        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Add remi-php74 repository
+      yum:
+        name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Enable module php7.4 for Centos8
+      dnf:
+        name: '@php:remi-7.4'
+        state: present
+      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+    - name: Install python3 Psycopg2
+      apt:
+        name: python3-psycopg2
+      when: ansible_os_family == 'Debian'
+    - name: "Set ansible_python_interpreter for Ubuntu 20"
+      set_fact:
+        ansible_python_interpreter: "/usr/bin/python3"
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 18
+  tasks:
+    - name: Include geerlingguy.php
+      include_role:
+        name: geerlingguy.php
+      vars:
+        php_enablerepo: "remi-php74"
+        php_default_version_debian: "7.4"
+        php_install_recommends: false
+        php_enable_php_fpm: true
+        php_webserver_daemon: "nginx"
+        php_date_timezone: "Europe/Paris"
+        php_expose_php: false
+        php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
+    - name: Include anxs.postgresql
+      include_role:
+        name: anxs.postgresql
+      vars:
+        postgresql_users:
+          - name: "drupal"
+            pass: "drupal"
+        postgresql_databases:
+          - name: "drupal"
+            owner: "drupal"
+    - name: Include geerlingguy.git
+      include_role:
+        name: geerlingguy.git
+    - name: Include geerlingguy.drush
+      include_role:
+        name: geerlingguy.drush
+    - name: Include geerlingguy.nginx
+      include_role:
+        name: geerlingguy.nginx
+      vars:
+        nginx_ppa_use: true
+        nginx_remove_default_vhost: true
+        nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+        nginx_vhosts:
+          - listen: "80"
+            server_name: "drupalll.test"
+            root: /drupal/project_root/www/web
+            extra_parameters: |
+              client_max_body_size 4096M;
+
+              location / {
+                  try_files $uri /index.php?$query_string;
+              }
+
+              location @rewrite {
+                rewrite ^ /index.php;
+              }
+
+              location ~ '\.php$|^/update.php' {
+                fastcgi_split_path_info ^(.+?\.php)(|/.*)$;
+                try_files $fastcgi_script_name =404;
+                include fastcgi_params;
+                fastcgi_param HTTP_PROXY "";
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param PATH_INFO $fastcgi_path_info;
+                fastcgi_param QUERY_STRING $query_string;
+                fastcgi_intercept_errors on;
+                fastcgi_pass 127.0.0.1:9000;
+              }
+
+              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+                try_files $uri @rewrite;
+                expires max;
+                log_not_found off;
+              }
+
+              location ~ ^/sites/.*/files/styles/ {
+                try_files $uri @rewrite;
+              }
+
+              location ~ ^(/[a-z\-]+)?/system/files/ {
+                try_files $uri /index.php?$query_string;
+              }
+
+              if ($request_uri ~* "^(.*/)index\.php/(.*)") {
+                return 307 $1$2;
+              }
+
+              error_log /var/log/nginx/project_error.log;
+              access_log /var/log/nginx/project_access.log;
+        tags:
+          - steamengine_nginx
+    - name: Include steamulo.steamengine
+      include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        steamengine_project_name: drupal
+        steamengine_project_type: drupal
+        steamengine_drupal_install_from_drush: true
+        steamengine_drupal_install_use_existing_config: true
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
+        steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
+        steamengine_drupal_project_setting: |
+          $databases['default']['default'] = array (
+            'database' => 'drupal',
+            'username' => 'drupal',
+            'password' => 'drupal',
+            'prefix' => '',
+            'host' => 'localhost',
+            'port' => '5432',
+            'namespace' => 'Drupal\\Core\\Database\\Driver\\pgsql',
+            'driver' => 'pgsql',
+          );
+          $settings['hash_salt'] = 'ChangeMe';
+          $config_directories['sync'] = '../config';

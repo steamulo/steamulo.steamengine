@@ -107,10 +107,13 @@
   tags:
     - steamengine_deploy_sf
 
-- name: Remove tmp directory
+- name: "Add read permission for {{ steamengine_app_user }}"
   file:
-    path: "{{ tempdir.path }}"
-    state: absent
+    path: "{{ steamengine_project_root_path_web }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    recurse: true
+    mode: u=rwx,g=rx,o=
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
@@ -149,6 +152,14 @@
   tags:
     - steamengine_deploy_sf
 
+- name: Clean logs link directory
+  file:
+    state: absent
+    path: "{{ steamengine_sf_log_path }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
+
 - name: Create logs link directory
   file:
     state: link
@@ -159,6 +170,15 @@
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
+
+- name: Clean link directory
+  file:
+    state: absent
+    path: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
+  with_dict: "{{ steamengine_sf_persistent_directory }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
 
 - name: Create link directory
   file:

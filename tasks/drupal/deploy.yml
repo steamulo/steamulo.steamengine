@@ -104,6 +104,14 @@
   tags:
     - steamengine_deploy_drupal
 
+- name: Clean configuration file
+  file:
+    state: absent
+    path: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
+
 - name: Create configuration link
   file:
     state: link

@@ -34,15 +34,6 @@
   tags:
     - steamengine_deploy_drupal
 
-- include_tasks:
-    file: "./deploy_dump_db.yml"
-    apply:
-      tags:
-        - steamengine_deploy
-        - steamengine_deploy_drupal
-  when: new_build_to_deploy
-  tags: always
-
 - name: Create tmp directory
   tempfile:
     state: directory
@@ -165,7 +156,7 @@
   tags:
     - steamengine_deploy_drupal
 
-### Install with MySQL Database
+# Install with MySQL Database
 
 - include_tasks:
     file: "./deploy_database.yml"
@@ -173,7 +164,7 @@
   tags:
     - steamengine_deploy
 
-### Install with Drush
+# Install with Drush
 
 - include_tasks:
     file: "./install_from_drush.yml"
@@ -181,7 +172,17 @@
   tags:
     - steamengine_deploy
 
-### Cleaning up
+# Finish install
+
+- include_tasks:
+    file: "./deploy_dump_db.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+        - steamengine_deploy_drupal
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
 
 - name: Drush command post deploy
   command: "{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} {{ item }}"

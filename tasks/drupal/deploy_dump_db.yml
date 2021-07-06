@@ -8,14 +8,9 @@
     group: "{{ steamengine_project_user }}"
     mode: 0750
 
-- name: Check that deployment exists
-  stat:
-    path: "{{ steamengine_project_root_path_web }}"
-  register: steamengine_project_root_path_web_details
-
 - name: Creating database dump
   command: "{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-dump --result-file={{ steamengine_home_path }}/deploy_dump/{{ ansible_date_time.iso8601 }}-{{ steamengine_build_checksum }}.sql"
-  when: steamengine_drupal_keep_last_n_backup > 0 and steamengine_project_root_path_web_details.stat.exists
+  when: steamengine_drupal_keep_last_n_backup > 0
 
 - name: Find all database dumps
   find:

@@ -34,6 +34,15 @@
   tags:
     - steamengine_deploy_drupal
 
+- include_tasks:
+    file: "./deploy_dump_db.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+        - steamengine_deploy_drupal
+  when: new_build_to_deploy
+  tags: always
+
 - name: Create tmp directory
   tempfile:
     state: directory
@@ -144,9 +153,7 @@
     - steamengine_deploy_drupal
 
 - name: Check if database is empty
-  command: >
-    {{ steamengine_drush_launcher_path }} -r \
-    {{ steamengine_project_root_path_web }} sql-query 'show tables'
+  command: "{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-query 'show tables'"
   register: database_table_number
   when: new_build_to_deploy
   tags:

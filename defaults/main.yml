@@ -105,3 +105,5 @@ steamengine_drupal_install_option: >
   --account-pass="admin"
   --account-mail="admin@example.com"
   --locale="fr"
+# Number of db backup to keep (0 to deactive backup when deploying)
+steamengine_drupal_keep_last_n_backup: 4

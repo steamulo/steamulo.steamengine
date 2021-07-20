@@ -1,0 +1,43 @@
+---
+
+# NODEJS
+steamengine_wrapper_scripts:
+  - name: start
+    description: Start the project
+    command: |
+      systemctl start {{ steamengine_project_name }}
+  - name: stop
+    description: Stop the project
+    command: |
+      systemctl stop {{ steamengine_project_name }}
+  - name: restart
+    description: Restart the project
+    command: |
+      systemctl restart {{ steamengine_project_name }}
+  - name: status
+    description: Display project status
+    command: |
+      systemctl status {{ steamengine_project_name }}
+      HOME={{ steamengine_project_root_path }} PM2_HOME={{ steamengine_project_root_path }}/pm2 /usr/local/lib/npm/bin/pm2 show {{ steamengine_project_name }}
+  - name: monit
+    description: Monitor project
+    command: |
+      HOME={{ steamengine_project_root_path }} PM2_HOME={{ steamengine_project_root_path }}/pm2 /usr/local/lib/npm/bin/pm2 monit
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log
+  - name: fixpermissions
+    description: Restore project files and folders permissions
+    command: |
+      if [ -d "{{ steamengine_project_root_path_web }}" ]; then
+        chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}
+        chmod -R u=rwx,g=rx,o= {{ steamengine_project_root_path_web }}
+        {% for item in steamengine_nodejs_allowed_write_paths -%}
+        if [ -d "{{ steamengine_project_root_path_web }}/{{ item }}" ]; then
+          chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}/{{ item }}
+          chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path_web }}/{{ item }}
+        fi
+        {% endfor %}
+
+      fi

@@ -1,0 +1,62 @@
+---
+
+# DRUPAL
+steamengine_drupal_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_drupal_public_directory }}"
+steamengine_drupal_persistent_path: "{{ steamengine_project_root_path }}/link"
+steamengine_wrapper_scripts:
+  - name: start
+    description: Start php-fpm and http server
+    command: |
+      systemctl start {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl start nginx
+  - name: stop
+    description: Stop php-fpm and http server
+    command: |
+      systemctl stop {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl stop nginx
+  - name: restart
+    description: Restart php-fpm and http server
+    command: |
+      systemctl restart {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl restart nginx
+  - name: status
+    description: Display php-fpm and http server status
+    command: |
+      systemctl status {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl status nginx
+  - name: reload
+    description: Reload http server configuration
+    command: |
+      systemctl reload nginx
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log
+  - name: fixpermissions
+    description: Restore project files and folders permissions
+    command: |
+      find {{ steamengine_project_root_path_web }} \
+      {% for value in steamengine_drupal_path_with_write_permission %}
+        -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
+      {% endfor %}
+      {% for value in steamengine_drupal_persistent_directory %}
+        -not -path '{{steamengine_project_root_path_web}}/{{ steamengine_drupal_persistent_directory[value] }}*' \
+      {% endfor %}
+        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
+        -exec chmod 'u=rwx,g=rx,o=' {} \;
+
+      /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+      {% for value in steamengine_drupal_path_with_write_permission %}
+        {{ steamengine_project_root_path_web }}/{{ value }} \
+      {% endfor %}
+      {% for value in steamengine_drupal_persistent_directory %}
+        {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
+      {% endfor %}
+
+      /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+      {% for value in steamengine_drupal_path_with_write_permission %}
+        {{ steamengine_project_root_path_web }}/{{ value }} \
+      {% endfor %}
+      {% for value in steamengine_drupal_persistent_directory %}
+        {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
+      {% endfor %}

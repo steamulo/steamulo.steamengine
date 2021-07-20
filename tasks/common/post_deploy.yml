@@ -1,0 +1,6 @@
+---
+
+- name: "Run post deploy commands"
+  command: "/{{ steamengine_project_name }}/bin/steamengine {{ item }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and steamengine_wrapper_scripts_post_deploy
+  loop: "{{ steamengine_wrapper_scripts_post_deploy }}"

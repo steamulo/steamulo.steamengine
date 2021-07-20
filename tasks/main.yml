@@ -7,6 +7,11 @@
       - "steamengine_project_type in steamengine_project_types"
   tags: always
 
+- name: "Include variables for {{ steamengine_project_type }}"
+  include_vars:
+    file: "vars/{{ steamengine_project_type }}.yml"
+  tags: always
+
 - include_tasks:
     file: "{{ steamengine_project_type }}/asserts.yml"
     apply:
@@ -55,4 +60,11 @@
       tags:
         - steamengine_deploy
   when: steamengine_build_url is defined and steamengine_build_url
+  tags: always
+
+- include_tasks:
+    file: common/post_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy
   tags: always

@@ -13,8 +13,8 @@ setup_env () {
     source ${CUR_MOL_VENV_DIR}/.virtualenv/${dir}/bin/activate
   else
     virtualenv -p `which python3` ${CUR_MOL_VENV_DIR}/.virtualenv/${dir} && source ${CUR_MOL_VENV_DIR}/.virtualenv/${dir}/bin/activate
-    python3 -m pip install --upgrade pip
-    python3 -m pip install -r ${CUR_MOL_VENV_DIR}/$PYTHON_REQUIREMENTS_FILE
+    python -m pip install --upgrade pip
+    python -m pip install -r ${CUR_MOL_VENV_DIR}/$PYTHON_REQUIREMENTS_FILE
   fi
 }
 

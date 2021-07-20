@@ -21,6 +21,13 @@ steamengine_logrotate_scripts:
 # This is a global option to rsyslog, this affect all your rsyslog conf
 steamengine_disable_rsyslog_escape_control_characters: true
 
+steamengine_wrapper_scripts_extra: []
+#  name:
+#  description:
+#  command:
+
+steamengine_wrapper_scripts_post_deploy: []
+
 steamengine_build_url_validate_certs: true
 steamengine_build_url_headers: {}
 

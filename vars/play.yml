@@ -1,0 +1,25 @@
+---
+
+# PLAY
+steamengine_play2_run_script: "startproject"
+steamengine_wrapper_scripts:
+  - name: start
+    description: Start the project
+    command: |
+      systemctl start {{ steamengine_project_name }}
+  - name: stop
+    description: Stop the project
+    command: |
+      systemctl stop {{ steamengine_project_name }}
+  - name: restart
+    description: Restart the project
+    command: |
+      systemctl restart {{ steamengine_project_name }}
+  - name: status
+    description: Display project status
+    command: |
+      systemctl status {{ steamengine_project_name }}
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log

@@ -1,0 +1,44 @@
+---
+
+# TOMCAT
+steamengine_tomcat_version: "{{ steamengine_tomcat_major_version }}.{{ steamengine_tomcat_minor_version }}"
+steamengine_tomcat_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ steamengine_tomcat_major_version }}/v{{ steamengine_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat_version }}.tar.gz"
+steamengine_wrapper_scripts:
+  - name: start
+    description: Start the project
+    command: |
+      systemctl start {{ steamengine_project_name }}
+  - name: stop
+    description: Stop the project
+    command: |
+      systemctl stop {{ steamengine_project_name }}
+  - name: restart
+    description: Restart the project
+    command: |
+      systemctl restart {{ steamengine_project_name }}
+  - name: status
+    description: Display project status
+    command: |
+      systemctl status {{ steamengine_project_name }}
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log
+  - name: fixpermissions
+    description: Restore project files and folders permissions
+    command: |
+      if [ -d "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT" ]; then
+          chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
+
+          {% if steamengine_tomcat_allow_insecure_write_root %}
+              chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
+          {% else %}
+              chmod -R u=rwx,g=rx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT
+              {% if steamengine_tomcat_allow_insecure_write_web_inf %}
+              if [ -d "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF" ]; then
+                  chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path }}/tomcat/webapps/ROOT/WEB-INF
+              fi
+              {% endif %}
+          {% endif %}
+
+      fi

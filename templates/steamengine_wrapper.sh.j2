@@ -5,11 +5,9 @@
 display_usage() {
     echo -e "Usage: $0 <arguments>"
     echo -e "\nArguments:"
-    echo -e "  start\n\t\t\tStart the http server"
-    echo -e "  stop\n\t\t\tStop the http server"
-    echo -e "  restart\n\t\t\tRestart the http server"
-    echo -e "  status\n\t\t\tDisplay the http server status"
-    echo -e "  reload\n\t\t\tReload the http server configuration"
+    {% for item in steamengine_wrapper_scripts | union(steamengine_wrapper_scripts_extra) -%}
+    echo -e "  {{ item.name }}\n\t\t\t{{ item.description }}"
+    {% endfor -%}
     echo -e "  -h, --help\n\t\t\tShow Usages"
     echo ""
 }
@@ -37,26 +35,12 @@ while [ $# -gt 0 ]; do
   arg=$1
   shift
   case $arg in
-    start)
-     systemctl start nginx
-     exit $?
+  {% for item in steamengine_wrapper_scripts | union(steamengine_wrapper_scripts_extra) -%}
+  {{ item.name }})
+    {{ item.command | indent(4) }}
+    exit $?
     ;;
-    stop)
-     systemctl stop nginx
-     exit $?
-    ;;
-    restart)
-     systemctl restart nginx
-     exit $?
-    ;;
-    status)
-     systemctl status nginx
-     exit $?
-    ;;
-    reload)
-     systemctl reload nginx
-     exit $?
-    ;;
+  {% endfor -%}
     *)
      echo "Wrong option"
      display_usage

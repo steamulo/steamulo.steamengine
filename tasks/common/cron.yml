@@ -1,0 +1,15 @@
+---
+
+- name: Create project crons
+  cron:
+    name: "{{ item.name }}"
+    day: "{{ item.day | default(omit) }}"
+    hour: "{{ item.hour |default(omit) }}"
+    minute: "{{ item.minute | default(omit) }}"
+    month: "{{ item.month | default(omit) }}"
+    special_time: "{{ item.special_time | default(omit) }}"
+    weekday: "{{ item.weekday | default(omit) }}"
+    disabled: "{{ item.disabled | default(omit) }}"
+    job: "{{ steamengine_bin_path }}/steamengine {{ item.name }} >> {{ steamengine_logs_path }}/cron_{{ item.name }}.log 2>&1"
+    user: "{{ steamengine_project_user }}"
+  loop: "{{ steamengine_crons }}"

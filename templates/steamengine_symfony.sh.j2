@@ -84,7 +84,7 @@ while [ $# -gt 0 ]; do
      exit $?
     ;;
     fixpermissions)
-     find {{ steamengine_project_root_path_web }} \
+     find -L {{ steamengine_project_root_path_web }} \
      {% for value in steamengine_sf_path_with_write_permission %}
        -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
      {% endfor %}
@@ -106,7 +106,7 @@ while [ $# -gt 0 ]; do
        {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
      {% endfor %}
 
-     /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+     /usr/bin/setfacl -dRL -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf_path_with_write_permission %}
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}

@@ -94,18 +94,18 @@ while [ $# -gt 0 ]; do
        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
        -exec chmod 'u=rwx,g=rx,o=' {} \;
 
-     find {{ steamengine_project_root_path_web }} \
+     find -L {{ steamengine_project_root_path_web }} \
        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
- 
-     /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+
+     /usr/bin/setfacl -RL -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf_path_with_write_permission %}
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}
      {% for value in steamengine_sf_persistent_directory %}
        {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
      {% endfor %}
- 
+
      /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf_path_with_write_permission %}
        {{ steamengine_project_root_path_web }}/{{ value }} \
@@ -113,7 +113,7 @@ while [ $# -gt 0 ]; do
      {% for value in steamengine_sf_persistent_directory %}
        {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
      {% endfor %}
- 
+
      exit $?
     ;;
     *)

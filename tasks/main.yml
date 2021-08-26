@@ -63,6 +63,13 @@
   tags: always
 
 - include_tasks:
+    file: common/cron.yml
+    apply:
+      tags:
+        - steamengine_cron
+  tags: always
+
+- include_tasks:
     file: common/post_deploy.yml
     apply:
       tags:

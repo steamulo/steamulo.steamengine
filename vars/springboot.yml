@@ -1,7 +1,7 @@
 ---
 
 # SPRINGBOOT
-steamengine_wrapper_scripts:
+steamengine_wrapper_scripts_base:
   - name: start
     description: Start the project
     command: |

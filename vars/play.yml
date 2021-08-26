@@ -2,7 +2,7 @@
 
 # PLAY
 steamengine_play2_run_script: "startproject"
-steamengine_wrapper_scripts:
+steamengine_wrapper_scripts_base:
   - name: start
     description: Start the project
     command: |

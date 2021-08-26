@@ -3,7 +3,7 @@
 # TOMCAT
 steamengine_tomcat_version: "{{ steamengine_tomcat_major_version }}.{{ steamengine_tomcat_minor_version }}"
 steamengine_tomcat_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ steamengine_tomcat_major_version }}/v{{ steamengine_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat_version }}.tar.gz"
-steamengine_wrapper_scripts:
+steamengine_wrapper_scripts_base:
   - name: start
     description: Start the project
     command: |

@@ -1,7 +1,7 @@
 ---
 
 # STATIC
-steamengine_wrapper_scripts:
+steamengine_wrapper_scripts_base:
   - name: start
     description: Start http server
     command: |

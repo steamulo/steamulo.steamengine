@@ -3,7 +3,7 @@
 # DRUPAL
 steamengine_drupal_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_drupal_public_directory }}"
 steamengine_drupal_persistent_path: "{{ steamengine_project_root_path }}/link"
-steamengine_wrapper_scripts:
+steamengine_wrapper_scripts_base:
   - name: start
     description: Start php-fpm and http server
     command: |

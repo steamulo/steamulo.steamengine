@@ -1,5 +1,15 @@
 ---
 
+# WRAPPER
+steamengine_wrapper_scripts_cron: |
+  {% set l = [] %}
+  {% for cron in steamengine_crons %}
+  {% set _ = l.append({'name': cron.name, 'description': cron.description, 'command': cron.command}) %}
+  {% endfor %}
+  {{ l }}
+
+steamengine_wrapper_scripts: "{{ steamengine_wrapper_scripts_base | union(steamengine_wrapper_scripts_extra) | union(steamengine_wrapper_scripts_cron) }}"
+
 # USERS
 steamengine_project_user: "{{ steamengine_project_name }}"
 steamengine_app_user: "{{ steamengine_project_name }}app"

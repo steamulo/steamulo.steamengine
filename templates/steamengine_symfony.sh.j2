@@ -98,7 +98,7 @@ while [ $# -gt 0 ]; do
        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
 
-     /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+     /usr/bin/setfacl -RL -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
      {% for value in steamengine_sf_path_with_write_permission %}
        {{ steamengine_project_root_path_web }}/{{ value }} \
      {% endfor %}

@@ -143,6 +143,18 @@
   tags:
     - steamengine_deploy_drupal
 
+# Add .env file for env_variables drupal modules: https://www.drupal.org/project/env_variables
+
+- include_tasks:
+    file: "./deploy_env_file.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+        - steamengine_deploy_drupal
+  when: steamengine_drupal_env_template_path is defined
+  tags:
+    - always
+
 - name: Check if database is empty
   command: "{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-query 'show tables'"
   register: database_table_number

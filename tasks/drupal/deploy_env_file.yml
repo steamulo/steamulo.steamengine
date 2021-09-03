@@ -1,0 +1,26 @@
+---
+
+- name: Remove potential env file
+  file:
+    state: absent
+    path: "{{ steamengine_project_root_path_web }}/.env"
+  when: steamengine_drupal_env_template_path is defined
+
+# Template module is used because copy module is not recommended with variables : https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html)
+- name: Create external env file
+  template:
+    src: "{{ steamengine_drupal_env_template_path }}"
+    dest: "{{ steamengine_conf_path }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  when: steamengine_drupal_env_template_path is defined
+
+- name: Create env symlink
+  file:
+    state: link
+    src: "{{ steamengine_conf_path }}/.env"
+    dest: "{{ steamengine_project_root_path_web }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: steamengine_drupal_env_template_path is defined

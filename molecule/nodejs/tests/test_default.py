@@ -24,8 +24,11 @@ def test_app_response(host):
 def test_storage_subdirectory_file(host):
     protected_upload = host.file("/test_nodejs/storage/protected_upload")
     assert protected_upload.exists
+    assert protected_upload.is_directory
 
 
 def test_link_file(host):
-    protected_upload = host.link("/test_nodejs/project_root/www/upload")
-    assert protected_upload.exists
+    upload = host.file("/test_nodejs/project_root/www/upload")
+    assert upload.exists
+    assert upload.is_symlink
+    assert "/test_nodejs/storage/protected_upload" in upload.linked_to

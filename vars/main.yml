@@ -21,6 +21,7 @@ steamengine_project_root_path_web: "{{ steamengine_project_root_path }}/www"
 steamengine_conf_path: "{{ steamengine_home_path }}/conf"
 steamengine_bin_path: "{{ steamengine_home_path }}/bin"
 steamengine_logs_path: "{{ steamengine_home_path }}/logs"
+steamengine_persitent_base_path: "/{{ steamengine_project_name }}/storage"
 
 # OTHERS
 steamengine_project_types:

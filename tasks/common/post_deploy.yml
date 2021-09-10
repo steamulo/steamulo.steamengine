@@ -1,5 +1,25 @@
 ---
 
+- name: Create storage subdirectories
+  file:
+    state: directory
+    path: "/{{ steamengine_persitent_base_path }}/{{ item.path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+    recurse: yes
+  loop: "{{ steamengine_persistant_directories }}"
+
+- name: Create symbolic link to storage directories
+  file:
+    state: link
+    src: "{{ steamengine_persitent_base_path }}/{{ item.path }}"
+    dest: "{{ steamengine_project_root_path_web }}/{{ item.symlink_src }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  loop: "{{ steamengine_persistant_directories }}"
+
 - name: "Run post deploy commands"
   command: "/{{ steamengine_project_name }}/bin/steamengine {{ item }}"
   when: new_build_to_deploy is defined and new_build_to_deploy and steamengine_wrapper_scripts_post_deploy

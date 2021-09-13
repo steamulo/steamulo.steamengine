@@ -3,7 +3,7 @@
 - name: Create storage subdirectories
   file:
     state: directory
-    path: "/{{ steamengine_persistent_base_path }}/{{ item.path }}"
+    path: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=

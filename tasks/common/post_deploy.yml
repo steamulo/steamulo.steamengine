@@ -21,7 +21,7 @@
   file:
     state: link
     src: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
-    dest: "{{ steamengine_project_name }}/{{ item.symlink_src }}"
+    dest: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=

@@ -10,7 +10,7 @@
     recurse: yes
   loop: "{{ steamengine_persistent_directories }}"
 
-- name: delete directories if exists
+- name: Delete directories if exists
   file:
     state: absent
     path: "{{ steamengine_project_name }}/{{ item.symlink_src }}"

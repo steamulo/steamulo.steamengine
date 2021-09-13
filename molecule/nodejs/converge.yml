@@ -18,6 +18,5 @@
         steamengine_persistent_directories:
           - path: "protected_upload"
             symlink_src: "project_root/www/upload"
-            delete_dir: true
         steamengine_project_configuration:
           PORT: 3300

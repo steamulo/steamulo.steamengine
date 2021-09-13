@@ -19,3 +19,16 @@ def test_app_listening(host):
 def test_app_response(host):
     resp = host.run("curl localhost:3300").stdout
     assert "Welcome to Express" in resp
+
+
+def test_storage_subdirectory_file(host):
+    protected_upload = host.file("/test_nodejs/storage/protected_upload")
+    assert protected_upload.exists
+    assert protected_upload.is_directory
+
+
+def test_link_file(host):
+    upload = host.file("/test_nodejs/project_root/www/upload")
+    assert upload.exists
+    assert upload.is_symlink
+    assert "/test_nodejs/storage/protected_upload" in upload.linked_to

@@ -46,6 +46,16 @@ steamengine_crons: []
 steamengine_build_url_validate_certs: true
 steamengine_build_url_headers: {}
 
+# Create persistent subdirectory
+# All directories are placed in "{{ steamengine_project_name }}/storage"
+# The storage directory is create if at least one item is present
+# Example :
+# steamengine_persistent_directories:
+#     - path: "protected_upload" # Create a subdirectory storage/protected_upload
+#       symlink_src: "upload"    # Create a link "{{ steamengine_project_name }}/upload" -> storage/protected_upload
+#       delete_dir: False        # Delete the directory (if exists) before creating the symlink . False by default
+steamengine_persistent_directories: []
+
 # NODEJS
 steamengine_nodejs_entrypoint: "bin/www"
 steamengine_nodejs_cluster_mode: true

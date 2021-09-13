@@ -7,7 +7,6 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-    recurse: yes
   loop: "{{ steamengine_persistent_directories }}"
 
 - name: Delete directories if exists

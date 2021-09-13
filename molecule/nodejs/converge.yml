@@ -16,7 +16,11 @@
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/nodejs-express-build.zip
         steamengine_build_checksum: sha1:5ca5bebc8f3b770358732c90b20b94b710158d55
         steamengine_persistent_directories:
-          - path: "protected_upload"
-            symlink_src: "project_root/www/upload"
+          - path: "certs"
+            symlink_src: "project_root/www/certs"
+          - path: "protected_upload/images"
+            symlink_src: "project_root/www/images"
+          - path: "protected_upload/gifs"
+            symlink_src: "project_root/www/gifs"
         steamengine_project_configuration:
           PORT: 3300

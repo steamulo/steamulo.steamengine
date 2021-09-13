@@ -27,8 +27,15 @@ def test_storage_subdirectory_file(host):
     assert protected_upload.is_directory
 
 
-def test_link_file(host):
-    upload = host.file("/test_nodejs/project_root/www/upload")
-    assert upload.exists
-    assert upload.is_symlink
-    assert "/test_nodejs/storage/protected_upload" in upload.linked_to
+def test_link_recursive_dir_file(host):
+    link = host.file("/test_nodejs/project_root/www/images")
+    assert link.exists
+    assert link.is_symlink
+    assert "/test_nodejs/storage/protected_upload/images" in link.linked_to
+
+
+def test_link_certs_file(host):
+    link = host.file("/test_nodejs/project_root/www/certs")
+    assert link.exists
+    assert link.is_symlink
+    assert "/test_nodejs/storage/certs" in link.linked_to

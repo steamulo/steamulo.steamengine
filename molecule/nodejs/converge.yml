@@ -17,6 +17,7 @@
         steamengine_build_checksum: sha1:5ca5bebc8f3b770358732c90b20b94b710158d55
         steamengine_persistent_directories:
           - path: "protected_upload"
-            symlink_src: "upload"
+            symlink_src: "project_root/www/upload"
+            delete_dir: true
         steamengine_project_configuration:
           PORT: 3300

@@ -10,11 +10,18 @@
     recurse: yes
   loop: "{{ steamengine_persistent_directories }}"
 
+- name: delete directories if exists
+  file:
+    state: absent
+    path: "{{ steamengine_project_name }}/{{ item.symlink_src }}"
+  loop: "{{ steamengine_persistent_directories }}"
+  when:  item.delete_dir is defined and item.delete_dir
+
 - name: Create symbolic link to storage directories
   file:
     state: link
     src: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
-    dest: "{{ steamengine_project_root_path_web }}/{{ item.symlink_src }}"
+    dest: "{{ steamengine_project_name }}/{{ item.symlink_src }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=

@@ -13,7 +13,7 @@
 - name: Delete directories if exists
   file:
     state: absent
-    path: "{{ steamengine_project_name }}/{{ item.symlink_src }}"
+    path: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
   loop: "{{ steamengine_persistent_directories }}"
   when: item.delete_dir is defined and item.delete_dir
 

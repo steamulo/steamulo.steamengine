@@ -22,7 +22,7 @@ def test_drupal_index_page(host):
 
 
 def test_drupal_env_file(host):
-    env_file = host.file(" /drupal/conf/.env")
+    env_file = host.file("/drupal/conf/.env")
     assert env_file.exists
     env_file_content = env_file.content_string
     assert 'ENV_VAR_TEST=test_value' in env_file_content

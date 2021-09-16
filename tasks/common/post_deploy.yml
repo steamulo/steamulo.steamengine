@@ -27,7 +27,9 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=
-  when: new_build_to_deploy is defined and new_build_to_deploy
+  when:
+    - item.symlink_src is defined and item.symlink_src
+    - new_build_to_deploy is defined and new_build_to_deploy
   loop: "{{ steamengine_persistent_directories }}"
 
 

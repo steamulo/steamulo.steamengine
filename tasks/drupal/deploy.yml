@@ -151,7 +151,7 @@
       tags:
         - steamengine_deploy
         - steamengine_deploy_drupal
-  when: steamengine_drupal_env_template_path is defined
+  when: steamengine_drupal_env is defined
   tags:
     - always
 

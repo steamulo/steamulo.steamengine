@@ -19,3 +19,10 @@ def test_app_listening(host):
 def test_drupal_index_page(host):
     resp = host.run("curl --resolve 'drupal.test:80:127.0.0.1' http://drupal.test/").stdout
     assert '<a href="/" title="Accueil" rel="home">drupal</a>' in resp
+
+
+def test_drupal_env_file(host):
+    env_file = host.file(" /drupal/conf/.env")
+    assert env_file.exists
+    env_file_content = env_file.content_string
+    assert 'ENV_VAR_TEST=test_value' in env_file_content

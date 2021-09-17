@@ -4,7 +4,6 @@
   file:
     state: absent
     path: "{{ steamengine_project_root_path_web }}/.env"
-  when: steamengine_drupal_env is defined
 
 - name: Create external env file
   copy:
@@ -15,7 +14,6 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rw,g=r,o=
-  when: steamengine_drupal_env is defined
 
 - name: Create env symlink
   file:
@@ -24,4 +22,3 @@
     dest: "{{ steamengine_project_root_path_web }}/.env"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: steamengine_drupal_env is defined

@@ -125,6 +125,8 @@
         steamengine_drupal_install_use_existing_config: true
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
         steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
+        steamengine_drupal_env: |
+          ENV_VAR_TEST=test_value
         steamengine_drupal_project_setting: |
           $databases['default']['default'] = array (
             'database' => 'drupal',

@@ -45,7 +45,7 @@ steamengine_wrapper_scripts_base:
         -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
         -exec chmod 'u=rwx,g=rx,o=' {} \;
 
-      /usr/bin/setfacl -R -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+      chown -R {{ steamengine_project_user }}:{{ steamengine_project_user }}app \
       {% for value in steamengine_drupal_path_with_write_permission %}
         {{ steamengine_project_root_path_web }}/{{ value }} \
       {% endfor %}
@@ -53,7 +53,7 @@ steamengine_wrapper_scripts_base:
         {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
       {% endfor %}
 
-      /usr/bin/setfacl -dR -m u:{{ (ansible_os_family == 'RedHat') | ternary('apache', 'www-data') }}:rwX -m u:{{ steamengine_project_user }}:rwX \
+      chmod -R 'u=rwx,g=rwx,o=' \
       {% for value in steamengine_drupal_path_with_write_permission %}
         {{ steamengine_project_root_path_web }}/{{ value }} \
       {% endfor %}

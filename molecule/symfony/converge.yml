@@ -71,3 +71,6 @@
             command: php {{ steamengine_sf_bin_path }}/console cache:clear --env=prod
         steamengine_wrapper_scripts_post_deploy:
           - "cache_clear"
+        steamengine_persistent_directories:
+          - path: "protected_upload"
+            symlink_src: "project_root/www/upload"

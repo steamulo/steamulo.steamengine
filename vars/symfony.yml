@@ -7,7 +7,6 @@ steamengine_sf_bin_path: "{{ steamengine_project_root_path_web }}/{{ steamengine
 steamengine_sf_var_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_var_directory }}"
 steamengine_sf_log_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_log_directory }}"
 steamengine_sf_cache_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_cache_directory }}"
-steamengine_sf_persistent_path: "{{ steamengine_project_root_path }}/link"
 steamengine_wrapper_scripts_base:
   - name: start
     description: Start php-fpm and http server
@@ -44,8 +43,8 @@ steamengine_wrapper_scripts_base:
       {% for value in steamengine_sf_path_with_write_permission %}
         -not -path '{{ steamengine_project_root_path_web }}/{{ value }}*' \
       {% endfor %}
-      {% for value in steamengine_sf_persistent_directory %}
-        -not -path '{{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }}*' \
+      {% for value in steamengine_persistent_directories %}
+        -not -path '{{ steamengine_project_name }}/{{ value.symlink_src }}*' \
       {% endfor %}
         -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
         -exec chmod 'u=rwx,g=rx,o=' {} \;
@@ -58,6 +57,6 @@ steamengine_wrapper_scripts_base:
       {% for value in steamengine_sf_path_with_write_permission %}
         {{ steamengine_project_root_path_web }}/{{ value }} \
       {% endfor %}
-      {% for value in steamengine_sf_persistent_directory %}
-        {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
+      {% for value in steamengine_persistent_directories %}
+        {{ steamengine_project_name }}/{{ value.symlink_src }} \
       {% endfor %}

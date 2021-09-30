@@ -4,13 +4,13 @@ node ('docker') {
     try {
         stage ('Testing') {
             withPythonEnv('/usr/bin/python3') {
-                sh "python3 -m pip install --upgrade pip"
+                sh "python -m pip install --upgrade pip"
                 // We use another dir, outside the python env
                 // so that molecule doesn't lint python lib
                 sh "mkdir steamulo.steamengine"
                 dir('steamulo.steamengine') {
                     checkout scm
-                    sh "python3 -m pip install -r requirements.txt"
+                    sh "python -m pip install -r requirements.txt"
                     ansiColor('xterm') {
                         sh "molecule test --all"
                     }

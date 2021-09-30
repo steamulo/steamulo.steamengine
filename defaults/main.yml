@@ -21,8 +21,40 @@ steamengine_logrotate_scripts:
 # This is a global option to rsyslog, this affect all your rsyslog conf
 steamengine_disable_rsyslog_escape_control_characters: true
 
+steamengine_wrapper_scripts_extra: []
+#  name:
+#  description:
+#  command:
+
+steamengine_wrapper_scripts_post_deploy: []
+
+# List of command to run periodically. This command will be automatically put into steamengine wrapper and called from a cron.
+# Example :
+# steamengine_crons:
+#   - name: "hello_world" # without space or special char
+#     description: "Hello World"
+#     command: "cache:hello:world"
+#     minute: "*" # optional
+#     hour: "*" # optional
+#     day: "*" # optional
+#     month: "*" # optional
+#     weekday: "*" # optional
+#     special_time: daily # optional
+#     disabled: false # optional
+steamengine_crons: []
+
 steamengine_build_url_validate_certs: true
 steamengine_build_url_headers: {}
+
+# Create persistent subdirectory
+# All directories are placed in "{{ steamengine_project_name }}/storage"
+# The storage directory is create if at least one item is present
+# Example :
+# steamengine_persistent_directories:
+#     - path: "protected_upload" # Create a subdirectory storage/protected_upload
+#       symlink_src: "upload"    # Create a link "/{{ steamengine_project_name }}/upload" -> "/{{ steamengine_project_name }}/storage/protected_upload
+#       delete_dir: False        # Delete the directory (if exists) before creating the symlink . False by default
+steamengine_persistent_directories: []
 
 # NODEJS
 steamengine_nodejs_entrypoint: "bin/www"

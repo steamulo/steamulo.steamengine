@@ -2,7 +2,7 @@
 
 - name: Create steamengine bin
   template:
-    src: "steamengine_{{ steamengine_project_type }}.sh.j2"
+    src: "steamengine_wrapper.sh.j2"
     dest: "{{ steamengine_bin_path }}/steamengine"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_project_user }}"
@@ -44,4 +44,4 @@
     owner: root
     group: root
     mode: 0644
-  with_items: "{{ steamengine_logrotate_scripts }}"
+  loop: "{{ steamengine_logrotate_scripts }}"

@@ -1,0 +1,39 @@
+---
+
+- name: Create storage subdirectories
+  file:
+    state: directory
+    path: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_persistent_directories }}"
+
+- name: Delete directories if exists
+  file:
+    state: absent
+    path: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
+  when:
+    - item.delete_dir is defined and item.delete_dir
+    - new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_persistent_directories }}"
+
+- name: Create symbolic link to storage directories
+  file:
+    state: link
+    src: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
+    dest: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when:
+    - item.symlink_src is defined and item.symlink_src
+    - new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_persistent_directories }}"
+
+
+- name: "Run post deploy commands"
+  command: "/{{ steamengine_project_name }}/bin/steamengine {{ item }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and steamengine_wrapper_scripts_post_deploy
+  loop: "{{ steamengine_wrapper_scripts_post_deploy }}"

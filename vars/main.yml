@@ -1,5 +1,15 @@
 ---
 
+# WRAPPER
+steamengine_wrapper_scripts_cron: |
+  {% set l = [] %}
+  {% for cron in steamengine_crons %}
+  {% set _ = l.append({'name': cron.name, 'description': cron.description, 'command': cron.command}) %}
+  {% endfor %}
+  {{ l }}
+
+steamengine_wrapper_scripts: "{{ steamengine_wrapper_scripts_base | union(steamengine_wrapper_scripts_extra) | union(steamengine_wrapper_scripts_cron) }}"
+
 # USERS
 steamengine_project_user: "{{ steamengine_project_name }}"
 steamengine_app_user: "{{ steamengine_project_name }}app"
@@ -11,6 +21,7 @@ steamengine_project_root_path_web: "{{ steamengine_project_root_path }}/www"
 steamengine_conf_path: "{{ steamengine_home_path }}/conf"
 steamengine_bin_path: "{{ steamengine_home_path }}/bin"
 steamengine_logs_path: "{{ steamengine_home_path }}/logs"
+steamengine_persistent_base_path: "/{{ steamengine_project_name }}/storage"
 
 # OTHERS
 steamengine_project_types:
@@ -20,13 +31,6 @@ steamengine_project_types:
   - tomcat
   - play
   - symfony
-
-# PLAY
-steamengine_play2_run_script: "startproject"
-
-# TOMCAT
-steamengine_tomcat_version: "{{ steamengine_tomcat_major_version }}.{{ steamengine_tomcat_minor_version }}"
-steamengine_tomcat_tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ steamengine_tomcat_major_version }}/v{{ steamengine_tomcat_version }}/bin/apache-tomcat-{{ steamengine_tomcat_version }}.tar.gz"
 
 # Symfony
 steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_external_logs_directory }}"

@@ -1,0 +1,28 @@
+---
+
+# STATIC
+steamengine_wrapper_scripts_base:
+  - name: start
+    description: Start http server
+    command: |
+      systemctl start nginx
+  - name: stop
+    description: Stop http server
+    command: |
+      systemctl stop nginx
+  - name: restart
+    description: Restart http server
+    command: |
+      systemctl restart nginx
+  - name: reload
+    description: Reload http server configuration
+    command: |
+      systemctl reload nginx
+  - name: status
+    description: Display the http server status
+    command: |
+      systemctl status nginx
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log

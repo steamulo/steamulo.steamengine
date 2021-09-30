@@ -65,3 +65,9 @@
         steamengine_build_checksum: sha1:ac336c6672f5b62f3b65b682311c9dd0a7a6654c
         steamengine_project_configuration:
           APP_ENV: dev
+        steamengine_wrapper_scripts_extra:
+          - name: cache_clear
+            description: Clear symfony cache
+            command: php {{ steamengine_sf_bin_path }}/console cache:clear --env=prod
+        steamengine_wrapper_scripts_post_deploy:
+          - "cache_clear"

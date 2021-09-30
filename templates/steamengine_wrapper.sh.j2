@@ -12,11 +12,6 @@ display_usage() {
     echo ""
 }
 
-if [ "$EUID" -ne 0 ]
-then
-    exec sudo "$0" "$@"
-fi
-
 # if less than two arguments supplied, display usage
 if [  $# -le 0 ]
 then
@@ -36,7 +31,17 @@ while [ $# -gt 0 ]; do
   shift
   case $arg in
   {% for item in steamengine_wrapper_scripts -%}
-  {{ item.name }})
+    {{ item.name }})
+    {% if item.run_with_project_user is defined and item.run_with_project_user %}
+      if [ "$(whoami)" != "{{ steamengine_project_user }}" ]; then
+        exec su {{ steamengine_project_user }} "$0" "$arg"
+      fi
+    {% else %}
+      if [ "$EUID" -ne 0 ]
+      then
+        exec sudo "$0" "$@"
+      fi
+    {% endif %}
     {{ item.command | indent(4) }}
     exit $?
     ;;

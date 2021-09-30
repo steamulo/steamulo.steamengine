@@ -1,0 +1,63 @@
+
+
+# Symfony
+steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_external_logs_directory }}"
+steamengine_sf_public_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_public_directory }}"
+steamengine_sf_bin_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_bin_directory }}"
+steamengine_sf_var_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_var_directory }}"
+steamengine_sf_log_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_log_directory }}"
+steamengine_sf_cache_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_cache_directory }}"
+steamengine_sf_persistent_path: "{{ steamengine_project_root_path }}/link"
+steamengine_wrapper_scripts_base:
+  - name: start
+    description: Start php-fpm and http server
+    command: |
+      systemctl start {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl start nginx
+  - name: stop
+    description: Stop php-fpm and http server
+    command: |
+      systemctl stop {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl stop nginx
+  - name: restart
+    description: Restart php-fpm and http server
+    command: |
+      systemctl restart {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl restart nginx
+  - name: status
+    description: Display php-fpm and http server status
+    command: |
+      systemctl status {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl status nginx
+  - name: reload
+    description: Reload http server configuration
+    command: |
+      systemctl reload nginx
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log
+  - name: fixpermissions
+    description: Restore project files and folders permissions
+    command: |
+      find -L {{ steamengine_project_root_path_web }} \
+      {% for value in steamengine_sf_path_with_write_permission %}
+        -not -path '{{ steamengine_project_root_path_web }}/{{ value }}*' \
+      {% endfor %}
+      {% for value in steamengine_sf_persistent_directory %}
+        -not -path '{{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }}*' \
+      {% endfor %}
+        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+        -exec chmod 'u=rwx,g=rx,o=' {} \;
+
+      find -L {{ steamengine_project_root_path_web }} \
+        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \;
+
+      chmod -R 'u=rwx,g=rwx,o=' \
+      {% for value in steamengine_sf_path_with_write_permission %}
+        {{ steamengine_project_root_path_web }}/{{ value }} \
+      {% endfor %}
+      {% for value in steamengine_sf_persistent_directory %}
+        {{ steamengine_project_root_path_web }}/{{ steamengine_sf_persistent_directory[value] }} \
+      {% endfor %}

@@ -67,10 +67,15 @@
           APP_ENV: dev
         steamengine_wrapper_scripts_extra:
           - name: cache_clear
-            description: Clear symfony cache
-            command: php {{ steamengine_sf_bin_path }}/console cache:clear --env=prod
+            description: "Clear symfony cache"
+            command: "runuser {{ steamengine_app_user }} -c 'php {{ steamengine_sf_bin_path }}/console cache:clear --env=prod'"
         steamengine_wrapper_scripts_post_deploy:
           - "cache_clear"
         steamengine_persistent_directories:
           - path: "protected_upload"
             symlink_src: "project_root/www/upload"
+        steamengine_crons:
+          - name: "cache_clear_cron"
+            description: "Cache clear Daily"
+            command: "runuser {{ steamengine_app_user }} -c 'php {{ steamengine_sf_bin_path }}/console cache:clear --env=prod'"
+            special_time: daily

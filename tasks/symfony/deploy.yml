@@ -170,3 +170,15 @@
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
+
+- name: "Ensure path with write permission exists"
+  file:
+    path: "{{ steamengine_project_root_path_web }}/{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  with_items: "{{ steamengine_sf_path_with_write_permission }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf

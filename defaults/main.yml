@@ -53,7 +53,7 @@ steamengine_build_url_headers: {}
 # steamengine_persistent_directories:
 #     - path: "protected_upload" # Create a subdirectory storage/protected_upload
 #       symlink_src: "upload"    # Create a link "/{{ steamengine_project_name }}/upload" -> "/{{ steamengine_project_name }}/storage/protected_upload
-#       delete_dir: False        # Delete the directory (if exists) before creating the symlink . False by default
+#       delete_dir: false        # Delete the directory (if exists) before creating the symlink . False by default
 steamengine_persistent_directories: []
 
 # NODEJS
@@ -116,10 +116,6 @@ steamengine_drupal_project_setting: |
   );
   $settings['hash_salt'] = 'ChangeMe';
   $config_directories['sync'] = '../config';
-# List of path that should be persisted in a folder outside the projet
-# The key is the folder persisted outside the root project, the value is the name (path) of the folder inside the project. A link will be created on it to the persisted folder
-steamengine_drupal_persistent_directory: 
-  files: "web/sites/default/files"
 # Directory for public file
 steamengine_drupal_public_directory: "web"
 # Url for the dump of database for an install

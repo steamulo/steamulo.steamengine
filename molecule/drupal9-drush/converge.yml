@@ -138,3 +138,13 @@
           );
           $settings['hash_salt'] = 'ChangeMe';
           $settings['config_sync_directory'] = '../config';
+        steamengine_wrapper_scripts_extra:
+          - name: drush_deploy
+            description: "Deploy site with Drush command"
+            command: "runuser {{ steamengine_app_user }} -c '{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} deploy -y'"
+        steamengine_wrapper_scripts_post_deploy:
+          - "drush_deploy"
+        steamengine_persistent_directories:
+          - path: "files"
+            symlink_src: "project_root/www/web/sites/default/files"
+            delete_dir: true

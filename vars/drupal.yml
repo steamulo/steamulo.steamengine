@@ -35,28 +35,22 @@ steamengine_wrapper_scripts_base:
   - name: fixpermissions
     description: Restore project files and folders permissions
     command: |
-      find {{ steamengine_project_root_path_web }} \
+      find -L {{ steamengine_project_root_path_web }} \
       {% for value in steamengine_drupal_path_with_write_permission %}
         -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
       {% endfor %}
-      {% for value in steamengine_drupal_persistent_directory %}
-        -not -path '{{steamengine_project_root_path_web}}/{{ steamengine_drupal_persistent_directory[value] }}*' \
+      {% for value in steamengine_persistent_directories %}
+        -not -path '/{{ steamengine_project_name }}/{{ value.symlink_src }}*' \
       {% endfor %}
-        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }}app {} \; \
         -exec chmod 'u=rwx,g=rx,o=' {} \;
 
-      chown -R {{ steamengine_project_user }}:{{ steamengine_project_user }}app \
-      {% for value in steamengine_drupal_path_with_write_permission %}
-        {{ steamengine_project_root_path_web }}/{{ value }} \
-      {% endfor %}
-      {% for value in steamengine_drupal_persistent_directory %}
-        {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
-      {% endfor %}
+      find -L {{ steamengine_project_root_path_web }} \
+        -exec chown {{ steamengine_project_user }}:{{ steamengine_app_user }} {} \;
 
       chmod -R 'u=rwx,g=rwx,o=' \
       {% for value in steamengine_drupal_path_with_write_permission %}
         {{ steamengine_project_root_path_web }}/{{ value }} \
       {% endfor %}
-      {% for value in steamengine_drupal_persistent_directory %}
-        {{ steamengine_project_root_path_web }}/{{ steamengine_drupal_persistent_directory[value] }} \
+      {% for value in steamengine_persistent_directories %}
+        /{{ steamengine_project_name }}/{{ value.symlink_src }} \
       {% endfor %}

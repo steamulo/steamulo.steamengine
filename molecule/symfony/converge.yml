@@ -32,6 +32,8 @@
         php_webserver_daemon: "nginx"
         php_date_timezone: "Europe/Paris"
         php_expose_php: false
+        php_fpm_pool_user: test_symfonyapp
+        php_fpm_pool_group: test_symfonyapp
     - role: geerlingguy.nginx
       vars:
         nginx_ppa_use: true

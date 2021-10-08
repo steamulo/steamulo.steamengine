@@ -38,10 +38,10 @@ while [ $# -gt 0 ]; do
   {% for item in steamengine_wrapper_scripts -%}
   {{ item.name }})
     {% set command = item.command %}
-    {% if item.run_as_app_user is defined and item.run_as_app_user -%}
+    {% if item.run_as_app_user is defined and item.run_as_app_user %}
       {% set command = 'runuser ' ~ steamengine_app_user ~ ' -c \'' ~ command ~ '\'' %}
     {% endif %}
-    {% if item.run_in_project_root_path_web is defined and item.run_in_project_root_path_web -%}
+    {% if item.run_in_project_root_path_web is defined and item.run_in_project_root_path_web %}
       {% set command = 'cd ' ~ steamengine_project_root_path_web ~ ' && ' ~ command %}
     {% endif %}
     {{ command | indent(4) }}

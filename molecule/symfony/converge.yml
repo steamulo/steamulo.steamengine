@@ -22,6 +22,11 @@
         name: '@php:remi-7.4'
         state: present
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+    - name: "Create project app user test_symfonyapp"
+      user:
+        name: "test_symfonyapp"
+        password: "*"
+        createhome: false
   roles:
     - role: geerlingguy.php
       vars:
@@ -68,20 +73,21 @@
         steamengine_project_configuration:
           APP_ENV: dev
         steamengine_wrapper_scripts_extra:
-          - name: cache_clear
+          - name: cache_clear_dev
             description: "Clear symfony cache"
-            command: "php {{ steamengine_sf_bin_directory }}/console cache:clear --env=prod"
+            command: "php bin/console cache:clear --env=dev"
             run_as_app_user: true
             run_in_project_root_path_web: true
         steamengine_wrapper_scripts_post_deploy:
           - "cache_clear"
+          - "cache_clear_dev"
         steamengine_persistent_directories:
           - path: "protected_upload"
             symlink_src: "project_root/www/upload"
         steamengine_crons:
           - name: "cache_clear_cron"
             description: "Cache clear Daily"
-            command: "php {{ steamengine_sf_bin_directory }}/console cache:clear --env=prod"
+            command: "php bin/console cache:clear --env=prod"
             run_as_app_user: true
             run_in_project_root_path_web: true
             special_time: daily

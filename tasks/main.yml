@@ -54,7 +54,7 @@
         - steamengine_runtime
   tags: always
 
-- name: "Reset var new_build_to_deploy"
+- name: "Initialize var new_build_to_deploy"
   set_fact:
     new_build_to_deploy: false
   tags: always

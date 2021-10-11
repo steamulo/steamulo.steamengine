@@ -39,10 +39,10 @@ while [ $# -gt 0 ]; do
   {{ item.name }})
     {% set command = item.command %}
     {% if item.run_as_app_user is defined and item.run_as_app_user %}
-      {% set command = 'runuser ' ~ steamengine_app_user ~ ' -c \'' ~ command ~ '\'' %}
+      {% set command = 'sudo -u ' ~ steamengine_app_user ~ ' ' ~ command %}
     {% endif %}
     {% if item.run_in_project_root_path_web is defined and item.run_in_project_root_path_web %}
-      {% set command = 'cd ' ~ steamengine_project_root_path_web ~ ' && ' ~ command %}
+      {% set command = 'bash -c \'cd ' ~ steamengine_project_root_path_web ~ '; ' ~ command ~ '\'' %}
     {% endif %}
     {{ command | indent(4) }}
     exit $?

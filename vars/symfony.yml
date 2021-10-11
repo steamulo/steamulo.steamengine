@@ -60,3 +60,8 @@ steamengine_wrapper_scripts_base:
       {% for value in steamengine_persistent_directories %}
         /{{ steamengine_project_name }}/{{ value.symlink_src }} \
       {% endfor %}
+  - name: cache_clear
+    description: "Clear symfony cache prod"
+    command: "php bin/console cache:clear --env=prod"
+    run_as_app_user: true
+    run_in_project_root_path_web: true

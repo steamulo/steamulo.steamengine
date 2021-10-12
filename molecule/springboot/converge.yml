@@ -15,6 +15,11 @@
         steamengine_project_type: springboot
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/hello-world-app-spring-boot.jar
         steamengine_build_checksum: sha1:332ea24fea20f0cecbc2b855b9174c49bd3feff2
+        steamengine_persistent_directories:
+          - path: "certs"
+            symlink_src: "project_root/certs"
+          - path: "protected_upload/images"
+
         steamengine_project_configuration:
           server:
             port: 8085

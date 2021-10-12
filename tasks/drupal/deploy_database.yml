@@ -25,7 +25,7 @@
   tags:
     - steamengine_deploy_drupal
 
-- name: Depploy db dump with drush
+- name: Deploy db dump with drush
   shell: >
     {{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} \
     sql:cli < {{ steamengine_project_root_path }}/{{ archive_contents.files[0] }}

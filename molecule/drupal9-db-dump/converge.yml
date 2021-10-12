@@ -30,6 +30,11 @@
       set_fact:
         ansible_python_interpreter: "/usr/bin/python3"
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 18
+    - name: "Create project app user drupalapp"
+      user:
+        name: "drupalapp"
+        password: "*"
+        createhome: false
   tasks:
     - name: Include geerlingguy.php
       include_role:
@@ -43,6 +48,8 @@
         php_date_timezone: "Europe/Paris"
         php_expose_php: false
         php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
+        php_fpm_pool_user: drupalapp
+        php_fpm_pool_group: drupalapp
     - name: Include anxs.postgresql
       include_role:
         name: anxs.postgresql
@@ -139,10 +146,6 @@
           );
           $settings['hash_salt'] = 'ChangeMe';
           $settings['config_sync_directory'] = '../config';
-        steamengine_wrapper_scripts_extra:
-          - name: drush_deploy
-            description: "Deploy site with Drush command"
-            command: "runuser {{ steamengine_app_user }} -c '{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} deploy -y'"
         steamengine_wrapper_scripts_post_deploy:
           - "drush_deploy"
         steamengine_persistent_directories:

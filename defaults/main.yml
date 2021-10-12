@@ -25,6 +25,8 @@ steamengine_wrapper_scripts_extra: []
 #  name:
 #  description:
 #  command:
+#  run_as_app_user: true # optional
+#  run_in_project_root_path_web: true # optional
 
 steamengine_wrapper_scripts_post_deploy: []
 
@@ -34,6 +36,8 @@ steamengine_wrapper_scripts_post_deploy: []
 #   - name: "hello_world" # without space or special char
 #     description: "Hello World"
 #     command: "cache:hello:world"
+#     run_as_app_user: true # optional
+#     run_in_project_root_path_web: true # optional
 #     minute: "*" # optional
 #     hour: "*" # optional
 #     day: "*" # optional

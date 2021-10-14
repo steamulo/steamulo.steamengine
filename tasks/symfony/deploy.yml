@@ -93,6 +93,17 @@
   tags:
     - steamengine_deploy_sf
 
+- name: Check www directory exists
+  stat:
+    path: "{{ steamengine_project_root_path_web }}"
+  register: root_path_web_directory
+
+- name: Fix permissions before updating source
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  when: new_build_to_deploy and root_path_web_directory.stat.exists
+  tags:
+    - steamengine_deploy_sf
+
 - name: Clean www directory
   file:
     path: "{{ steamengine_project_root_path_web }}"

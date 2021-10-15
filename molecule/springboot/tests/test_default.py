@@ -28,7 +28,7 @@ def test_storage_subdirectory_file(host):
 
 
 def test_link_certs_file(host):
-    link = host.file("/test_springboot/project_root/www/certs")
+    link = host.file("/test_springboot/project_root/certs")
     assert link.exists
     assert link.is_symlink
     assert "/test_springboot/storage/certs" in link.linked_to

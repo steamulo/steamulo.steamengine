@@ -33,6 +33,7 @@
                    scheme="https"
                    {% endif %}
                    protocol="org.apache.coyote.http11.Http11NioProtocol"
+                   maxPostSize="{{ steamengine_tomcat_max_post_size }}"
                    connectionTimeout="{{ steamengine_tomcat_connection_timeout }}"
                    maxThreads="{{ steamengine_tomcat_max_threads }}"
                    acceptCount="{{ steamengine_tomcat_accept_count }}"

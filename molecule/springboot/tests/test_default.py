@@ -19,3 +19,16 @@ def test_app_listening(host):
 def test_app_response(host):
     resp = host.run("curl -d 'Francis' -X POST localhost:8085").stdout
     assert "Hello Francis" in resp
+
+
+def test_storage_subdirectory_file(host):
+    protected_upload = host.file("/test_springboot/storage/protected_upload")
+    assert protected_upload.exists
+    assert protected_upload.is_directory
+
+
+def test_link_certs_file(host):
+    link = host.file("/test_springboot/project_root/certs")
+    assert link.exists
+    assert link.is_symlink
+    assert "/test_springboot/storage/certs" in link.linked_to

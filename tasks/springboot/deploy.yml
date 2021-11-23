@@ -39,5 +39,12 @@
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
   notify:
     - "{{ steamengine_project_name }} restart"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_springboot
+
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  set_fact:
+    new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_springboot

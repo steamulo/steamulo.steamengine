@@ -35,10 +35,8 @@
         name: "drupalapp"
         password: "*"
         createhome: false
-  tasks:
-    - name: Include geerlingguy.php
-      include_role:
-        name: geerlingguy.php
+  roles:
+    - role: geerlingguy.php
       vars:
         php_enablerepo: "remi-php74"
         php_default_version_debian: "7.4"
@@ -50,9 +48,7 @@
         php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
         php_fpm_pool_user: drupalapp
         php_fpm_pool_group: drupalapp
-    - name: Include anxs.postgresql
-      include_role:
-        name: anxs.postgresql
+    - role: anxs.postgresql
       vars:
         postgresql_users:
           - name: "drupal"
@@ -60,15 +56,9 @@
         postgresql_databases:
           - name: "drupal"
             owner: "drupal"
-    - name: Include geerlingguy.git
-      include_role:
-        name: geerlingguy.git
-    - name: Include geerlingguy.drush
-      include_role:
-        name: geerlingguy.drush
-    - name: Include geerlingguy.nginx
-      include_role:
-        name: geerlingguy.nginx
+    - role: geerlingguy.git
+    - role: geerlingguy.drush
+    - role: geerlingguy.nginx
       vars:
         nginx_ppa_use: true
         nginx_remove_default_vhost: true
@@ -122,9 +112,7 @@
               access_log /var/log/nginx/project_access.log;
         tags:
           - steamengine_nginx
-    - name: Include steamulo.steamengine
-      include_role:
-        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: drupal
         steamengine_project_type: drupal

@@ -9,7 +9,7 @@
     mode: 0750
 
 - name: Creating database dump
-  command: "{{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-dump --result-file={{ steamengine_home_path }}/deploy_dump/{{ ansible_date_time.iso8601 }}-{{ steamengine_build_checksum }}.sql"
+  command: "{{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-dump --result-file={{ steamengine_home_path }}/deploy_dump/{{ ansible_date_time.iso8601 }}-{{ steamengine_build_checksum }}.sql"
   when: steamengine_drupal_keep_last_n_backup > 0
 
 - name: Find all database dumps

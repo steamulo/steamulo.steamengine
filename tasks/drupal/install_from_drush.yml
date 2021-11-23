@@ -18,10 +18,10 @@
 
 - name: Install Drupal with drush.
   command: >
-    {{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }}
+    {{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }}
     site-install {{ steamengine_drupal_install_profile }} -y {{ steamengine_drupal_install_option }}
     {{ steamengine_drupal_install_use_existing_config | ternary('--existing-config', '') }}
-  when: new_deploy and steamengine_drupal_install_from_drush
+  when: initial_drupal_install and steamengine_drupal_install_from_drush
   tags:
     - steamengine_deploy_drupal
 

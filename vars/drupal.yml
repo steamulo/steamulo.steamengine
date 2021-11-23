@@ -56,6 +56,6 @@ steamengine_wrapper_scripts_base:
       {% endfor %}
   - name: drush_deploy
     description: "Deploy site with Drush command"
-    command: "{{ steamengine_drush_launcher_path }} deploy -y"
+    command: "{{ steamengine_drupal_drush_launcher_path }} deploy -y"
     run_as_app_user: true
     run_in_project_root_path_web: true

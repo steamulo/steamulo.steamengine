@@ -27,9 +27,9 @@
 
 - name: Deploy db dump with drush
   shell: >
-    {{ steamengine_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} \
+    {{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} \
     sql:cli < {{ steamengine_project_root_path }}/{{ archive_contents.files[0] }}
-  when: new_deploy and not steamengine_drupal_install_from_drush and steamengine_db_dump_url is defined and steamengine_db_dump_url
+  when: initial_drupal_install and not steamengine_drupal_install_from_drush and steamengine_db_dump_url is defined and steamengine_db_dump_url
   tags:
     - steamengine_deploy_drupal
 

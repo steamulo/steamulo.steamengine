@@ -100,7 +100,7 @@ steamengine_java_opts:
 
 # DRUPAL
 # Path of drush launcher
-steamengine_drush_launcher_path: "/usr/local/bin/drush"
+steamengine_drupal_drush_launcher_path: "/usr/local/bin/drush"
 # Command run at the end of deployment
 steamengine_drupal_drush_command_deployment:
   - "deploy -y"

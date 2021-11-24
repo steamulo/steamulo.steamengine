@@ -4,7 +4,7 @@ driver:
   name: docker
 lint: |
   set -e
-  ansible-lint --exclude ~/.cache
+  ansible-lint --exclude ~/.cache --exclude .github
   flake8
 platforms:
   - name: instance

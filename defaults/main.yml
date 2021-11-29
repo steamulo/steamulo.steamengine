@@ -101,9 +101,6 @@ steamengine_java_opts:
 # DRUPAL
 # Path of drush launcher
 steamengine_drupal_drush_launcher_path: "/usr/local/bin/drush"
-# Command run at the end of deployment
-steamengine_drupal_drush_command_deployment:
-  - "deploy -y"
 # List of directory we need write permission
 steamengine_drupal_path_with_write_permission:
   - "web/sites/default/files"

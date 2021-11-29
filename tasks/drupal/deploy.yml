@@ -185,10 +185,3 @@
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
-
-- name: Drush command post deploy
-  command: "{{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} {{ item }}"
-  with_items: "{{ steamengine_drupal_drush_command_deployment }}"
-  when: new_build_to_deploy
-  tags:
-    - steamengine_deploy_drupal

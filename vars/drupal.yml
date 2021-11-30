@@ -45,7 +45,8 @@ steamengine_wrapper_scripts_base:
         -exec chmod 'u=rwx,g=rx,o=' {} \;
 
       find -L {{ steamengine_project_root_path_web }} \
-        -exec chown {{ steamengine_project_user }}:{{ steamengine_app_user }} {} \;
+        -exec chown {{ steamengine_project_user }}:{{ steamengine_app_user }} {} \
+      || true
 
       chmod -R 'u=rwx,g=rwx,o=' \
       {% for value in steamengine_drupal_path_with_write_permission %}
@@ -54,6 +55,7 @@ steamengine_wrapper_scripts_base:
       {% for value in steamengine_persistent_directories %}
         /{{ steamengine_project_name }}/{{ value.symlink_src }} \
       {% endfor %}
+      || true
   - name: drush_deploy
     description: "Deploy site with Drush command"
     command: "{{ steamengine_drupal_drush_launcher_path }} deploy -y"

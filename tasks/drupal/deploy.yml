@@ -139,14 +139,14 @@
 
 - name: Check if database is empty
   command: "{{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-query 'show tables'"
-  register: database_table_number
+  register: steamengine_drupal_database_table_number
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
-- name: "Is a new deploy: {{ database_table_number.changed and not database_table_number.stdout }}"
+- name: "Is a new deploy: {{ steamengine_drupal_database_table_number.changed and not steamengine_drupal_database_table_number.stdout }}"
   set_fact:
-    initial_drupal_install: "{{ database_table_number.changed and not database_table_number.stdout }}"
+    steamengine_drupal_initial_install: "{{ steamengine_drupal_database_table_number.changed and not steamengine_drupal_database_table_number.stdout }}"
   tags:
     - steamengine_deploy_drupal
 
@@ -158,7 +158,7 @@
       tags:
         - steamengine_deploy
         - steamengine_deploy_drupal
-  when: initial_drupal_install and steamengine_drupal_db_dump_url is defined and steamengine_drupal_db_dump_url
+  when: steamengine_drupal_initial_install and steamengine_drupal_db_dump_url is defined and steamengine_drupal_db_dump_url
   tags:
     - steamengine_drupal_deploy_drupal
 
@@ -170,7 +170,7 @@
       tags:
         - steamengine_deploy
         - steamengine_deploy_drupal
-  when: initial_drupal_install and steamengine_drupal_install_from_drush
+  when: steamengine_drupal_initial_install and steamengine_drupal_install_from_drush
   tags:
     - steamengine_deploy_drupal
 

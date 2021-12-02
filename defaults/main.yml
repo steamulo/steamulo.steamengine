@@ -121,8 +121,8 @@ steamengine_drupal_project_setting: |
 # Directory for public file
 steamengine_drupal_public_directory: "web"
 # Url for the dump of database for an install
-steamengine_db_dump_url:
-steamengine_db_dump_url_headers: {}
+steamengine_drupal_db_dump_url:
+steamengine_drupal_db_dump_url_headers: {}
 # If is new install of drupal, launch a drush's install
 steamengine_drupal_install_from_drush: false
 # Profile type for a drush's install (standard|minimal|expert)

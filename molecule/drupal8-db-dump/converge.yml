@@ -118,7 +118,7 @@
         steamengine_project_type: drupal
         steamengine_drupal_install_from_drush: false
         steamengine_drupal_install_use_existing_config: false
-        steamengine_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_8.zip
+        steamengine_drupal_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_8.zip
         steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/drupal_8.zip
         steamengine_build_checksum: sha1:a354cceb222ef776644394f72f3f9278265ba6ae
         steamengine_drupal_env: |

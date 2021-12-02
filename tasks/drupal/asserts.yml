@@ -10,7 +10,7 @@
 - name: Verify db dump extension
   assert:
     that:
-      - (steamengine_db_dump_url | basename | splitext)[-1] == ".zip"
-  when: steamengine_db_dump_url is defined and steamengine_db_dump_url
+      - (steamengine_drupal_db_dump_url | basename | splitext)[-1] == ".zip"
+  when: steamengine_drupal_db_dump_url is defined and steamengine_drupal_db_dump_url
   tags:
     - steamengine_deploy_drupal

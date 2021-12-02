@@ -2,12 +2,12 @@
 
 - name: Download project db dump
   get_url:
-    url: "{{ steamengine_db_dump_url }}"
+    url: "{{ steamengine_drupal_db_dump_url }}"
     dest: "{{ steamengine_project_root_path }}/db_dump.zip"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-    headers: "{{ steamengine_db_dump_url_headers }}"
+    headers: "{{ steamengine_drupal_db_dump_url_headers }}"
   register: db_dump
   tags:
     - steamengine_deploy_drupal
@@ -29,7 +29,7 @@
   shell: >
     {{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} \
     sql:cli < {{ steamengine_project_root_path }}/{{ archive_contents.files[0] }}
-  when: initial_drupal_install and not steamengine_drupal_install_from_drush and steamengine_db_dump_url is defined and steamengine_db_dump_url
+  when: initial_drupal_install and not steamengine_drupal_install_from_drush and steamengine_drupal_db_dump_url is defined and steamengine_drupal_db_dump_url
   tags:
     - steamengine_deploy_drupal
 

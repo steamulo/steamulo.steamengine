@@ -4,9 +4,9 @@
   template:
     src: "steamengine_wrapper.sh.j2"
     dest: "{{ steamengine_bin_path }}/steamengine"
-    owner: "{{ steamengine_project_user }}"
+    owner: "root"
     group: "{{ steamengine_project_user }}"
-    mode: 0500
+    mode: 0750
 
 - name: Create sudo configuration
   copy:

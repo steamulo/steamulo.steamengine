@@ -4,11 +4,7 @@ driver:
   name: docker
 lint: |
   set -e
-  # A bit ugly... See
-  # https://github.com/ansible-community/ansible-lint/issues/1387
-  # https://github.com/ansible-community/ansible-lint/pull/1490
-  # even if merged, no resolution for external roles deps at the moment.
-  ANSIBLE_ROLES_PATH=${MOLECULE_EPHEMERAL_DIRECTORY}/roles ansible-lint --exclude ${MOLECULE_EPHEMERAL_DIRECTORY}/roles -c .ansible-lint.yml ${MOLECULE_SCENARIO_DIRECTORY}/converge.yml
+  ansible-lint --exclude ~/.cache --exclude .github
   flake8
 platforms:
   - name: instance

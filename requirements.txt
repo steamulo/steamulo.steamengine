@@ -1,6 +1,6 @@
 ansible==3.4.0
 ansible-base==2.10.9
-ansible-lint==5.0.7
+ansible-lint==5.2.1
 appdirs==1.4.3
 arrow==1.1.0
 attrs==20.3.0

@@ -47,11 +47,11 @@ Example Playbook
 ------------
 
 Examples for different project types can be found under the molecule folder:
-* [Node.js](molecule/nodejs/playbook.yml)
-* [Play](molecule/play/playbook.yml)
-* [SpringBoot](molecule/springboot/playbook.yml)
-* [Static](molecule/static/playbook.yml)
-* [Tomcat](molecule/tomcat/playbook.yml) 
+* [Node.js](molecule/nodejs/converge.yml)
+* [Play](molecule/play/converge.yml)
+* [SpringBoot](molecule/springboot/converge.yml)
+* [Static](molecule/static/converge.yml)
+* [Tomcat](molecule/tomcat/converge.yml)
 * [Drupal](molecule/drupal/converge.yml)
 
 Development

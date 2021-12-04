@@ -1,4 +1,4 @@
-
+---
 
 # Symfony
 steamengine_sf_external_logs_path: "{{ steamengine_logs_path }}/{{ steamengine_sf_external_logs_directory }}"

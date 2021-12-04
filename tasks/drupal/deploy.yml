@@ -49,7 +49,7 @@
   copy:
     src: "{{ tempdir.path }}/{{ steamengine_drupal_public_directory }}/sites/default/default.settings.php"
     dest: "{{ steamengine_conf_path }}/settings.php"
-    force: no
+    force: false
     remote_src: true
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

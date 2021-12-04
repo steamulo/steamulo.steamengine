@@ -19,8 +19,8 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=
-    remote_src: yes
-    list_files: yes
+    remote_src: true
+    list_files: true
   register: archive_contents
   tags:
     - steamengine_deploy_drupal

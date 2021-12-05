@@ -160,7 +160,7 @@
         - steamengine_deploy_drupal
   when: steamengine_drupal_initial_install and steamengine_drupal_db_dump_url is defined and steamengine_drupal_db_dump_url
   tags:
-    - steamengine_drupal_deploy_drupal
+    - steamengine_deploy_drupal
 
 # Install with Drush
 

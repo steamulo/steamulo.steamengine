@@ -25,6 +25,8 @@ steamengine_wrapper_scripts_extra: []
 #  name:
 #  description:
 #  command:
+#  run_as_app_user: true # optional
+#  run_in_project_root_path_web: true # optional
 
 steamengine_wrapper_scripts_post_deploy: []
 
@@ -34,6 +36,8 @@ steamengine_wrapper_scripts_post_deploy: []
 #   - name: "hello_world" # without space or special char
 #     description: "Hello World"
 #     command: "cache:hello:world"
+#     run_as_app_user: true # optional
+#     run_in_project_root_path_web: true # optional
 #     minute: "*" # optional
 #     hour: "*" # optional
 #     day: "*" # optional
@@ -93,3 +97,23 @@ steamengine_java_base_opts:
 steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"
+
+# Symfony
+# List of directory we need write permission (modify for symfony < 4)
+steamengine_sf_path_with_write_permission:
+  - "var/log"
+  - "var/cache"
+# List of source template and target path for configuration to put inside the projet (for example for symfony < 4 : parameters.yml.j2: app/config/parameters.yml )
+steamengine_sf_project_custom_configurations_template_path: {}
+# Directory name to store logs outside the project
+steamengine_sf_external_logs_directory: "symfony"
+# Directory for public file (replace with "web" for symfony < 4)
+steamengine_sf_public_directory: "public"
+# Directory for php console file (replace with "app" for symfony < 4)
+steamengine_sf_bin_directory: "bin"
+# Directory which contain cache and log directory (replace with "app" for symfony < 3)
+steamengine_sf_var_directory: "var"
+# Directory for log files (replace with "logs" for symfony < 4)
+steamengine_sf_log_directory: "log"
+# Directory for cache files
+steamengine_sf_cache_directory: "cache"

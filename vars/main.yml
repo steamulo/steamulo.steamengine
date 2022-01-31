@@ -4,7 +4,7 @@
 steamengine_wrapper_scripts_cron: |
   {% set l = [] %}
   {% for cron in steamengine_crons %}
-  {% set _ = l.append({'name': cron.name, 'description': cron.description, 'command': cron.command}) %}
+  {% set _ = l.append({'name': cron.name, 'description': cron.description, 'command': cron.command, 'run_as_app_user': cron.run_as_app_user | default(omit), 'run_in_project_root_path_web': cron.run_in_project_root_path_web | default(omit)}) %}
   {% endfor %}
   {{ l }}
 
@@ -30,3 +30,4 @@ steamengine_project_types:
   - nodejs
   - tomcat
   - play
+  - symfony

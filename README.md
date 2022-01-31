@@ -52,6 +52,7 @@ Examples for different project types can be found under the molecule folder:
 * [SpringBoot](molecule/springboot/converge.yml)
 * [Static](molecule/static/converge.yml)
 * [Tomcat](molecule/tomcat/converge.yml)
+* [Symfony](molecule/symfony/converge.yml)
 
 Development
 ------------

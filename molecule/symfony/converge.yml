@@ -1,0 +1,93 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+  pre_tasks:
+    - name: Add ppa:ondrej/php repository
+      apt_repository:
+        repo: ppa:ondrej/php
+      when: ansible_os_family == 'Debian'
+    - name: Import remi GPG key.
+      rpm_key:
+        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Add remi-php74 repository
+      yum:
+        name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Enable module php7.4 for Centos8
+      dnf:
+        name: '@php:remi-7.4'
+        state: present
+      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+    - name: "Create project app user test_symfonyapp"
+      user:
+        name: "test_symfonyapp"
+        password: "*"
+        createhome: false
+  roles:
+    - role: steamulo.php
+      vars:
+        php_enablerepo: "remi-php74"
+        php_default_version_debian: "7.4"
+        php_install_recommends: false
+        php_enable_php_fpm: true
+        php_webserver_daemon: "nginx"
+        php_date_timezone: "Europe/Paris"
+        php_expose_php: false
+        php_fpm_pool_user: test_symfonyapp
+        php_fpm_pool_group: test_symfonyapp
+    - role: geerlingguy.nginx
+      vars:
+        nginx_ppa_use: true
+        nginx_remove_default_vhost: true
+        nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+        nginx_vhosts:
+          - listen: "80"
+            server_name: "localhost"
+            index: "/"
+            extra_parameters: |
+              root /test_symfony/project_root/www/public;
+              location / {
+                try_files $uri /index.php$is_args$args;
+              }
+              location ~ ^/index\.php(/|$) {
+                fastcgi_pass 127.0.0.1:9000;
+                fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                fastcgi_param DOCUMENT_ROOT $realpath_root;
+                internal;
+              }
+              location ~ \.php$ {
+                return 404;
+              }
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        steamengine_project_name: test_symfony
+        steamengine_project_type: symfony
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/symfony5_test.zip
+        steamengine_build_checksum: sha1:ac336c6672f5b62f3b65b682311c9dd0a7a6654c
+        steamengine_project_configuration:
+          APP_ENV: dev
+        steamengine_wrapper_scripts_extra:
+          - name: cache_clear_dev
+            description: "Clear symfony cache"
+            command: "php bin/console cache:clear --env=dev"
+            run_as_app_user: true
+            run_in_project_root_path_web: true
+        steamengine_wrapper_scripts_post_deploy:
+          - "cache_clear"
+          - "cache_clear_dev"
+        steamengine_persistent_directories:
+          - path: "protected_upload"
+            symlink_src: "project_root/www/upload"
+        steamengine_crons:
+          - name: "cache_clear_cron"
+            description: "Cache clear Daily"
+            command: "php bin/console cache:clear --env=prod"
+            run_as_app_user: true
+            run_in_project_root_path_web: true
+            special_time: daily

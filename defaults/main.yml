@@ -117,3 +117,5 @@ steamengine_sf_var_directory: "var"
 steamengine_sf_log_directory: "log"
 # Directory for cache files
 steamengine_sf_cache_directory: "cache"
+# Php fpm version
+steamengine_sf_php_fpm_version: "php7.4-fpm"

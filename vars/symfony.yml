@@ -11,22 +11,22 @@ steamengine_wrapper_scripts_base:
   - name: start
     description: Start php-fpm and http server
     command: |
-      systemctl start {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl start {{ (ansible_os_family == 'Debian') | ternary(steamengine_sf_php_fpm_version, 'php-fpm') }}
       systemctl start nginx
   - name: stop
     description: Stop php-fpm and http server
     command: |
-      systemctl stop {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl stop {{ (ansible_os_family == 'Debian') | ternary(steamengine_sf_php_fpm_version, 'php-fpm') }}
       systemctl stop nginx
   - name: restart
     description: Restart php-fpm and http server
     command: |
-      systemctl restart {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl restart {{ (ansible_os_family == 'Debian') | ternary(steamengine_sf_php_fpm_version, 'php-fpm') }}
       systemctl restart nginx
   - name: status
     description: Display php-fpm and http server status
     command: |
-      systemctl status {{ (ansible_os_family == 'Debian') | ternary('php7.4-fpm', 'php-fpm') }}
+      systemctl status {{ (ansible_os_family == 'Debian') | ternary(steamengine_sf_php_fpm_version, 'php-fpm') }}
       systemctl status nginx
   - name: reload
     description: Reload http server configuration

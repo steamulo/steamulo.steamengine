@@ -28,7 +28,7 @@
         password: "*"
         createhome: false
   roles:
-    - role: steamulo.php
+    - role: geerlingguy.php
       vars:
         php_enablerepo: "remi-php74"
         php_default_version_debian: "7.4"

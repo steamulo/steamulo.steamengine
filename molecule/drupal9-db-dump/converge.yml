@@ -56,7 +56,6 @@
         postgresql_databases:
           - name: "drupal"
             owner: "drupal"
-    - role: geerlingguy.git
     - role: geerlingguy.drush
     - role: geerlingguy.nginx
       vars:

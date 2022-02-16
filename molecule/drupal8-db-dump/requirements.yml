@@ -9,8 +9,5 @@
 - src: geerlingguy.nginx
   version: 2.7.0
 
-- src: geerlingguy.git
-  version: 3.0.0
-
 - src: geerlingguy.drush
   version: 3.1.2

@@ -185,3 +185,9 @@
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
+
+- name: Fix drush cache permissions
+  command: "/{{ steamengine_project_name }}/bin/steamengine drush_fix_permissions"
+  when: new_build_to_deploy or steamengine_drupal_initial_install
+  tags:
+    - steamengine_deploy_drupal

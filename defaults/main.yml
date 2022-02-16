@@ -137,3 +137,25 @@ steamengine_drupal_install_option: >
   --locale="fr"
 # Number of db backup to keep (0 to deactive backup when deploying)
 steamengine_drupal_keep_last_n_backup: 4
+
+# Symfony
+# List of directory we need write permission (modify for symfony < 4)
+steamengine_sf_path_with_write_permission:
+  - "var/log"
+  - "var/cache"
+# List of source template and target path for configuration to put inside the projet (for example for symfony < 4 : parameters.yml.j2: app/config/parameters.yml )
+steamengine_sf_project_custom_configurations_template_path: {}
+# Directory name to store logs outside the project
+steamengine_sf_external_logs_directory: "symfony"
+# Directory for public file (replace with "web" for symfony < 4)
+steamengine_sf_public_directory: "public"
+# Directory for php console file (replace with "app" for symfony < 4)
+steamengine_sf_bin_directory: "bin"
+# Directory which contain cache and log directory (replace with "app" for symfony < 3)
+steamengine_sf_var_directory: "var"
+# Directory for log files (replace with "logs" for symfony < 4)
+steamengine_sf_log_directory: "log"
+# Directory for cache files
+steamengine_sf_cache_directory: "cache"
+# Php fpm version
+steamengine_sf_php_fpm_version: "php7.4-fpm"

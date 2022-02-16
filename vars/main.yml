@@ -31,3 +31,4 @@ steamengine_project_types:
   - tomcat
   - drupal
   - play
+  - symfony

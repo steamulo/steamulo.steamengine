@@ -1,0 +1,195 @@
+---
+
+- name: Create project folder structure (5)
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_items:
+    - "{{ steamengine_sf_external_logs_path }}"
+
+- name: Create project folder structure (6)
+  file:
+    path: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_items: "{{ steamengine_persistent_directories }}"
+
+- name: Create configuration file
+  template:
+    src: "project_properties.env.j2"
+    dest: "{{ steamengine_conf_path }}/.env.local"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  when: steamengine_project_configuration is defined
+  tags:
+    - steamengine_deploy_sf
+
+- name: Ensure custom configuration directory exists
+  file:
+    path: "{{ steamengine_conf_path }}/{{ item.value | dirname }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0770
+  with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
+
+- name: "Download build {{ steamengine_build_url }}"
+  get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_project_root_path }}/project.zip"
+    checksum: "{{ steamengine_build_checksum }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    headers: "{{ steamengine_build_url_headers }}"
+    validate_certs: "{{ steamengine_build_url_validate_certs }}"
+  notify:
+    - "{{ steamengine_project_name }} fixpermissions"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_sf
+
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  set_fact:
+    new_build_to_deploy: "{{ get_url_build.changed }}"
+  tags:
+    - steamengine_deploy_sf
+
+- name: Create custom configuration file
+  template:
+    src: "{{ item.key }}"
+    dest: "{{ steamengine_conf_path }}/{{ item.value }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+  with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: Create tmp directory
+  tempfile:
+    state: directory
+    suffix: "{{ steamengine_project_name }}"
+  register: tempdir
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: Unarchive build
+  unarchive:
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ tempdir.path }}"
+    remote_src: true
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: Check www directory exists
+  stat:
+    path: "{{ steamengine_project_root_path_web }}"
+  register: root_path_web_directory
+
+- name: Fix permissions before updating source
+  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  when: new_build_to_deploy and root_path_web_directory.stat.exists
+  tags:
+    - steamengine_deploy_sf
+
+- name: Clean www directory
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    state: absent
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: "Move archive files to {{ steamengine_project_root_path_web }}"
+  command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: "Add read permission for {{ steamengine_app_user }}"
+  file:
+    path: "{{ steamengine_project_root_path_web }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    recurse: true
+    mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: "Ensure var directory exists"
+  file:
+    path: "{{ steamengine_sf_var_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: 0750
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: Create configuration link
+  file:
+    state: link
+    src: "{{ steamengine_conf_path }}/.env.local"
+    dest: "{{ steamengine_project_root_path_web }}/.env.local"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy and steamengine_project_configuration is defined
+  tags:
+    - steamengine_deploy_sf
+
+- name: Create custom configuration link
+  file:
+    state: link
+    src: "{{ steamengine_conf_path }}/{{ item.value }}"
+    dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: Clean logs link directory
+  file:
+    state: absent
+    path: "{{ steamengine_sf_log_path }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Create logs link directory
+  file:
+    state: link
+    src: "{{ steamengine_sf_external_logs_path }}"
+    dest: "{{ steamengine_sf_log_path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
+- name: "Ensure path with write permission exists"
+  file:
+    path: "{{ steamengine_project_root_path_web }}/{{ item }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  with_items: "{{ steamengine_sf_path_with_write_permission }}"
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf

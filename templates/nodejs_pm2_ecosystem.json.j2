@@ -4,6 +4,9 @@
     name: "{{ steamengine_project_name }}",
     script: "{{ steamengine_nodejs_entrypoint }}",
     cwd: "{{ steamengine_project_root_path_web }}",
+    {% if steamengine_nodejs_entrypoint_args is defined and steamengine_nodejs_entrypoint_args %}
+    args: "{{ steamengine_nodejs_entrypoint_args }}",
+    {% endif %}
     error_file: "/dev/null",
     out_file: "/dev/null",
     {% if steamengine_project_configuration is defined %}

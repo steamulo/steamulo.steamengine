@@ -9,6 +9,8 @@
     mode: 0770
   with_items:
     - "{{ steamengine_sf_external_logs_path }}"
+  tags:
+    - steamengine_deploy_sf
 
 - name: Create project folder structure (6)
   file:
@@ -18,6 +20,8 @@
     group: "{{ steamengine_app_user }}"
     mode: 0770
   with_items: "{{ steamengine_persistent_directories }}"
+  tags:
+    - steamengine_deploy_sf
 
 - name: Create configuration file
   template:
@@ -38,6 +42,8 @@
     group: "{{ steamengine_app_user }}"
     mode: 0770
   with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
+  tags:
+    - steamengine_deploy_sf
 
 - name: "Download build {{ steamengine_build_url }}"
   get_url:
@@ -97,6 +103,8 @@
   stat:
     path: "{{ steamengine_project_root_path_web }}"
   register: root_path_web_directory
+  tags:
+    - steamengine_deploy_sf
 
 - name: Fix permissions before updating source
   command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"

@@ -5,10 +5,11 @@
   roles:
     - role: geerlingguy.nodejs
       vars:
-        nodejs_version: "12.x"
+        nodejs_version: "16.x"
         nodejs_install_npm_user: root
         nodejs_npm_global_packages:
-          - "pm2"
+          - name: pm2
+            version: 5.2.0
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: test_nodejs

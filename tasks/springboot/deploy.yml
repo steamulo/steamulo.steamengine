@@ -1,7 +1,7 @@
 ---
 
 - name: Create configuration file
-  copy:
+  ansible.builtin.copy:
     content: |
       # This file is managed by Ansible, all changes will be lost.
       {{ steamengine_project_configuration | to_nice_yaml }}
@@ -15,7 +15,7 @@
     - steamengine_deploy_springboot
 
 - name: Create external configuration file
-  template:
+  ansible.builtin.template:
     src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env_conf.yml"
     owner: "{{ steamengine_project_user }}"
@@ -28,7 +28,7 @@
     - steamengine_deploy_springboot
 
 - name: "Download build {{ steamengine_build_url }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.jar"
     checksum: "{{ steamengine_build_checksum }}"
@@ -44,7 +44,7 @@
     - steamengine_deploy_springboot
 
 - name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
+  ansible.builtin.set_fact:
     new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_springboot

@@ -1,7 +1,7 @@
 ---
 
 - name: Verify build extension
-  assert:
+  ansible.builtin.assert:
     that: (steamengine_build_url | basename | splitext)[1] == ".zip"
   when: steamengine_build_url is defined and steamengine_build_url
   tags:

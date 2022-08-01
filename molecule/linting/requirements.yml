@@ -1,0 +1,13 @@
+---
+- src: geerlingguy.nodejs
+  version: 5.1.1
+
+- src: lean_delivery.java
+  version: 7.1.0
+
+- src: geerlingguy.nginx
+  version: 3.1.1
+
+- src: https://github.com/STEAMULO/ansible-role-php.git
+  version: 4.7.1
+  name: steamulo.php

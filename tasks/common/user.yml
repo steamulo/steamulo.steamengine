@@ -1,7 +1,7 @@
 ---
 
 - name: Create project groups
-  group:
+  ansible.builtin.group:
     name: "{{ item }}"
     state: present
   with_items:
@@ -9,7 +9,7 @@
     - "{{ steamengine_app_user }}"
 
 - name: "Create project app user {{ steamengine_app_user }}"
-  user:
+  ansible.builtin.user:
     name: "{{ steamengine_app_user }}"
     password: "*"
     createhome: false
@@ -17,7 +17,7 @@
     append: true
 
 - name: "Create project user {{ steamengine_project_user }}"
-  user:
+  ansible.builtin.user:
     name: "{{ steamengine_project_user }}"
     password: "*"
     home: "{{ steamengine_home_path }}"
@@ -29,7 +29,7 @@
     append: true
 
 - name: "Ensure authorized_keys are present for user {{ steamengine_project_user }}"
-  authorized_key:
+  ansible.builtin.authorized_key:
     user: "{{ steamengine_project_user }}"
     key: "{{ steamengine_project_ssh_keys | join('\n') }}"
     state: present

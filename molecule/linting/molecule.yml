@@ -1,0 +1,17 @@
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+lint: |
+  set -e
+  export ANSIBLE_ROLES_PATH=${MOLECULE_EPHEMERAL_DIRECTORY}/roles
+  ansible-lint --exclude ${MOLECULE_EPHEMERAL_DIRECTORY} -c .ansible-lint.yml
+  flake8
+scenario:
+  create_sequence: []
+  check_sequence: []
+  converge_sequence: []
+  destroy_sequence: []
+  test_sequence:
+    - dependency
+    - lint

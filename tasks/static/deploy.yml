@@ -1,7 +1,7 @@
 ---
 
 - name: "Download build {{ steamengine_build_url }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ steamengine_build_checksum }}"
@@ -15,7 +15,7 @@
     - steamengine_deploy_static
 
 - name: Create www directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -39,7 +39,7 @@
     - steamengine_deploy_static
 
 - name: "Add read permission for {{ steamengine_app_user }}"
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

@@ -1,10 +1,10 @@
 ---
 
 - name: Create project crons
-  cron:
+  ansible.builtin.cron:
     name: "{{ item.name }}"
     day: "{{ item.day | default(omit) }}"
-    hour: "{{ item.hour |default(omit) }}"
+    hour: "{{ item.hour | default(omit) }}"
     minute: "{{ item.minute | default(omit) }}"
     month: "{{ item.month | default(omit) }}"
     special_time: "{{ item.special_time | default(omit) }}"

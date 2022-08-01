@@ -37,14 +37,17 @@ while [ $# -gt 0 ]; do
   case $arg in
   {% for item in steamengine_wrapper_scripts -%}
   {{ item.name }})
-    {% set command = item.command %}
     {% if item.run_as_app_user is defined and item.run_as_app_user %}
-      {% set command = 'sudo -u ' ~ steamengine_app_user ~ ' ' ~ command %}
+        cat <<"EOF" | sudo -u {{ steamengine_app_user }} bash
+    {% else %}
+        cat <<"EOF" | bash
     {% endif %}
+    {% set command = item.command %}
     {% if item.run_in_project_root_path_web is defined and item.run_in_project_root_path_web %}
-      {% set command = 'bash -c \'cd ' ~ steamengine_project_root_path_web ~ '; ' ~ command ~ '\'' %}
+        cd {{ steamengine_project_root_path_web }}
     {% endif %}
     {{ command | indent(4) }}
+EOF
     exit $?
     ;;
   {% endfor -%}

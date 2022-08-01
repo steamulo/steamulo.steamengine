@@ -42,11 +42,10 @@ while [ $# -gt 0 ]; do
     {% else %}
         cat <<"EOF" | bash
     {% endif %}
-    {% set command = item.command %}
     {% if item.run_in_project_root_path_web is defined and item.run_in_project_root_path_web %}
         cd {{ steamengine_project_root_path_web }}
     {% endif %}
-    {{ command | indent(4) }}
+    {{ item.command }}
 EOF
     exit $?
     ;;

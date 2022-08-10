@@ -67,10 +67,11 @@
       vars:
         steamengine_project_name: test_symfony
         steamengine_project_type: symfony
-        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/symfony5_test.zip
-        steamengine_build_checksum: sha1:ac336c6672f5b62f3b65b682311c9dd0a7a6654c
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/symfony5-4_test.zip
+        steamengine_build_checksum: sha1:daaa9a3b4e6e0b33bf3d7883ff8b6bf5d35433b9
         steamengine_project_configuration:
           APP_ENV: dev
+          MESSENGER_TRANSPORT_DSN: in-memory://
         steamengine_wrapper_scripts_extra:
           - name: cache_clear_dev
             description: "Clear symfony cache"
@@ -90,3 +91,7 @@
             run_as_app_user: true
             run_in_project_root_path_web: true
             special_time: daily
+        steamengine_extra_services:
+          - name: messenger
+            description: "Symfony Messenger: Sync & Queued Message Handling"
+            command: "/usr/bin/php bin/console messenger:consume async --limit=10 --env=prod"

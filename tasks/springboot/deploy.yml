@@ -48,3 +48,12 @@
     new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_springboot
+
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_springboot
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_springboot

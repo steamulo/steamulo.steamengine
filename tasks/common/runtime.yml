@@ -45,3 +45,21 @@
     group: root
     mode: 0644
   loop: "{{ steamengine_logrotate_scripts }}"
+
+- name: Create extra services unit file
+  ansible.builtin.template:
+    src: systemd_extra.service.j2
+    dest: "/etc/systemd/system/{{ steamengine_project_name }}-{{ item.name }}.service"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  loop: "{{ steamengine_extra_services }}"
+  notify:
+    - "{{ steamengine_project_name }} restart"
+
+- name: Ensure extra services are running and set to start on boot
+  ansible.builtin.systemd:
+    enabled: true
+    daemon_reload: true
+    name: "{{ steamengine_project_name }}-{{ item.name }}"
+  loop: "{{ steamengine_extra_services }}"

@@ -48,6 +48,15 @@
   tags:
     - steamengine_deploy_play2
 
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_play2
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
+
 - name: Create tmp directory
   ansible.builtin.tempfile:
     state: directory

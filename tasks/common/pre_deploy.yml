@@ -1,0 +1,6 @@
+---
+
+- name: Stop extra services
+  ansible.builtin.command: "{{ steamengine_bin_path }}/steamengine {{ item.name }}_stop"
+  when: new_build_to_deploy
+  loop: "{{ steamengine_extra_services }}"

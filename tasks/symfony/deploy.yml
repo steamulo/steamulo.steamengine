@@ -67,6 +67,15 @@
   tags:
     - steamengine_deploy_sf
 
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_sf
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
 - name: Create custom configuration file
   ansible.builtin.template:
     src: "{{ item.key }}"

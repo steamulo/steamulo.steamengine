@@ -47,6 +47,14 @@ steamengine_wrapper_scripts_post_deploy: []
 #     disabled: false # optional
 steamengine_crons: []
 
+# List of additional services to create
+# Example :
+# steamengine_extra_services:
+#   - name: messenger
+#     description: "Symfony Messenger: Sync & Queued Message Handling"
+#     command: "/usr/bin/php bin/console messenger:consume async --limit=10 --env=prod"
+steamengine_extra_services: []
+
 steamengine_build_url_validate_certs: true
 steamengine_build_url_headers: {}
 

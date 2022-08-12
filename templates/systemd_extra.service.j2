@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description={{ steamengine_project_name }} {{ item.description }}
+
+[Service]
+WorkingDirectory={{ steamengine_project_root_path_web }}
+ExecStart={{ item.command }} 
+
+Type=simple
+
+Restart=always
+RestartSec=10
+
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+User={{ steamengine_app_user }}
+Group={{ steamengine_app_user }}
+LogExtraFields=STM_ID=steamengine
+LogExtraFields=PROJECT_TYPE={{ steamengine_project_type }}
+SyslogIdentifier={{ steamengine_project_name }}-{{ item.name }}
+
+[Install]
+WantedBy=multi-user.target

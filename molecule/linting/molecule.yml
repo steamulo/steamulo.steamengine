@@ -1,3 +1,5 @@
+---
+prerun: true
 dependency:
   name: galaxy
 driver:

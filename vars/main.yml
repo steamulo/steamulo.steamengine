@@ -8,7 +8,15 @@ steamengine_wrapper_scripts_cron: |
   {% endfor %}
   {{ l }}
 
-steamengine_wrapper_scripts: "{{ steamengine_wrapper_scripts_base | union(steamengine_wrapper_scripts_extra) | union(steamengine_wrapper_scripts_cron) }}"
+steamengine_wrapper_extra_services: |
+  {% set l = [] %}
+  {% for systemd_service in steamengine_extra_services %}
+  {% set _ = l.append({'name': systemd_service.name + '_start', 'description': 'Start ' + systemd_service.description, 'command': 'systemctl start ' + steamengine_project_name + '-' + systemd_service.name }) %}
+  {% set _ = l.append({'name': systemd_service.name + '_stop', 'description': 'Stop ' + systemd_service.description, 'command': 'systemctl stop ' + steamengine_project_name + '-' + systemd_service.name }) %}
+  {% endfor %}
+  {{ l }}
+
+steamengine_wrapper_scripts: "{{ steamengine_wrapper_scripts_base | union(steamengine_wrapper_scripts_extra) | union(steamengine_wrapper_scripts_cron) | union(steamengine_wrapper_extra_services) }}"
 
 # USERS
 steamengine_project_user: "{{ steamengine_project_name }}"

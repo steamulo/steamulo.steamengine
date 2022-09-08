@@ -1,7 +1,7 @@
 ---
 
 - name: Create configuration file
-  template:
+  ansible.builtin.template:
     src: "project_properties.conf.j2"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
@@ -14,7 +14,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create external configuration file
-  template:
+  ansible.builtin.template:
     src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
@@ -27,7 +27,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create tomcat directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -37,7 +37,7 @@
     - steamengine_deploy_tomcat
 
 - name: Download tomcat
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_tomcat_tomcat_url }}"
     dest: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat_version }}.tar.gz"
     checksum: "sha512:{{ steamengine_tomcat_archive_sha512 }}"
@@ -51,13 +51,13 @@
     - steamengine_deploy_tomcat
 
 - name: "Is there a new tomcat version: {{ get_url_tomcat.changed }}"
-  set_fact:
+  ansible.builtin.set_fact:
     new_tomcat_version: "{{ get_url_tomcat.changed }}"
   tags:
     - steamengine_deploy_tomcat
 
 - name: Unzip tomcat
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat_version }}.tar.gz"
     dest: "{{ steamengine_project_root_path }}/tomcat"
     owner: "{{ steamengine_project_user }}"
@@ -70,7 +70,7 @@
     - steamengine_deploy_tomcat
 
 - name: Remove default tomcat deployment
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps"
     state: absent
   when: new_tomcat_version
@@ -78,7 +78,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create tomcat webapps directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps"
     state: directory
     owner: "{{ steamengine_project_user }}"
@@ -89,7 +89,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create tomcat working directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat/work"
     state: directory
     owner: "{{ steamengine_project_user }}"
@@ -100,7 +100,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create tomcat temp directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat/temp"
     state: directory
     owner: "{{ steamengine_project_user }}"
@@ -111,7 +111,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create tomcat configuration file
-  template:
+  ansible.builtin.template:
     src: "tomcat.server.xml.j2"
     dest: "{{ steamengine_project_root_path }}/tomcat/conf/server.xml"
     owner: "{{ steamengine_project_user }}"
@@ -123,7 +123,7 @@
     - steamengine_deploy_tomcat
 
 - name: "Download build {{ steamengine_build_url }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.war"
     checksum: "{{ steamengine_build_checksum }}"
@@ -140,19 +140,28 @@
     - steamengine_deploy_tomcat
 
 - name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
+  ansible.builtin.set_fact:
     new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_tomcat
 
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_tomcat
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_tomcat
+
 - name: Fix permissions before updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_tomcat
 
 - name: Remove tomcat ROOT deployment
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
     state: absent
   when: new_build_to_deploy
@@ -160,7 +169,7 @@
     - steamengine_deploy_tomcat
 
 - name: Create tomcat ROOT deployment
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
     state: directory
     owner: "{{ steamengine_project_user }}"
@@ -171,7 +180,7 @@
     - steamengine_deploy_tomcat
 
 - name: Extract war in tomcat ROOT directory
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ steamengine_project_root_path }}/project.war"
     dest: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
     remote_src: true
@@ -180,7 +189,7 @@
     - steamengine_deploy_tomcat
 
 - name: Fix permissions after updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_tomcat

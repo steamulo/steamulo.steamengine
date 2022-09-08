@@ -1,7 +1,7 @@
 ---
 
 - name: Create steamengine bin
-  template:
+  ansible.builtin.template:
     src: "steamengine_wrapper.sh.j2"
     dest: "{{ steamengine_bin_path }}/steamengine"
     owner: "root"
@@ -9,7 +9,7 @@
     mode: 0750
 
 - name: Create sudo configuration
-  copy:
+  ansible.builtin.copy:
     content: |
       {{ steamengine_project_name }} ALL= NOPASSWD: /{{ steamengine_project_name }}/bin/steamengine *
 
@@ -19,7 +19,7 @@
     mode: 0440
 
 - name: Grant syslog user write access to logs directory
-  acl:
+  ansible.builtin.acl:
     path: "{{ steamengine_logs_path }}"
     entity: syslog
     etype: user
@@ -28,7 +28,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Create rsyslog configuration
-  template:
+  ansible.builtin.template:
     src: rsyslog.conf.j2
     dest: "/etc/rsyslog.d/10-{{ steamengine_project_name }}.conf"
     owner: root
@@ -38,10 +38,28 @@
     - "rsyslog restart"
 
 - name: Create logrotate scripts
-  template:
+  ansible.builtin.template:
     src: logrotate.conf.j2
     dest: "/etc/logrotate.d/{{ item.name }}"
     owner: root
     group: root
     mode: 0644
   loop: "{{ steamengine_logrotate_scripts }}"
+
+- name: Create extra services unit file
+  ansible.builtin.template:
+    src: systemd_extra.service.j2
+    dest: "/etc/systemd/system/{{ steamengine_project_name }}-{{ item.name }}.service"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  loop: "{{ steamengine_extra_services }}"
+  notify:
+    - "{{ steamengine_project_name }} restart"
+
+- name: Ensure extra services are running and set to start on boot
+  ansible.builtin.systemd:
+    enabled: true
+    daemon_reload: true
+    name: "{{ steamengine_project_name }}-{{ item.name }}"
+  loop: "{{ steamengine_extra_services }}"

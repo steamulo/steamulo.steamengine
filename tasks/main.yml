@@ -1,14 +1,14 @@
 ---
 
 - name: Verify project type
-  assert:
+  ansible.builtin.assert:
     that:
       - "steamengine_project_type is defined"
       - "steamengine_project_type in steamengine_project_types"
   tags: always
 
 - name: "Include variables for {{ steamengine_project_type }}"
-  include_vars:
+  ansible.builtin.include_vars:
     file: "vars/{{ steamengine_project_type }}.yml"
   tags: always
 
@@ -55,7 +55,7 @@
   tags: always
 
 - name: "Initialize var new_build_to_deploy"
-  set_fact:
+  ansible.builtin.set_fact:
     new_build_to_deploy: false
   tags: always
 

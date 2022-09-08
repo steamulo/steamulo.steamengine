@@ -1,7 +1,7 @@
 ---
 
 - name: Create configuration file
-  template:
+  ansible.builtin.template:
     src: "project_properties.conf.j2"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
@@ -14,7 +14,7 @@
     - steamengine_deploy_play2
 
 - name: Create external configuration file
-  template:
+  ansible.builtin.template:
     src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
@@ -27,7 +27,7 @@
     - steamengine_deploy_play2
 
 - name: "Download build {{ steamengine_build_url }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ steamengine_build_checksum }}"
@@ -43,13 +43,22 @@
     - steamengine_deploy_play2
 
 - name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
+  ansible.builtin.set_fact:
     new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_play2
 
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_play2
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_play2
+
 - name: Create tmp directory
-  tempfile:
+  ansible.builtin.tempfile:
     state: directory
     suffix: "{{ steamengine_project_name }}"
   register: tempdir
@@ -58,7 +67,7 @@
     - steamengine_deploy_play2
 
 - name: Unarchive build
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ steamengine_project_root_path }}/project.zip"
     dest: "{{ tempdir.path }}"
     remote_src: true
@@ -67,7 +76,7 @@
     - steamengine_deploy_play2
 
 - name: Clean www directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     state: absent
   when: new_build_to_deploy
@@ -75,7 +84,7 @@
     - steamengine_deploy_play2
 
 - name: Clean www directory (2)
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -86,13 +95,13 @@
     - steamengine_deploy_play2
 
 - name: "Move archive files to {{ steamengine_project_root_path_web }}"
-  shell: "mv {{ tempdir.path }}/*/* {{ steamengine_project_root_path_web }}"
+  ansible.builtin.shell: "mv {{ tempdir.path }}/*/* {{ steamengine_project_root_path_web }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_play2
 
 - name: "Recursively change ownership of {{ steamengine_project_root_path_web }}"
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     state: directory
     recurse: true
@@ -104,7 +113,7 @@
     - steamengine_deploy_play2
 
 - name: Remove tmp directory
-  file:
+  ansible.builtin.file:
     path: "{{ tempdir.path }}"
     state: absent
   when: new_build_to_deploy
@@ -112,7 +121,7 @@
     - steamengine_deploy_play2
 
 - name: Move start_project script
-  shell: |
+  ansible.builtin.shell: |
     shopt -s extglob
     mv {{ steamengine_project_root_path_web }}/bin/!(*.bat) {{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}
   args:
@@ -122,7 +131,7 @@
     - steamengine_deploy_play2
 
 - name: Make script executable
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}/bin/{{ steamengine_play2_run_script }}"
     state: file
     mode: u=rwx,g=rx,o=x

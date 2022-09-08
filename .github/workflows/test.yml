@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
-        distribution: [centos7, centos8, ubuntu1804, ubuntu2004]
+        python-version: [3.8]
+        distribution: [centos7, rockylinux8, ubuntu1804, ubuntu2004, ubuntu2204]
     steps:
       - uses: actions/checkout@v2
         with:

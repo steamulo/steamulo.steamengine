@@ -1,7 +1,7 @@
 ---
 
 - name: Create systemd unit file
-  template:
+  ansible.builtin.template:
     src: systemd_springboot.service.j2
     dest: "/etc/systemd/system/{{ steamengine_project_name }}.service"
     owner: root
@@ -13,7 +13,7 @@
     - steamengine_runtime_springboot
 
 - name: "Ensure {{ steamengine_project_name }} is running and set to start on boot"
-  systemd:
+  ansible.builtin.systemd:
     enabled: true
     daemon_reload: true
     name: "{{ steamengine_project_name }}"

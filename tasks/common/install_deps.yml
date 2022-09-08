@@ -1,9 +1,9 @@
 ---
 
 - name: Install acl package
-  package:
+  ansible.builtin.package:
     name: acl
 
 - name: Install unzip package
-  package:
+  ansible.builtin.package:
     name: unzip

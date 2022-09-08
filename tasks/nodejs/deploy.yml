@@ -1,7 +1,7 @@
 ---
 
 - name: Create configuration file
-  template:
+  ansible.builtin.template:
     src: "nodejs_pm2_ecosystem.json.j2"
     dest: "{{ steamengine_conf_path }}/nodejs_pm2_ecosystem.json"
     owner: "{{ steamengine_project_user }}"
@@ -13,7 +13,7 @@
     - steamengine_deploy_nodejs
 
 - name: "Download build {{ steamengine_build_url }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ steamengine_build_checksum }}"
@@ -29,19 +29,28 @@
     - steamengine_deploy_nodejs
 
 - name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
+  ansible.builtin.set_fact:
     new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_nodejs
 
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_nodejs
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_nodejs
+
 - name: Fix permissions before updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_nodejs
 
 - name: Create pm2 directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/pm2"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -51,7 +60,7 @@
     - steamengine_deploy_nodejs
 
 - name: Clean www directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     state: absent
   when: new_build_to_deploy
@@ -59,7 +68,7 @@
     - steamengine_deploy_nodejs
 
 - name: Clean www directory (2)
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -70,7 +79,7 @@
     - steamengine_deploy_nodejs
 
 - name: Update www directory
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ steamengine_project_root_path }}/project.zip"
     dest: "{{ steamengine_project_root_path_web }}"
     remote_src: true
@@ -79,7 +88,7 @@
     - steamengine_deploy_nodejs
 
 - name: Fix permissions after updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_nodejs

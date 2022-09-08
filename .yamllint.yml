@@ -40,4 +40,5 @@ rules:
 
 ignore: |
   .virtualenv
-  .cache
+  .git
+  .github

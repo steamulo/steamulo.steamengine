@@ -1,7 +1,7 @@
 ---
 
 - name: Create project folder structure (5)
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
@@ -9,18 +9,22 @@
     mode: 0770
   with_items:
     - "{{ steamengine_sf_external_logs_path }}"
+  tags:
+    - steamengine_deploy_sf
 
 - name: Create project folder structure (6)
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0770
   with_items: "{{ steamengine_persistent_directories }}"
+  tags:
+    - steamengine_deploy_sf
 
 - name: Create configuration file
-  template:
+  ansible.builtin.template:
     src: "project_properties.env.j2"
     dest: "{{ steamengine_conf_path }}/.env.local"
     owner: "{{ steamengine_project_user }}"
@@ -31,16 +35,18 @@
     - steamengine_deploy_sf
 
 - name: Ensure custom configuration directory exists
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_conf_path }}/{{ item.value | dirname }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: 0770
   with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
+  tags:
+    - steamengine_deploy_sf
 
 - name: "Download build {{ steamengine_build_url }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ steamengine_build_checksum }}"
@@ -56,13 +62,22 @@
     - steamengine_deploy_sf
 
 - name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
+  ansible.builtin.set_fact:
     new_build_to_deploy: "{{ get_url_build.changed }}"
   tags:
     - steamengine_deploy_sf
 
+- include_tasks:
+    file: common/pre_deploy.yml
+    apply:
+      tags:
+        - steamengine_deploy_sf
+  when: new_build_to_deploy
+  tags:
+    - steamengine_deploy_sf
+
 - name: Create custom configuration file
-  template:
+  ansible.builtin.template:
     src: "{{ item.key }}"
     dest: "{{ steamengine_conf_path }}/{{ item.value }}"
     owner: "{{ steamengine_project_user }}"
@@ -74,7 +89,7 @@
     - steamengine_deploy_sf
 
 - name: Create tmp directory
-  tempfile:
+  ansible.builtin.tempfile:
     state: directory
     suffix: "{{ steamengine_project_name }}"
   register: tempdir
@@ -83,7 +98,7 @@
     - steamengine_deploy_sf
 
 - name: Unarchive build
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ steamengine_project_root_path }}/project.zip"
     dest: "{{ tempdir.path }}"
     remote_src: true
@@ -94,18 +109,20 @@
     - steamengine_deploy_sf
 
 - name: Check www directory exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ steamengine_project_root_path_web }}"
   register: root_path_web_directory
+  tags:
+    - steamengine_deploy_sf
 
 - name: Fix permissions before updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy and root_path_web_directory.stat.exists
   tags:
     - steamengine_deploy_sf
 
 - name: Clean www directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     state: absent
   when: new_build_to_deploy
@@ -113,13 +130,13 @@
     - steamengine_deploy_sf
 
 - name: "Move archive files to {{ steamengine_project_root_path_web }}"
-  command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
+  ansible.builtin.command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
 
 - name: "Add read permission for {{ steamengine_app_user }}"
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -130,7 +147,7 @@
     - steamengine_deploy_sf
 
 - name: "Ensure var directory exists"
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_sf_var_path }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
@@ -141,7 +158,7 @@
     - steamengine_deploy_sf
 
 - name: Create configuration link
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ steamengine_conf_path }}/.env.local"
     dest: "{{ steamengine_project_root_path_web }}/.env.local"
@@ -152,7 +169,7 @@
     - steamengine_deploy_sf
 
 - name: Create custom configuration link
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ steamengine_conf_path }}/{{ item.value }}"
     dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
@@ -164,7 +181,7 @@
     - steamengine_deploy_sf
 
 - name: Clean logs link directory
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ steamengine_sf_log_path }}"
   when: new_build_to_deploy
@@ -172,7 +189,7 @@
     - steamengine_deploy_drupal
 
 - name: Create logs link directory
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ steamengine_sf_external_logs_path }}"
     dest: "{{ steamengine_sf_log_path }}"
@@ -183,7 +200,7 @@
     - steamengine_deploy_sf
 
 - name: "Ensure path with write permission exists"
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}/{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"

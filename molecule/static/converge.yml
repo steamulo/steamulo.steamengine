@@ -5,7 +5,6 @@
   roles:
     - role: geerlingguy.nginx
       vars:
-        nginx_ppa_use: true
         nginx_remove_default_vhost: true
         nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
         nginx_vhosts:

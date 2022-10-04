@@ -7,6 +7,7 @@ steamengine_sf_bin_path: "{{ steamengine_project_root_path_web }}/{{ steamengine
 steamengine_sf_var_path: "{{ steamengine_project_root_path_web }}/{{ steamengine_sf_var_directory }}"
 steamengine_sf_log_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_log_directory }}"
 steamengine_sf_cache_path: "{{ steamengine_sf_var_path }}/{{ steamengine_sf_cache_directory }}"
+steamengine_php_bin_path: "/usr/bin/php"
 steamengine_wrapper_scripts_base:
   - name: start
     description: Start php-fpm and http server
@@ -62,6 +63,6 @@ steamengine_wrapper_scripts_base:
       {% endfor %}
   - name: cache_clear
     description: "Clear symfony cache prod"
-    command: "php -d memory_limit=1024M bin/console cache:clear --env=prod"
+    command: "{{ steamengine_php_bin_path }} -d memory_limit=1024M bin/console cache:clear --env=prod"
     run_as_app_user: true
     run_in_project_root_path_web: true

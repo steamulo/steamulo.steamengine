@@ -127,3 +127,5 @@ steamengine_sf_log_directory: "log"
 steamengine_sf_cache_directory: "cache"
 # Php fpm version
 steamengine_sf_php_fpm_version: "php7.4-fpm"
+# Php bin path
+steamengine_sf_php_bin_path: "/usr/bin/php"

@@ -29,6 +29,7 @@ steamengine_wrapper_scripts_extra: []
 #  run_in_project_root_path_web: true # optional
 
 steamengine_wrapper_scripts_post_deploy: []
+steamengine_wrapper_scripts_pre_deploy: []
 
 # List of command to run periodically. This command will be automatically put into steamengine wrapper and called from a cron.
 # Example :

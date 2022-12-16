@@ -2,7 +2,7 @@
 
 - name: Verify build extension
   ansible.builtin.assert:
-    that: (steamengine_build_url | basename | splitext)[1] == ".zip"
+    that: (steamengine_build_url | basename | splitext)[1] == ".zip" or (steamengine_build_url | basename | splitext)[1] == ".tgz"
   when: steamengine_build_url is defined and steamengine_build_url
   tags:
     - steamengine_deploy_sf

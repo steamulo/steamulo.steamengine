@@ -8,14 +8,14 @@
 
 # This is done this way in order to support steamengine_tomcat_allow_insecure_write_*
 #  application might have created directory on which steamengine_project_user doesn't have ownership
-- name: "{{ steamengine_project_name }} fixpermissions"
-  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+- name: "{{ steamengine_home_path }} fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_home_path }}/bin/steamengine fixpermissions"
 
-- name: "{{ steamengine_project_name }} restart"
-  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine restart"
+- name: "{{ steamengine_home_path }} restart"
+  ansible.builtin.command: "/{{ steamengine_home_path }}/bin/steamengine restart"
 
-- name: "{{ steamengine_project_name }} stop"
-  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine stop"
+- name: "{{ steamengine_home_path }} stop"
+  ansible.builtin.command: "/{{ steamengine_home_path }}/bin/steamengine stop"
 
-- name: "{{ steamengine_project_name }} start"
-  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine start"
+- name: "{{ steamengine_home_path }} start"
+  ansible.builtin.command: "/{{ steamengine_home_path }}/bin/steamengine start"

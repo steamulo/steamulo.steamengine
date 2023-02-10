@@ -13,8 +13,8 @@
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
   notify:
-    - "{{ steamengine_project_name }} fixpermissions"
-    - "{{ steamengine_project_name }} restart"
+    - "{{ steamengine_home_path }} fixpermissions"
+    - "{{ steamengine_home_path }} restart"
   register: get_url_build
   tags:
     - steamengine_deploy_drupal
@@ -76,7 +76,7 @@
   register: root_path_web_directory
 
 - name: Fix permissions before updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  command: "/{{ steamengine_home_path }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy and root_path_web_directory.stat.exists
   tags:
     - steamengine_deploy_drupal
@@ -187,7 +187,7 @@
     - steamengine_deploy_drupal
 
 - name: Fix drush cache permissions
-  command: "/{{ steamengine_project_name }}/bin/steamengine drush_fix_permissions"
+  command: "/{{ steamengine_home_path }}/bin/steamengine drush_fix_permissions"
   when: new_build_to_deploy or steamengine_drupal_initial_install
   tags:
     - steamengine_deploy_drupal

@@ -55,8 +55,6 @@
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
-  notify:
-    - "{{ steamengine_project_name }} fixpermissions"
   register: get_url_build
   tags:
     - steamengine_deploy_sf

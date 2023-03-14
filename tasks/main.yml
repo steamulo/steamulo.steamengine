@@ -80,3 +80,10 @@
       tags:
         - steamengine_deploy
   tags: always
+
+- include_tasks:
+    file: common/delete_project.yml
+    apply:
+      tags:
+        - steamengine_delete_project
+  when: steamengine_delete_project

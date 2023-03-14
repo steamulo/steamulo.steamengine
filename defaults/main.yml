@@ -1,9 +1,10 @@
 ---
 
+
 # GLOBAL
 steamengine_project_name: "default_project"
 
-steamengine_project_ssh_keys: []
+steamengine_project_ssh_keys: [ ]
 
 steamengine_logrotate_scripts:
   - name: "{{ steamengine_project_name }}"
@@ -21,15 +22,15 @@ steamengine_logrotate_scripts:
 # This is a global option to rsyslog, this affect all your rsyslog conf
 steamengine_disable_rsyslog_escape_control_characters: true
 
-steamengine_wrapper_scripts_extra: []
+steamengine_wrapper_scripts_extra: [ ]
 #  name:
 #  description:
 #  command:
 #  run_as_app_user: true # optional
 #  run_in_project_root_path_web: true # optional
 
-steamengine_wrapper_scripts_post_deploy: []
-steamengine_wrapper_scripts_pre_deploy: []
+steamengine_wrapper_scripts_post_deploy: [ ]
+steamengine_wrapper_scripts_pre_deploy: [ ]
 
 # List of command to run periodically. This command will be automatically put into steamengine wrapper and called from a cron.
 # Example :
@@ -46,7 +47,7 @@ steamengine_wrapper_scripts_pre_deploy: []
 #     weekday: "*" # optional
 #     special_time: daily # optional
 #     disabled: false # optional
-steamengine_crons: []
+steamengine_crons: [ ]
 
 # List of additional services to create
 # Example :
@@ -54,25 +55,25 @@ steamengine_crons: []
 #   - name: messenger
 #     description: "Symfony Messenger: Sync & Queued Message Handling"
 #     command: "/usr/bin/php bin/console messenger:consume async --limit=10 --env=prod"
-steamengine_extra_services: []
+steamengine_extra_services: [ ]
 
 steamengine_build_url_validate_certs: true
-steamengine_build_url_headers: {}
+steamengine_build_url_headers: { }
 
 # Create persistent subdirectory
 # All directories are placed in "{{ steamengine_project_name }}/storage"
-# The storage directory is create if at least one item is present
+# The storage directory is created if at least one item is present
 # Example :
 # steamengine_persistent_directories:
 #     - path: "protected_upload" # Create a subdirectory storage/protected_upload
 #       symlink_src: "upload"    # Create a link "/{{ steamengine_project_name }}/upload" -> "/{{ steamengine_project_name }}/storage/protected_upload
 #       delete_dir: False        # Delete the directory (if exists) before creating the symlink . False by default
-steamengine_persistent_directories: []
+steamengine_persistent_directories: [ ]
 
 # NODEJS
 steamengine_nodejs_entrypoint: "bin/www"
 steamengine_nodejs_cluster_mode: true
-steamengine_nodejs_allowed_write_paths: []
+steamengine_nodejs_allowed_write_paths: [ ]
 steamengine_nodejs_add_nginx_app_group: false
 
 # TOMCAT7
@@ -113,7 +114,7 @@ steamengine_sf_path_with_write_permission:
   - "var/log"
   - "var/cache"
 # List of source template and target path for configuration to put inside the projet (for example for symfony < 4 : parameters.yml.j2: app/config/parameters.yml )
-steamengine_sf_project_custom_configurations_template_path: {}
+steamengine_sf_project_custom_configurations_template_path: { }
 # Directory name to store logs outside the project
 steamengine_sf_external_logs_directory: "symfony"
 # Directory for public file (replace with "web" for symfony < 4)

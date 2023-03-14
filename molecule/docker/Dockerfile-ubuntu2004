@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM jgeusebroek/ubuntu2004-molecule
 
 ENV container=docker \
     LANGUAGE=en_US.UTF-8 \

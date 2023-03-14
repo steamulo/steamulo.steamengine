@@ -39,3 +39,8 @@ steamengine_project_types:
   - tomcat
   - play
   - symfony
+
+# ADDITIONAL VARIABLES
+steamengine_delete_project: false
+
+steamengine_project_to_delete: []

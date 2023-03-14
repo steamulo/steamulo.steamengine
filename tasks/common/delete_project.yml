@@ -46,7 +46,7 @@
 
 - name: "Uninstall all associated packages"
   become: true
-  #ansible.builtin.apt:
+  # ansible.builtin.apt:
   ansible.builtin.package:
     state: absent
     name: "{{ item }}"

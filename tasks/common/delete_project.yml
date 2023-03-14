@@ -25,7 +25,7 @@
   loop: "{{ steamengine_extra_services }}"
 
 - name: Remove systemd unit file
-  ansible.builtin.systemd:
+  ansible.builtin.file:
   file:
     path: "/etc/systemd/system/{{ steamengine_project_name }}.service"
     state: absent

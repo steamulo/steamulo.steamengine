@@ -35,7 +35,7 @@
   file:
     path: "{{ service_path }}"
     state: absent
-    recurse: yes
+    recurse: true
   become: true
 
 - name: "Delete user {{ steamengine_project_user }}"

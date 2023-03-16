@@ -1,5 +1,28 @@
 ---
 
+- name: Check if the service exists
+  command: systemctl status "{{ steamengine_project_name }}.service"
+  register: service_status
+  ignore_errors: true
+
+- name: Stop the service
+  systemd:
+    name: "{{ steamengine_project_name }}.service"
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  when: not service_status.rc == 4
+
+
+- name: "Delete user {{ steamengine_project_user }}"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ steamengine_project_user }}"
+    - "{{ steamengine_app_user }}"
+
+
 - name: Delete project
   ansible.builtin.group:
     name: "{{ item }}"
@@ -17,38 +40,15 @@
     - item.delete_dir is defined and item.delete_dir
   loop: "{{ steamengine_persistent_directories }}"
 
-- name: Delete services currently running
-  ansible.builtin.systemd:
-    enabled: false
-    daemon_reload: true
-    name: "{{ steamengine_project_name }}-{{ item.name }}"
-  loop: "{{ steamengine_extra_services }}"
 
 - name: Remove systemd unit file
-  ansible.builtin.file:
   file:
-    path: "/etc/systemd/system/{{ steamengine_project_name }}.service"
+    path: "/etc/systemd/system/{{ item }}.service"
     state: absent
   become: true
-
-- name: Remove service files
-  file:
-    path: "{{ service_path }}"
-    state: absent
-    recurse: true
-  become: true
-
-- name: "Delete user {{ steamengine_project_user }}"
-  ansible.builtin.user:
-    name: "{{ steamengine_project_user }}"
-    state: absent
-
-
-- name: "Uninstall all associated packages"
-  become: true
-  # ansible.builtin.apt:
-  ansible.builtin.package:
-    state: absent
-    name: "{{ item }}"
   with_items:
-    - "{{ ansible_facts.packages }}"
+    - "{{ steamengine_extra_services }}"
+    - "{{ steamengine_project_name }}"
+
+- name: Delete project file at project root
+  ansible.builtin.command: rm -rf "/{{ steamengine_project_name }}"

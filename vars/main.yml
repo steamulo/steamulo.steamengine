@@ -43,4 +43,4 @@ steamengine_project_types:
 # ADDITIONAL VARIABLES
 steamengine_delete_project: false
 
-steamengine_project_to_delete: []
+#steamengine_projects_to_delete: []

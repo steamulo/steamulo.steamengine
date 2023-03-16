@@ -6,11 +6,13 @@
       - "steamengine_project_type is defined"
       - "steamengine_project_type in steamengine_project_types"
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - name: "Include variables for {{ steamengine_project_type }}"
   ansible.builtin.include_vars:
     file: "vars/{{ steamengine_project_type }}.yml"
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - include_tasks:
     file: "{{ steamengine_project_type }}/asserts.yml"
@@ -18,6 +20,7 @@
       tags:
         - steamengine_deploy
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - include_tasks:
     file: common/install_deps.yml
@@ -25,6 +28,7 @@
       tags:
         - steamengine_dependencies
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - include_tasks:
     file: common/user.yml
@@ -32,6 +36,7 @@
       tags:
         - steamengine_user
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - include_tasks:
     file: common/structure.yml
@@ -39,6 +44,7 @@
       tags:
         - steamengine_structure
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - include_tasks:
     file: common/runtime.yml
@@ -46,6 +52,7 @@
       tags:
         - steamengine_runtime
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - include_tasks:
     file: "{{ steamengine_project_type }}/runtime.yml"
@@ -53,6 +60,7 @@
       tags:
         - steamengine_runtime
   tags: always
+  when: steamengine_project_name not in steamengine_projects_to_delete
 
 - name: "Initialize var new_build_to_deploy"
   ansible.builtin.set_fact:
@@ -64,7 +72,9 @@
     apply:
       tags:
         - steamengine_deploy
-  when: steamengine_build_url is defined and steamengine_build_url
+  when:
+    - steamengine_build_url is defined and steamengine_build_url
+    - steamengine_project_name not in steamengine_projects_to_delete
   tags: always
 
 - include_tasks:
@@ -86,4 +96,5 @@
     apply:
       tags:
         - steamengine_delete_project
-  when: steamengine_delete_project
+  tags: always
+  when: steamengine_project_name in steamengine_projects_to_delete

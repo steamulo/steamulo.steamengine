@@ -3,7 +3,8 @@
 Steamengine
 =========
 
-This role provides production grade installation and deployment workflow for nodejs, tomcat, play, springboot, symfony and static files.
+This role provides production grade installation and deployment workflow for nodejs, tomcat, play, springboot, symfony
+and static files.
 
 Role Variables
 ------------
@@ -40,17 +41,20 @@ steamengine_project_configuration_base_name:
 
 # Public ssh keys that will be added to the project user.
 # Default is empty.
-steamengine_project_ssh_keys: []
+steamengine_project_ssh_keys: [ ]
 
 # If you wish to delete a project you need to specify this variable.
 # Default is empty, you need to write your project name in vars.yml in steamengine_projects_to_delete.
-steamengine_projects_to_delete: []
+steamengine_projects_to_delete: [ ]
+#  - {{ steamengine_project_name }}
+
 ```
 
 Example Playbook
 ------------
 
 Examples for different project types can be found under the molecule folder:
+
 * [Node.js](molecule/nodejs/converge.yml)
 * [Play](molecule/play/converge.yml)
 * [SpringBoot](molecule/springboot/converge.yml)
@@ -61,9 +65,11 @@ Examples for different project types can be found under the molecule folder:
 Development
 ------------
 
-This role use the [molecule framework](https://molecule.readthedocs.io/en/stable/) in order to simplify the development process.
+This role use the [molecule framework](https://molecule.readthedocs.io/en/stable/) in order to simplify the development
+process.
 
 Requirements:
+
 * [Python 3](https://www.python.org/download)
 * [Docker](https://docs.docker.com/get-docker/)
 
@@ -71,7 +77,8 @@ Setup your local environnement with python virtualenv prior to using molecule : 
 
 This command will create a virtual env, activate it and download python dependencies.
 
-Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type>``` to log into the test machine.
+Use ```molecule converge -s <project_type>``` to create a local environnement and ```molecule login -s <project_type>```
+to log into the test machine.
 
 Before any commit ensure that every test are passing with ```molecule test --all```
 

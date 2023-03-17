@@ -51,3 +51,4 @@
 
 - name: Delete project file at project root
   ansible.builtin.command: rm -rf "/{{ steamengine_project_name }}"
+  

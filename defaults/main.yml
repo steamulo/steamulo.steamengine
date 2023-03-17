@@ -133,3 +133,7 @@ steamengine_sf_php_fpm_version: "php7.4-fpm"
 steamengine_sf_php_bin_path: "/usr/bin/php"
 #Delete project
 steamengine_projects_to_delete: []
+# Example :
+#  - project_name1
+#  - project_name2
+#  - project_name3

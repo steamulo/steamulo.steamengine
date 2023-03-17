@@ -41,6 +41,10 @@ steamengine_project_configuration_base_name:
 # Public ssh keys that will be added to the project user.
 # Default is empty.
 steamengine_project_ssh_keys: []
+
+# If you wish to delete a project you need to specify this variable.
+# Default is empty, you need to write your project name in vars.yml in steamengine_projects_to_delete.
+steamengine_projects_to_delete: []
 ```
 
 Example Playbook

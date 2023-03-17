@@ -13,13 +13,6 @@
 
 - name: "{{ steamengine_project_name }} restart"
   ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine restart"
-  register: restart_result
-  ignore_errors: true
-
-- name: skip restart task if previous task failed
-  ansible.builtin.debug:
-    msg: "Restart failed, skipping task"
-  when: restart_result.rc != 0
 
 - name: "{{ steamengine_project_name }} stop"
   ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine stop"

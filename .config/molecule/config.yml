@@ -10,11 +10,11 @@ platforms:
     dockerfile: ../docker/Dockerfile-${MOLECULE_DISTRO:-ubuntu2004}
     pre_build_image: false
     privileged: true
-#    volumes:
-#      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#    tmpfs:
-#      - /tmp
-#      - /run
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tmpfs:
+      - /tmp
+      - /run
 provisioner:
   name: ansible
 verifier:

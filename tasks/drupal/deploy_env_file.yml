@@ -1,12 +1,12 @@
 ---
 
 - name: Remove potential env file
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ steamengine_project_root_path_web }}/.env"
 
 - name: Create external env file
-  copy:
+  ansible.builtin.copy:
     content: |
       # This file is managed by Ansible, all changes will be lost.
       {{ steamengine_drupal_env }}
@@ -16,7 +16,7 @@
     mode: u=rw,g=r,o=
 
 - name: Create env symlink
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ steamengine_conf_path }}/.env"
     dest: "{{ steamengine_project_root_path_web }}/.env"

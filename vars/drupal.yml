@@ -35,7 +35,7 @@ steamengine_wrapper_scripts_base:
     command: |
       find -L {{ steamengine_project_root_path_web }} \
       {% for value in steamengine_drupal_path_with_write_permission %}
-        -not -path '{{steamengine_project_root_path_web}}/{{ value }}*' \
+        -not -path '{{ steamengine_project_root_path_web }}/{{ value }}*' \
       {% endfor %}
       {% for value in steamengine_persistent_directories %}
         -not -path '/{{ steamengine_project_name }}/{{ value.symlink_src }}*' \

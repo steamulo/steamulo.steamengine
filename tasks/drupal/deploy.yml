@@ -3,7 +3,7 @@
 ### Build
 
 - name: Download build {{ steamengine_build_url }}
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ steamengine_build_checksum }}"
@@ -20,13 +20,13 @@
     - steamengine_deploy_drupal
 
 - name: "Is there a new build: {{ get_url_build.changed }}"
-  set_fact:
-    new_build_to_deploy: "{{ get_url_build.changed|bool }}"
+  ansible.builtin.set_fact:
+    new_build_to_deploy: "{{ get_url_build.changed | bool }}"
   tags:
     - steamengine_deploy_drupal
 
 - name: Create tmp directory
-  tempfile:
+  ansible.builtin.tempfile:
     state: directory
     suffix: "{{ steamengine_project_name }}"
   register: tempdir
@@ -35,7 +35,7 @@
     - steamengine_deploy_drupal
 
 - name: Unarchive build
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ steamengine_project_root_path }}/project.zip"
     dest: "{{ tempdir.path }}"
     remote_src: true
@@ -46,7 +46,7 @@
     - steamengine_deploy_drupal
 
 - name: Ensure settings is present
-  copy:
+  ansible.builtin.copy:
     src: "{{ tempdir.path }}/{{ steamengine_drupal_public_directory }}/sites/default/default.settings.php"
     dest: "{{ steamengine_conf_path }}/settings.php"
     force: false
@@ -60,7 +60,7 @@
     - steamengine_deploy_drupal
 
 - name: Customize drupal settings
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ steamengine_conf_path }}/settings.php"
     block: "{{ steamengine_drupal_project_setting }}"
     mode: u=rwx,g=rx,o=
@@ -71,18 +71,18 @@
     - steamengine_deploy_drupal
 
 - name: Check www directory exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ steamengine_project_root_path_web }}"
   register: root_path_web_directory
 
 - name: Fix permissions before updating source
-  command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine fixpermissions"
   when: new_build_to_deploy and root_path_web_directory.stat.exists
   tags:
     - steamengine_deploy_drupal
 
 - name: Clean www directory
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     state: absent
   when: new_build_to_deploy
@@ -90,13 +90,13 @@
     - steamengine_deploy_drupal
 
 - name: "Move archive files to {{ steamengine_project_root_path_web }}"
-  command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
+  ansible.builtin.command: "mv {{ tempdir.path }} {{ steamengine_project_root_path_web }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
 - name: "Add read permission for {{ steamengine_app_user }}"
-  file:
+  ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -107,7 +107,7 @@
     - steamengine_deploy_drupal
 
 - name: Clean configuration file
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ steamengine_project_root_path_web }}/{{ steamengine_drupal_public_directory }}/sites/default/settings.php"
   when: new_build_to_deploy
@@ -115,7 +115,7 @@
     - steamengine_deploy_drupal
 
 - name: Create configuration link
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ steamengine_conf_path }}/settings.php"
     dest: "{{ steamengine_project_root_path_web }}/{{ steamengine_drupal_public_directory }}/sites/default/settings.php"
@@ -138,14 +138,14 @@
     - always
 
 - name: Check if database is empty
-  command: "{{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-query 'show tables'"
+  ansible.builtin.command: "{{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-query 'show tables'"
   register: steamengine_drupal_database_table_number
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
 
 - name: "Is a new deploy: {{ steamengine_drupal_database_table_number.changed and not steamengine_drupal_database_table_number.stdout }}"
-  set_fact:
+  ansible.builtin.set_fact:
     steamengine_drupal_initial_install: "{{ steamengine_drupal_database_table_number.changed and not steamengine_drupal_database_table_number.stdout }}"
   tags:
     - steamengine_deploy_drupal
@@ -187,7 +187,7 @@
     - steamengine_deploy_drupal
 
 - name: Fix drush cache permissions
-  command: "/{{ steamengine_project_name }}/bin/steamengine drush_fix_permissions"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine drush_fix_permissions"
   when: new_build_to_deploy or steamengine_drupal_initial_install
   tags:
     - steamengine_deploy_drupal

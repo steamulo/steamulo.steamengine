@@ -4,34 +4,34 @@
   become: true
   pre_tasks:
     - name: Add ppa:ondrej/php repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: ppa:ondrej/php
       when: ansible_os_family == 'Debian'
     - name: Import remi GPG key.
-      rpm_key:
+      ansible.builtin.rpm_key:
         key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
         state: present
       when: ansible_os_family == 'RedHat'
     - name: Add remi-php74 repository
-      yum:
+      ansible.builtin.yum:
         name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
         state: present
       when: ansible_os_family == 'RedHat'
     - name: Enable module php7.4 for Centos8
-      dnf:
+      ansible.builtin.dnf:
         name: '@php:remi-7.4'
         state: present
       when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
     - name: Install python3 Psycopg2
-      apt:
+      ansible.builtin.apt:
         name: python3-psycopg2
       when: ansible_os_family == 'Debian'
     - name: "Set ansible_python_interpreter for Ubuntu 20"
-      set_fact:
+      ansible.builtin.set_fact:
         ansible_python_interpreter: "/usr/bin/python3"
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 18
     - name: "Create project app user drupalapp"
-      user:
+      ansible.builtin.user:
         name: "drupalapp"
         password: "*"
         createhome: false

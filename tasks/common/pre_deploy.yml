@@ -1,6 +1,11 @@
 ---
 
-- name: Stop extra services
+- name: "Run pre deploy commands"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine {{ item }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and steamengine_wrapper_scripts_pre_deploy
+  loop: "{{ steamengine_wrapper_scripts_pre_deploy }}"
+
+- name: "Stop extra services"
   ansible.builtin.command: "{{ steamengine_bin_path }}/steamengine {{ item.name }}_stop"
-  when: new_build_to_deploy
+  when: new_build_to_deploy is defined and new_build_to_deploy
   loop: "{{ steamengine_extra_services }}"

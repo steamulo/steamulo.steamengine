@@ -29,6 +29,7 @@ steamengine_wrapper_scripts_extra: []
 #  run_in_project_root_path_web: true # optional
 
 steamengine_wrapper_scripts_post_deploy: []
+steamengine_wrapper_scripts_pre_deploy: []
 
 # List of command to run periodically. This command will be automatically put into steamengine wrapper and called from a cron.
 # Example :
@@ -106,6 +107,12 @@ steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"
 
+# PHP
+# PHP fpm version
+steamengine_php_fpm_service_name: "php7.4-fpm"
+# PHP CLI bin path
+steamengine_php_bin_path: "/usr/bin/php"
+
 # DRUPAL
 # Path of drush launcher
 steamengine_drupal_drush_launcher_path: "/usr/local/bin/drush"
@@ -165,7 +172,3 @@ steamengine_sf_var_directory: "var"
 steamengine_sf_log_directory: "log"
 # Directory for cache files
 steamengine_sf_cache_directory: "cache"
-
-# DRUPAL & SYMFONY
-# Php fpm version
-steamengine_php_fpm_service_name: "php7.4-fpm"

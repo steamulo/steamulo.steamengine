@@ -1,16 +1,19 @@
 ---
 
 - name: Check if the service exists
-  command: systemctl status "{{ steamengine_project_name }}.service"
+  ansible.builtin.service:
+    name: "{{ steamengine_project_name }}.service"
   register: service_status
+  failed_when: false
+  changed_when: false
 
 - name: Stop the service
-  systemd:
+  ansible.builtin.service:
     name: "{{ steamengine_project_name }}.service"
     state: stopped
     enabled: false
     daemon_reload: true
-  when: service_status.rc == 0 or service_status.rc == 3
+  when: service_status is defined and service_status|bool
 
 
 - name: "Delete user {{ steamengine_project_user }}"

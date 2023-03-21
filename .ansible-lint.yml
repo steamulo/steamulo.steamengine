@@ -5,3 +5,5 @@ exclude_paths:
   - .git
 skip_list:
   - experimental
+warn_list:
+  - var-spacing # Faux positif sur Drupal https://github.com/ansible/ansible-lint/issues/2209

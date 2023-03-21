@@ -66,7 +66,7 @@ steamengine_build_url_headers: {}
 # steamengine_persistent_directories:
 #     - path: "protected_upload" # Create a subdirectory storage/protected_upload
 #       symlink_src: "upload"    # Create a link "/{{ steamengine_project_name }}/upload" -> "/{{ steamengine_project_name }}/storage/protected_upload
-#       delete_dir: False        # Delete the directory (if exists) before creating the symlink . False by default
+#       delete_dir: false        # Delete the directory (if exists) before creating the symlink . False by default
 steamengine_persistent_directories: []
 
 # NODEJS
@@ -107,7 +107,53 @@ steamengine_java_opts:
   - "-Xmx512M"
   - "-Xms512M"
 
-# Symfony
+# PHP
+# PHP fpm version
+steamengine_php_fpm_service_name: "php7.4-fpm"
+# PHP CLI bin path
+steamengine_php_bin_path: "/usr/bin/php"
+
+# DRUPAL
+# Path of drush launcher
+steamengine_drupal_drush_launcher_path: "/usr/local/bin/drush"
+# List of directory we need write permission
+steamengine_drupal_path_with_write_permission:
+  - "web/sites/default/files"
+# Content to add to the setting.php
+steamengine_drupal_project_setting: |
+  $databases['default']['default'] = array (
+    'database' => 'drupal',
+    'username' => 'drupal',
+    'password' => 'drupal',
+    'prefix' => '',
+    'host' => 'localhost',
+    'port' => '3306',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+  );
+  $settings['hash_salt'] = 'ChangeMe';
+  $config_directories['sync'] = '../config';
+# Directory for public file
+steamengine_drupal_public_directory: "web"
+# Url for the dump of database for an install
+steamengine_drupal_db_dump_url:
+steamengine_drupal_db_dump_url_headers: {}
+# If is new install of drupal, launch a drush's install
+steamengine_drupal_install_from_drush: false
+# Profile type for a drush's install (standard|minimal|expert)
+steamengine_drupal_install_profile: "minimal"
+steamengine_drupal_install_use_existing_config: true
+steamengine_drupal_install_option: >
+  --site-name="{{ steamengine_project_name }}"
+  --site-mail="admin@example.com"
+  --account-name="admin"
+  --account-pass="admin"
+  --account-mail="admin@example.com"
+  --locale="fr"
+# Number of db backup to keep (0 to deactive backup when deploying)
+steamengine_drupal_keep_last_n_backup: 4
+
+# SYMFONY
 # List of directory we need write permission (modify for symfony < 4)
 steamengine_sf_path_with_write_permission:
   - "var/log"
@@ -126,7 +172,3 @@ steamengine_sf_var_directory: "var"
 steamengine_sf_log_directory: "log"
 # Directory for cache files
 steamengine_sf_cache_directory: "cache"
-# Php fpm version
-steamengine_sf_php_fpm_version: "php7.4-fpm"
-# Php bin path
-steamengine_sf_php_bin_path: "/usr/bin/php"

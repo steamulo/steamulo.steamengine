@@ -1,7 +1,6 @@
 ---
-- src: https://github.com/STEAMULO/ansible-role-php.git
-  version: 4.7.1
-  name: steamulo.php
+- src: geerlingguy.php
+  version: 4.8.0
 
 - src: geerlingguy.nginx
   version: 3.1.1

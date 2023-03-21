@@ -1,0 +1,24 @@
+---
+
+- name: Ensure dump folder exists
+  ansible.builtin.file:
+    path: "{{ steamengine_home_path }}/deploy_dump"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_project_user }}"
+    mode: 0750
+
+- name: Creating database dump
+  ansible.builtin.command: "{{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }} sql-dump --result-file={{ steamengine_home_path }}/deploy_dump/{{ ansible_date_time.iso8601 }}-{{ steamengine_build_checksum }}.sql"
+  when: steamengine_drupal_keep_last_n_backup > 0
+
+- name: Find all database dumps
+  ansible.builtin.find:
+    paths: "{{ steamengine_home_path }}/deploy_dump"
+  register: steamengine_drupal_dump_files
+
+- name: "Keep only last {{ steamengine_drupal_keep_last_n_backup }} database dumps"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ (steamengine_drupal_dump_files.files | sort(attribute='ctime'))[:-steamengine_drupal_keep_last_n_backup] }}"

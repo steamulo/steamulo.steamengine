@@ -1,0 +1,41 @@
+---
+
+- name: Remove settings link
+  ansible.builtin.file:
+    path: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+    state: absent
+  when: not steamengine_drupal_install_use_existing_config
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Remove settings
+  ansible.builtin.file:
+    path: "{{ steamengine_conf_path }}/settings.php"
+    state: absent
+  when: not steamengine_drupal_install_use_existing_config
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Install Drupal with drush.
+  ansible.builtin.command: >
+    {{ steamengine_drupal_drush_launcher_path }} -r {{ steamengine_project_root_path_web }}
+    site-install {{ steamengine_drupal_install_profile }} -y {{ steamengine_drupal_install_option }}
+    {{ steamengine_drupal_install_use_existing_config | ternary('--existing-config', '') }}
+  when: steamengine_drupal_initial_install and steamengine_drupal_install_from_drush
+  tags:
+    - steamengine_deploy_drupal
+
+- name: "Move setting files to {{ steamengine_conf_path }}"
+  ansible.builtin.command: "mv {{ steamengine_project_root_path_web }}/web/sites/default/settings.php {{ steamengine_conf_path }}/settings.php"
+  when: not steamengine_drupal_install_use_existing_config
+  tags:
+    - steamengine_deploy_drupal
+
+- name: Create configuration link
+  ansible.builtin.file:
+    state: link
+    src: "{{ steamengine_conf_path }}/settings.php"
+    dest: "{{ steamengine_project_root_path_web }}/web/sites/default/settings.php"
+  when: not steamengine_drupal_install_use_existing_config
+  tags:
+    - steamengine_deploy_drupal

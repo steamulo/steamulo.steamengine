@@ -37,5 +37,6 @@ steamengine_project_types:
   - static
   - nodejs
   - tomcat
+  - drupal
   - play
   - symfony

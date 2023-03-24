@@ -1,7 +1,6 @@
 ---
 - name: Converge
   hosts: instance
-  remote_user: sbarbarin
   become: true
   roles:
     - role: geerlingguy.nginx

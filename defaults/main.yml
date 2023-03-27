@@ -8,8 +8,7 @@ steamengine_project_ssh_keys: [ ]
 
 steamengine_logrotate_scripts:
   - name: "{{ steamengine_project_name }}"
-    path: "{{ item }}"
-    with_items:
+    path:
       - "{{ steamengine_logs_path }}/*.log"
       - "{{ steamengine_logs_path }}/{{ steamengine_sf_external_logs_directory }}/*.log"
     options:

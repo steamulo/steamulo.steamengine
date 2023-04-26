@@ -40,6 +40,3 @@ steamengine_project_types:
   - play
   - symfony
 
-# ADDITIONAL VARIABLES
-steamengine_delete_project: false
-

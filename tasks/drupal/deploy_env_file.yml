@@ -1,0 +1,24 @@
+---
+
+- name: Remove potential env file
+  ansible.builtin.file:
+    state: absent
+    path: "{{ steamengine_project_root_path_web }}/.env"
+
+- name: Create external env file
+  ansible.builtin.copy:
+    content: |
+      # This file is managed by Ansible, all changes will be lost.
+      {{ steamengine_drupal_env }}
+    dest: "{{ steamengine_conf_path }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=
+
+- name: Create env symlink
+  ansible.builtin.file:
+    state: link
+    src: "{{ steamengine_conf_path }}/.env"
+    dest: "{{ steamengine_project_root_path_web }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"

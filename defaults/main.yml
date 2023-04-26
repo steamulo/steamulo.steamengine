@@ -140,3 +140,5 @@ steamengine_projects_to_delete: []
 #  - project_name1
 #  - project_name2
 #  - project_name3
+
+steamengine_ignore_checksum: false

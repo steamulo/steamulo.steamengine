@@ -1,4 +1,11 @@
 ---
+- name: Verify checksum is defined
+  ansible.builtin.assert:
+    that:
+      - steamengine_build_checksum is defined
+      - steamengine_ignore_checksum or checksum.strip() != ''
+    fail_msg: "The checksum '{{ steamengine_build_checksum }}' isn't defined."
+  tags: always
 
 - name: Verify project type
   ansible.builtin.assert:

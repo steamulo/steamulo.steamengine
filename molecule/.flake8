@@ -1,0 +1,3 @@
+[flake8]
+exclude = .git,__pycache__,.virtualenv,roles
+max-line-length = 250

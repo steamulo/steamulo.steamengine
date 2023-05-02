@@ -8,6 +8,12 @@
 - src: geerlingguy.nginx
   version: 3.1.1
 
-- src: https://github.com/STEAMULO/ansible-role-php.git
-  version: 4.7.1
-  name: steamulo.php
+- src: geerlingguy.php
+  version: 4.8.0
+
+- src: https://github.com/ANXS/postgresql.git
+  version: e3f22bf58446039f24312583532280c7d9032e96
+  name: anxs.postgresql
+
+- src: geerlingguy.drush
+  version: 3.1.2

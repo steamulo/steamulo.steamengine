@@ -12,7 +12,8 @@
   ansible.builtin.user:
     name: "{{ steamengine_app_user }}"
     password: "*"
-    createhome: false
+    home: "{{ steamengine_home_path }}/.app"
+    createhome: true
     group: "{{ steamengine_app_user }}"
     append: true
 

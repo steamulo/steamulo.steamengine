@@ -6,8 +6,8 @@ driver:
   name: docker
 platforms:
   - name: instance
-    image: ${MOLECULE_DISTRO:-ubuntu1804}
-    dockerfile: ../docker/Dockerfile-${MOLECULE_DISTRO:-ubuntu1804}
+    image: ${MOLECULE_DISTRO:-ubuntu2004}
+    dockerfile: ../docker/Dockerfile-${MOLECULE_DISTRO:-ubuntu2004}
     pre_build_image: false
     privileged: true
     volumes:

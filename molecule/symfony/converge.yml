@@ -3,35 +3,29 @@
   hosts: instance
   become: true
   pre_tasks:
-    - name: Add ppa:ondrej/php repository
-      ansible.builtin.apt_repository:
-        repo: ppa:ondrej/php
-      when: ansible_os_family == 'Debian'
-    - name: Import remi GPG key.
-      ansible.builtin.rpm_key:
-        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+    - name: Create project groups
+      ansible.builtin.group:
+        name: "test_symfonyapp"
         state: present
-      when: ansible_os_family == 'RedHat'
-    - name: Add remi-php74 repository
-      ansible.builtin.yum:
-        name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
-        state: present
-      when: ansible_os_family == 'RedHat'
-    - name: Enable module php7.4 for REHL
-      ansible.builtin.dnf:
-        name: '@php:remi-7.4'
-        state: present
-      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
-    - name: "Create project app user test_symfonyapp"
+    - name: Create project app user test_symfonyapp
       ansible.builtin.user:
         name: "test_symfonyapp"
         password: "*"
-        createhome: false
-  roles:
-    - role: geerlingguy.php
+        home: "/test_symfony/.app"
+        createhome: true
+        group: "test_symfonyapp"
+        append: true
+  tasks:
+    - name: Include php versions role
+      ansible.builtin.include_role:
+        name: geerlingguy.php-versions
       vars:
-        php_enablerepo: "remi-php74"
-        php_default_version_debian: "7.4"
+        php_version: "8.2"
+    - name: Include php role
+      ansible.builtin.include_role:
+        name: geerlingguy.php
+      vars:
+        php_version: "8.2"
         php_install_recommends: false
         php_enable_php_fpm: true
         php_webserver_daemon: "nginx"
@@ -39,7 +33,9 @@
         php_expose_php: false
         php_fpm_pool_user: test_symfonyapp
         php_fpm_pool_group: test_symfonyapp
-    - role: geerlingguy.nginx
+    - name: Include nginx role
+      ansible.builtin.include_role:
+        name: geerlingguy.nginx
       vars:
         nginx_remove_default_vhost: true
         nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
@@ -63,7 +59,9 @@
               location ~ \.php$ {
                 return 404;
               }
-    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    - name: Include steamengine role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: test_symfony
         steamengine_project_type: symfony
@@ -75,7 +73,7 @@
         steamengine_wrapper_scripts_extra:
           - name: cache_clear_dev
             description: "Clear symfony cache"
-            command: "php bin/console cache:clear --env=dev"
+            command: "{{ steamengine_php_bin_path }} bin/console cache:clear --env=dev"
             run_as_app_user: true
             run_in_project_root_path_web: true
         steamengine_wrapper_scripts_post_deploy:
@@ -87,11 +85,11 @@
         steamengine_crons:
           - name: "cache_clear_cron"
             description: "Cache clear Daily"
-            command: "php bin/console cache:clear --env=prod"
+            command: "{{ steamengine_php_bin_path }} bin/console cache:clear --env=prod"
             run_as_app_user: true
             run_in_project_root_path_web: true
             special_time: daily
         steamengine_extra_services:
           - name: messenger
             description: "Symfony Messenger: Sync & Queued Message Handling"
-            command: "/usr/bin/php bin/console messenger:consume async --limit=10 --env=prod"
+            command: "{{ steamengine_php_bin_path }} bin/console messenger:consume async --limit=10 --env=prod"

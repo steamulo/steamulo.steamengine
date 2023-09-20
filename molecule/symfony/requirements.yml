@@ -2,5 +2,8 @@
 - src: geerlingguy.php
   version: 4.8.0
 
+- src: geerlingguy.php-versions
+  version: 5.0.0
+
 - src: geerlingguy.nginx
   version: 3.1.1

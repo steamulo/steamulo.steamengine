@@ -3,10 +3,6 @@
   hosts: instance
   become: true
   pre_tasks:
-    - name: Add ppa:ondrej/php repository
-      ansible.builtin.apt_repository:
-        repo: ppa:ondrej/php
-      when: ansible_os_family == 'Debian'
     - name: Import remi GPG key.
       ansible.builtin.rpm_key:
         key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
@@ -30,16 +26,29 @@
       ansible.builtin.set_fact:
         ansible_python_interpreter: "/usr/bin/python3"
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 18
-    - name: "Create project app user drupalapp"
+    - name: Create project groups
+      ansible.builtin.group:
+        name: "drupalapp"
+        state: present
+    - name: Create project app user drupalapp
       ansible.builtin.user:
         name: "drupalapp"
         password: "*"
-        createhome: false
-  roles:
-    - role: geerlingguy.php
+        home: "/drupal/.app"
+        createhome: true
+        group: "drupalapp"
+        append: true
+  tasks:
+    - name: Include php versions role
+      ansible.builtin.include_role:
+        name: geerlingguy.php-versions
       vars:
-        php_enablerepo: "remi-php74"
-        php_default_version_debian: "7.4"
+        php_version: "7.4"
+    - name: Include php role
+      ansible.builtin.include_role:
+        name: geerlingguy.php
+      vars:
+        php_version: "7.4"
         php_install_recommends: false
         php_enable_php_fpm: true
         php_webserver_daemon: "nginx"
@@ -48,7 +57,9 @@
         php_packages_extra: "{{ (ansible_os_family == 'Debian') | ternary(['php7.4-pgsql'], ['php-pgsql']) }}"
         php_fpm_pool_user: drupalapp
         php_fpm_pool_group: drupalapp
-    - role: anxs.postgresql
+    - name: Include postgresql role
+      ansible.builtin.include_role:
+        name: anxs.postgresql
       vars:
         postgresql_users:
           - name: "drupal"
@@ -56,15 +67,19 @@
         postgresql_databases:
           - name: "drupal"
             owner: "drupal"
-    - role: geerlingguy.drush
-    - role: geerlingguy.nginx
+    - name: Include drush role
+      ansible.builtin.include_role:
+        name: geerlingguy.drush
+    - name: Include nginx role
+      ansible.builtin.include_role:
+        name: geerlingguy.nginx
       vars:
         nginx_ppa_use: true
         nginx_remove_default_vhost: true
         nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
         nginx_vhosts:
           - listen: "80"
-            server_name: "drupalll.test"
+            server_name: "drupal.test"
             root: /drupal/project_root/www/web
             extra_parameters: |
               client_max_body_size 4096M;
@@ -111,10 +126,13 @@
               access_log /var/log/nginx/project_access.log;
         tags:
           - steamengine_nginx
-    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    - name: Include steamengine role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         steamengine_project_name: drupal
         steamengine_project_type: drupal
+        steamengine_php_fpm_service_name: "php7.4-fpm"
         steamengine_drupal_install_from_drush: false
         steamengine_drupal_install_use_existing_config: false
         steamengine_drupal_db_dump_url: https://delivery.steamulo.org/SteamEngineV2_tests/db_dump_drupal_9.zip

@@ -109,7 +109,7 @@ steamengine_java_opts:
 
 # PHP
 # PHP fpm version
-steamengine_php_fpm_service_name: "php7.4-fpm"
+steamengine_php_fpm_service_name: "php8.2-fpm"
 # PHP CLI bin path
 steamengine_php_bin_path: "/usr/bin/php"
 

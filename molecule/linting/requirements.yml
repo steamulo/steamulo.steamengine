@@ -2,7 +2,7 @@
 - src: geerlingguy.nodejs
   version: 5.1.1
 
-- src: lean_delivery.java
+- src: lean-delivery.java
   version: 7.1.0
 
 - src: geerlingguy.nginx

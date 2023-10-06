@@ -4,7 +4,7 @@
   become: true
 
   roles:
-    - role: lean_delivery.java
+    - role: lean-delivery.java
       vars:
         java_distribution: adoptopenjdk
         java_major_version: 8

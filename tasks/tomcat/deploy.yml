@@ -122,11 +122,16 @@
   tags:
     - steamengine_deploy_tomcat
 
+- name: Ensure non-empty checksum
+  set_fact:
+    steamengine_build_checksum_verified: sha1:1
+  when: steamengine_build_checksum == ''
+
 - name: "Download build {{ steamengine_build_url }}"
   ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.war"
-    checksum: "{{ steamengine_build_checksum }}"
+    checksum: "{{ (steamengine_build_checksum == '') | ternary(steamengine_build_checksum_verified, steamengine_build_checksum) }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=

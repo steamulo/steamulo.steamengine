@@ -26,15 +26,6 @@
   tags:
     - steamengine_deploy_play2
 
-# Setup checksum verification
-- name: Ensure non-empty checksum
-  set_fact:
-    empty_checksum_check: "{{ (steamengine_build_checksum == '') | ternary('sha1:1', steamengine_build_checksum) }}"
-
-- name: Confirm the verification of the checksum
-  set_fact:
-    checksum_verified: "{{ steamengine_skip_checksum | ternary('', empty_checksum_check) }}"
-
 - name: "Download build {{ steamengine_build_url }}"
   ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"

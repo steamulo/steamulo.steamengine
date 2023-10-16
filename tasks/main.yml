@@ -14,7 +14,7 @@
 
 - name: Confirm the verification of the checksum
   set_fact:
-    checksum_verified: "{{ steamengine_skip_checksum | ternary('', empty_checksum_check) }}"
+    checksum_verified: "{{ (steamengine_skip_checksum | default(False)) | ternary('', empty_checksum_check) }}"
 
 - name: "Include variables for {{ steamengine_project_type }}"
   ansible.builtin.include_vars:

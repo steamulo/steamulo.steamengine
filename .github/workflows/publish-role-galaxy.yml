@@ -1,4 +1,4 @@
---
+---
 name: Publish role to Ansible Galaxy
 
 on:
@@ -11,6 +11,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: galaxy
-        uses: robertdebock/galaxy-action@1.0.3
+        uses: robertdebock/galaxy-action@1.2.1
         with:
           galaxy_api_key: ${{ secrets.galaxy_api_key }}

@@ -16,7 +16,7 @@
   ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
     dest: "{{ steamengine_project_root_path }}/project.zip"
-    checksum: "{{ steamengine_build_checksum }}"
+    checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rx,o=

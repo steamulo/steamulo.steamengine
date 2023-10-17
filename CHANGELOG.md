@@ -27,6 +27,11 @@ All notable changes to this project will be documented in this file. Dates are d
 - Refacto on drupal test [`ba6f3fe`](https://github.com/STEAMULO/steamulo.steamengine/commit/ba6f3fe8c1ae75dbe21306372bd9deb9dbce0316)
 - Maj for steamengin Drupal [`bbcd5c9`](https://github.com/STEAMULO/steamulo.steamengine/commit/bbcd5c9255d1bc3b1bcd594a24b3aa3a16b6ae3e)
 
+### Breaking Changes
+
+- Rename *steamengine_sf_php_bin_path* to *steamengine_php_bin_path*
+- Rename *steamengine_sf_php_fpm_version* to *steamengine_php_fpm_service_name*
+
 #### [2.5.0](https://github.com/STEAMULO/steamulo.steamengine/compare/2.4.0...2.5.0)
 
 > 8 November 2022
@@ -88,6 +93,11 @@ All notable changes to this project will be documented in this file. Dates are d
 - Merge pull request #12 from STEAMULO/sf [`5aa84cf`](https://github.com/STEAMULO/steamulo.steamengine/commit/5aa84cf4bc57b2df90769423c2f46c35749f7f2c)
 - [EVOL] Create symfony4 steamengine [`0660992`](https://github.com/STEAMULO/steamulo.steamengine/commit/066099251df8caf283746d2bc78ec80e438fea96)
 - Use group for nginx/apache instead of acl [`1a9e6da`](https://github.com/STEAMULO/steamulo.steamengine/commit/1a9e6da1b0f4fb32f8e3c3913927914fc75e9b4c)
+
+### Breaking Changes
+
+- Add *run_as_app_user* and *run_in_project_root_path_web* for wrapper scripts (steamengine_wrapper_scripts_extra)
+- Add *run_as_app_user* and *run_in_project_root_path_web* for crons scripts (steamengine_crons)
 
 #### [1.5.1](https://github.com/STEAMULO/steamulo.steamengine/compare/1.5.0...1.5.1)
 

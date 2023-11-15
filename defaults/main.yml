@@ -61,7 +61,7 @@ steamengine_build_url_headers: {}
 
 # Create persistent subdirectory
 # All directories are placed in "{{ steamengine_project_name }}/storage"
-# The storage directory is create if at least one item is present
+# The storage directory is created if at least one item is present
 # Example :
 # steamengine_persistent_directories:
 #     - path: "protected_upload" # Create a subdirectory storage/protected_upload
@@ -159,7 +159,7 @@ steamengine_sf_path_with_write_permission:
   - "var/log"
   - "var/cache"
 # List of source template and target path for configuration to put inside the projet (for example for symfony < 4 : parameters.yml.j2: app/config/parameters.yml )
-steamengine_sf_project_custom_configurations_template_path: {}
+steamengine_sf_project_custom_configurations_template_path: { }
 # Directory name to store logs outside the project
 steamengine_sf_external_logs_directory: "symfony"
 # Directory for public file (replace with "web" for symfony < 4)
@@ -172,3 +172,13 @@ steamengine_sf_var_directory: "var"
 steamengine_sf_log_directory: "log"
 # Directory for cache files
 steamengine_sf_cache_directory: "cache"
+# Php fpm version
+steamengine_sf_php_fpm_version: "php7.4-fpm"
+# Php bin path
+steamengine_sf_php_bin_path: "/usr/bin/php"
+# Delete project
+steamengine_projects_to_delete: []
+# Example :
+#  - project_name1
+#  - project_name2
+#  - project_name3

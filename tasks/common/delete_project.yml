@@ -1,0 +1,57 @@
+---
+
+- name: Check if the service exists
+  ansible.builtin.service:
+    name: "{{ steamengine_project_name }}.service"
+  register: service_status
+  failed_when: false
+  changed_when: false
+
+- name: Stop the service
+  ansible.builtin.service:
+    name: "{{ steamengine_project_name }}.service"
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  when: service_status is defined and service_status|bool
+
+
+- name: "Delete user {{ steamengine_project_user }}"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ steamengine_project_user }}"
+    - "{{ steamengine_app_user }}"
+
+
+- name: Delete project
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ steamengine_project_user }}"
+    - "{{ steamengine_app_user }}"
+
+
+- name: Delete directories if exists
+  ansible.builtin.file:
+    state: absent
+    path: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
+  when:
+    - item.delete_dir is defined and item.delete_dir
+  loop: "{{ steamengine_persistent_directories }}"
+
+
+- name: Remove systemd unit file
+  file:
+    path: "/etc/systemd/system/{{ item }}.service"
+    state: absent
+  become: true
+  with_items:
+    - "{{ steamengine_extra_services }}"
+    - "{{ steamengine_project_name }}"
+
+- name: Delete project file at project root
+  ansible.builtin.command: rm -rf "/{{ steamengine_project_name }}"
+  

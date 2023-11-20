@@ -113,7 +113,7 @@
   when: new_build_to_deploy is defined and new_build_to_deploy
 
 - name: Move current release to old release
-  ansible.builtin.command: "rsync --remove-source-files --chown{{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_wordpress_current_release_path }} {{ steamengine_project_wordpress_old_release_path }}"
+  ansible.builtin.command: "rsync --remove-source-files --chown={{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_wordpress_current_release_path }} {{ steamengine_project_wordpress_old_release_path }}"
   when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
 
 - name: Switch symlink on old release
@@ -126,7 +126,7 @@
   when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
 
 - name: Move next release to current release
-  ansible.builtin.command: "rsync --remove-source-files --chown{{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_wordpress_new_release_path }} {{ steamengine_project_wordpress_current_release_path }}"
+  ansible.builtin.command: "rsync --remove-source-files --chown={{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_wordpress_new_release_path }} {{ steamengine_project_wordpress_current_release_path }}"
   when: new_build_to_deploy is defined and new_build_to_deploy
 
 - name: Switch symlink on the new current release

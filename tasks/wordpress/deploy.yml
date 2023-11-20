@@ -3,7 +3,7 @@
 
 - name: "Create configuration file for projects"
   ansible.builtin.template:
-    src: wordpress.j2
+    src: wordpress.env.j2
     dest: "{{ steamengine_project_root_path }}/.env"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

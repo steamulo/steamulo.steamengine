@@ -78,6 +78,15 @@
   register: project_current_release_exist
   when: new_build_to_deploy is defined and new_build_to_deploy
 
+- name: Create current release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_current_release_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=rw,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy and not project_current_release_exist.stat.exists
+
 - name: "Ensure {{ steamengine_project_wordpress_uploads_path }} has the right permissions"
   ansible.builtin.file:
     path: "{{ steamengine_project_wordpress_uploads_path }}"
@@ -136,7 +145,7 @@
     state: link
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy is defined and new_build_to_deploy
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
 
 - name: "Ensure {{ steamengine_project_wordpress_current_release_path }} has the right permissions"
   ansible.builtin.file:

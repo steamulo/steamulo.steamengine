@@ -49,6 +49,21 @@
   tags:
     - steamengine_deploy_wordpress
 
+- name: Clean new release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_new_release_path }}"
+    state: absent
+  when: new_build_to_deploy is defined and new_build_to_deploy
+
+- name: Create new release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_new_release_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy
+
 - name: Update www directory
   include_tasks: include/update_from_archive.yml
   vars:
@@ -102,21 +117,6 @@
     mode: u=rwx,g=rx,o=
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy is defined and new_build_to_deploy
-
-- name: Clean new release directory
-  ansible.builtin.file:
-    path: "{{ steamengine_project_wordpress_new_release_path }}"
-    state: absent
-  when: new_build_to_deploy is defined and new_build_to_deploy
-
-- name: Create new release directory
-  ansible.builtin.file:
-    path: "{{ steamengine_project_wordpress_new_release_path }}"
-    state: directory
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rwx,g=rx,o=
   when: new_build_to_deploy is defined and new_build_to_deploy
 
 - name: Create all symlink

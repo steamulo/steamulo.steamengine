@@ -122,7 +122,7 @@
 - name: Create all symlink
   ansible.builtin.file:
     src: "{{ item.path }}"
-    dest: "{{ project_new_release }}/{{ item.symlink_src }}"
+    dest: "{{ steamengine_project_wordpress_new_release_path }}/{{ item.symlink_src }}"
     state: link
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"

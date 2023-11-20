@@ -31,6 +31,9 @@ steamengine_bin_path: "{{ steamengine_home_path }}/bin"
 steamengine_logs_path: "{{ steamengine_home_path }}/logs"
 steamengine_persistent_base_path: "/{{ steamengine_project_name }}/storage"
 
+# DB dump URL
+steamengine_project_dump_bdd_url: "{{ steamengine_project_dump_bdd_url }} | default('') }}"
+
 # OTHERS
 steamengine_project_types:
   - springboot
@@ -40,3 +43,4 @@ steamengine_project_types:
   - drupal
   - play
   - symfony
+  - wordpress

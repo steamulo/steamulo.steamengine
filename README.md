@@ -54,6 +54,7 @@ Examples for different project types can be found under the molecule folder:
 * [Tomcat](molecule/tomcat/converge.yml)
 * [Drupal](molecule/drupal/converge.yml)
 * [Symfony](molecule/symfony/converge.yml)
+* [Wordpress](molecule/wordpress/converge.yml)
 
 Development
 ------------

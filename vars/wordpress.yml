@@ -1,0 +1,38 @@
+---
+
+steamengine_project_wordpress_uploads_path: "{{ steamengine_project_root_path }}/uploads"
+steamengine_project_wordpress_current_release_path: "{{ steamengine_project_root_path }}/current_release"
+steamengine_project_wordpress_old_release_path: "{{ steamengine_project_root_path }}/old_release"
+steamengine_project_wordpress_new_release_path: "{{ steamengine_project_root_path }}/new_release"
+steamengine_project_wordpress_symlinks:
+  - path: "{{ steamengine_project_root_path }}/.env"
+    symlink_src: ".env"
+  - path: "{{ steamengine_project_wordpress_uploads_path }}"
+    symlink_src: "web/app/uploads"
+
+# WORDPRESS
+steamengine_wrapper_scripts_base:
+  - name: start
+    description: Start http server
+    command: |
+      systemctl start nginx
+  - name: stop
+    description: Stop http server
+    command: |
+      systemctl stop nginx
+  - name: restart
+    description: Restart http server
+    command: |
+      systemctl restart nginx
+  - name: reload
+    description: Reload http server configuration
+    command: |
+      systemctl reload nginx
+  - name: status
+    description: Display the http server status
+    command: |
+      systemctl status nginx
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log

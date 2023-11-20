@@ -1,0 +1,36 @@
+---
+
+- name: Download project db dump
+  ansible.builtin.get_url:
+    url: "{{ steamengine_project_dump_bdd_url }}"
+    dest: "{{ steamengine_home_path }}/db_dump.zip"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  register: db_dump
+
+- name: Unzip project db dump
+  ansible.builtin.unarchive:
+    src: "{{ steamengine_home_path }}/db_dump.zip"
+    dest: "{{ steamengine_project_name }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+    remote_src: true
+    list_files: true
+  register: archive_contents
+
+- name: Deploy db dump
+  ansible.builtin.shell: >
+    mariadb --host={{ steamengine_project_configuration_env.DB_HOST }} --user={{ steamengine_project_configuration_env.DB_USER }} --password={{ steamengine_project_configuration_env.DB_PASSWORD }} < {{ steamengine_home_path }}/dump.sql
+  when: project_dump_bdd_url is defined and project_dump_bdd_url
+
+- name: Delete db dump
+  ansible.builtin.file:
+    path: "{{ steamengine_home_path }}/{{ archive_contents.files[0] }}"
+    state: absent
+
+- name: Delete archive db dump
+  ansible.builtin.file:
+    path: "{{ steamengine_home_path }}/db_dump.zip"
+    state: absent

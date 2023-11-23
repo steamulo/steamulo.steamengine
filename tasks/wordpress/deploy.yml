@@ -1,5 +1,20 @@
-#file: noinspection YAMLSchemaValidation
 ---
+
+- name: Is there a .env file
+  ansible.builtin.stat:
+    path: "{{ steamengine_project_root_path }}/.env"
+  register: project_env_file_exist
+
+- name: "Create .env backup file"
+  ansible.builtin.copy:
+    src: "{{ steamengine_project_root_path }}/.env"
+    dest: "{{ steamengine_project_root_path }}/.env.backup"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=r
+    remote_src: yes
+  become: true
+  when: project_env_file_exist.stat.exists
 
 - name: "Create configuration file for projects"
   ansible.builtin.template:
@@ -96,21 +111,11 @@
     group: "{{ steamengine_app_user }}"
   when: new_build_to_deploy is defined and new_build_to_deploy
 
-- name: Create all symlink
-  ansible.builtin.file:
-    src: "{{ item.path }}"
-    dest: "{{ steamengine_project_wordpress_new_release_path }}/{{ item.symlink_src }}"
-    state: link
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-  with_items: "{{ steamengine_project_wordpress_symlinks }}"
-  when: new_build_to_deploy is defined and new_build_to_deploy
-
 - name: Clean old release directory
   ansible.builtin.file:
     path: "{{ steamengine_project_wordpress_old_release_path }}"
     state: absent
-  when: new_build_to_deploy is defined and new_build_to_deploy
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
 
 - name: Create old release directory
   ansible.builtin.file:
@@ -119,33 +124,49 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rw,g=rw,o=
-  when: new_build_to_deploy is defined and new_build_to_deploy
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
 
 - name: Move current release to old release
-  ansible.builtin.command: "rsync --remove-source-files --chown={{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_wordpress_current_release_path }} {{ steamengine_project_wordpress_old_release_path }}"
+  ansible.builtin.shell: "mv {{ steamengine_project_wordpress_current_release_path }}/* {{ steamengine_project_wordpress_old_release_path }}"
   when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
 
-- name: Switch symlink on old release
+- name: Remove symlink on old release
   ansible.builtin.file:
-    src: "{{ steamengine_project_wordpress_old_release_path }}"
-    dest: "{{ steamengine_project_root_path }}"
-    state: link
+    path: "{{ steamengine_project_wordpress_old_release_path }}/item.symlink_src"
+    state: absent
+  with_items: "{{ steamengine_project_wordpress_symlinks }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+
+- name: "Move the .env.backup file on the old directory"
+  ansible.builtin.copy:
+    src: "{{ steamengine_project_root_path }}/.env.backup"
+    dest: "{{ steamengine_project_wordpress_old_release_path }}/.env"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+    remote_src: yes
+    mode: u=rw,g=r,o=r
+  become: true
+  when: project_env_file_exist.stat.exists and new_build_to_deploy is defined and new_build_to_deploy
 
-- name: Move next release to current release
-  ansible.builtin.command: "rsync --remove-source-files --chown={{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_wordpress_new_release_path }} {{ steamengine_project_wordpress_current_release_path }}"
+- name: "Delete the .env.backup file"
+  ansible.builtin.file:
+    path: "{{ steamengine_project_root_path }}/.env.backup"
+    state: absent
+  when: project_env_file_exist.stat.exists and new_build_to_deploy is defined and new_build_to_deploy
+
+- name: Move next release to current release using mv command
+  ansible.builtin.shell: "mv {{ steamengine_project_wordpress_new_release_path }}/* {{ steamengine_project_wordpress_current_release_path }}"
   when: new_build_to_deploy is defined and new_build_to_deploy
 
-- name: Switch symlink on the new current release
+- name: Add/Switch symlink on the new current release
   ansible.builtin.file:
-    src: "{{ steamengine_project_wordpress_current_release_path }}"
-    dest: "{{ steamengine_project_root_path }}"
+    src: "{{ item.path }}"
+    dest: "{{ steamengine_project_wordpress_current_release_path }}/{{ item.symlink_src }}"
     state: link
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+  with_items: "{{ steamengine_project_wordpress_symlinks }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy
 
 - name: "Ensure {{ steamengine_project_wordpress_current_release_path }} has the right permissions"
   ansible.builtin.file:

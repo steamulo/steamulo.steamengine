@@ -83,9 +83,23 @@
         - steamengine_cron
   tags: always
 
+- name: Check if steamengine_project_type/post_deploy.yml exists
+  ansible.builtin.stat:
+    path: "{{ steamengine_project_type }}/post_deploy.yml"
+  register: steamengine_post_deploy_check
+
+- include_tasks:
+    file: "{{ steamengine_project_type }}/post_deploy.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+  when: steamengine_post_deploy_check.stat.exists
+  tags: always
+
 - include_tasks:
     file: common/post_deploy.yml
     apply:
       tags:
         - steamengine_deploy
+  when: not steamengine_post_deploy_check.stat.exists
   tags: always

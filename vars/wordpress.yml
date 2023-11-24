@@ -1,14 +1,11 @@
 ---
 
-steamengine_project_wordpress_uploads_path: "{{ steamengine_project_root_path }}/uploads"
 steamengine_project_wordpress_current_release_path: "{{ steamengine_project_root_path }}/current_release"
 steamengine_project_wordpress_old_release_path: "{{ steamengine_project_root_path }}/old_release"
 steamengine_project_wordpress_new_release_path: "{{ steamengine_project_root_path }}/new_release"
 steamengine_project_wordpress_symlinks:
   - path: "{{ steamengine_project_root_path }}/.env"
-    symlink_src: ".env"
-  - path: "{{ steamengine_project_wordpress_uploads_path }}"
-    symlink_src: "web/app/uploads"
+    symlink_src: "{{ steamengine_conf_path }}/.env"
 
 # WORDPRESS
 steamengine_wrapper_scripts_base:

@@ -1,0 +1,81 @@
+---
+
+- name: Create storage subdirectories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_persistent_directories }}"
+
+- name: Delete directories if exists
+  ansible.builtin.file:
+    state: absent
+    path: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
+  when:
+    - item.delete_dir is defined and item.delete_dir
+    - new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_persistent_directories }}"
+
+- name: Create symbolic link to storage directories on new release directory
+  ansible.builtin.file:
+    state: link
+    src: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
+    dest: "/{{ steamengine_project_wordpress_new_release_path }}/{{ item.symlink_src }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rwx,o=
+  when:
+    - item.symlink_src is defined and item.symlink_src
+    - new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_persistent_directories }}"
+
+- name: Move current release to old release
+  ansible.builtin.shell: "mv {{ steamengine_project_wordpress_current_release_path }}/* {{ steamengine_project_wordpress_old_release_path }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+
+- name: Remove symlink on old release
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_old_release_path }}/item.symlink_src"
+    state: absent
+  with_items: "{{ steamengine_project_wordpress_symlinks }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+
+- name: "Move the .env.backup file on the old directory"
+  ansible.builtin.copy:
+    src: "{{ steamengine_project_root_path }}/.env.backup"
+    dest: "{{ steamengine_project_wordpress_old_release_path }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    remote_src: yes
+    mode: u=rw,g=r,o=r
+  become: true
+  when: project_env_file_exist.stat.exists and new_build_to_deploy is defined and new_build_to_deploy
+
+- name: "Delete the .env.backup file"
+  ansible.builtin.file:
+    path: "{{ steamengine_project_root_path }}/.env.backup"
+    state: absent
+  when: project_env_file_exist.stat.exists and new_build_to_deploy is defined and new_build_to_deploy
+
+- name: Move next release to current release using mv command
+  ansible.builtin.shell: "mv {{ steamengine_project_wordpress_new_release_path }}/* {{ steamengine_project_wordpress_current_release_path }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy
+
+- name: Clean new release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_new_release_path }}"
+    state: absent
+  when: new_build_to_deploy is defined and new_build_to_deploy
+
+- name: "Run post deploy commands"
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine {{ item }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy and steamengine_wrapper_scripts_post_deploy
+  loop: "{{ steamengine_wrapper_scripts_post_deploy }}"
+
+- name: Start extra services
+  ansible.builtin.command: "/{{ steamengine_project_name }}/bin/steamengine {{ item.name }}_start"
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_extra_services }}"

@@ -23,7 +23,7 @@
   ansible.builtin.file:
     state: link
     src: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
-    dest: "/{{ steamengine_project_wordpress_new_release_path }}/{{ item.symlink_src }}"
+    dest: "{{ steamengine_project_wordpress_new_release_path }}/{{ item.symlink_src }}"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rwx,g=rwx,o=

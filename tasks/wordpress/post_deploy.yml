@@ -13,7 +13,7 @@
 - name: Delete directories if exists
   ansible.builtin.file:
     state: absent
-    path: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
+    path: "{{ steamengine_project_name }}/{{ item.symlink_src }}"
   when:
     - item.delete_dir is defined and item.delete_dir
     - new_build_to_deploy is defined and new_build_to_deploy
@@ -45,7 +45,7 @@
 
 - name: "Move the .env.backup file on the old directory"
   ansible.builtin.copy:
-    src: "{{ steamengine_project_root_path }}/.env.backup"
+    src: "{{ steamengine_conf_path }}/.env.backup"
     dest: "{{ steamengine_project_wordpress_old_release_path }}/.env"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
@@ -56,7 +56,7 @@
 
 - name: "Delete the .env.backup file"
   ansible.builtin.file:
-    path: "{{ steamengine_project_root_path }}/.env.backup"
+    path: "{{ steamengine_conf_path }}/.env.backup"
     state: absent
   when: project_env_file_exist.stat.exists and new_build_to_deploy is defined and new_build_to_deploy
 

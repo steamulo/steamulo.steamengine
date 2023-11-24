@@ -12,7 +12,6 @@
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
   notify:
     - "{{ steamengine_project_name }} fixpermissions"
-    - "{{ steamengine_project_name }} restart"
   register: get_url_build
   tags:
     - steamengine_deploy_drupal

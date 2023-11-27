@@ -64,6 +64,11 @@
   ansible.builtin.shell: "mv {{ steamengine_project_wordpress_new_release_path }}/* {{ steamengine_project_wordpress_current_release_path }}"
   when: new_build_to_deploy is defined and new_build_to_deploy
 
+- name: Move next release symlinks to current release using mv command
+  ansible.builtin.shell: "mv {{ item.path }} {{ steamengine_project_wordpress_current_release_path }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  loop: "{{ steamengine_project_wordpress_symlinks }}"
+
 - name: Clean new release directory
   ansible.builtin.file:
     path: "{{ steamengine_project_wordpress_new_release_path }}"

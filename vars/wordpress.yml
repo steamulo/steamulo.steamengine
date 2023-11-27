@@ -53,21 +53,21 @@ steamengine_wrapper_scripts_base:
     description: Restore project files and folders permissions
     command: |
       find -L {{ steamengine_project_root_path_web }} \
-      {% for value in steamengine_sf_path_with_write_permission %}
+      {% for value in steamengine_wp_path_with_write_permission %}
         -not -path '{{ steamengine_project_root_path_web }}/{{ value }}*' \
       {% endfor %}
       {% for value in steamengine_persistent_directories %}
         -not -path '/{{ steamengine_project_name }}/{{ value.symlink_src }}*' \
       {% endfor %}
-        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+        -not -path '{{ steamengine_project_root_path_web }}/.env' \
         -print0 | xargs -0 chmod 'u=rwx,g=rx,o='
 
       find -L {{ steamengine_project_root_path_web }} \
-        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+        -not -path '{{ steamengine_project_root_path_web }}/.env' \
         -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_app_user }}
 
       chmod -R 'u=rwx,g=rwx,o=' \
-      {% for value in steamengine_sf_path_with_write_permission %}
+      {% for value in steamengine_wp_path_with_write_permission %}
         {{ steamengine_project_root_path_web }}/{{ value }} \
       {% endfor %}
       {% for value in steamengine_persistent_directories %}

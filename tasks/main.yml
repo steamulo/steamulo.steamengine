@@ -89,6 +89,7 @@
     path: "{{ lookup('ansible.builtin.fileglob', role_path + '/tasks/' + steamengine_project_type + '/post_deploy.yml') }}"
   become: false
   register: steamengine_post_deploy_check
+  tags: always
 
 - include_tasks:
     file: "{{ steamengine_project_type }}/post_deploy.yml"

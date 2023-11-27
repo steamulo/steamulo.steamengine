@@ -45,7 +45,7 @@
 
 - name: Ensure settings is present
   ansible.builtin.copy:
-    src: "{{ tempdir.path }}/{{ steamengine_drupal_public_directory }}/sites/default/default.settings.php"
+    src: "{{ tempdir.path }}{{ steamengine_drupal_public_directory }}/sites/default/default.settings.php"
     dest: "{{ steamengine_conf_path }}/settings.php"
     force: false
     remote_src: true
@@ -107,7 +107,7 @@
 - name: Clean configuration file
   ansible.builtin.file:
     state: absent
-    path: "{{ steamengine_project_root_path_web }}/{{ steamengine_drupal_public_directory }}/sites/default/settings.php"
+    path: "{{ steamengine_project_root_path_web }}{{ steamengine_drupal_public_directory }}/sites/default/settings.php"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal
@@ -116,7 +116,7 @@
   ansible.builtin.file:
     state: link
     src: "{{ steamengine_conf_path }}/settings.php"
-    dest: "{{ steamengine_project_root_path_web }}/{{ steamengine_drupal_public_directory }}/sites/default/settings.php"
+    dest: "{{ steamengine_project_root_path_web }}{{ steamengine_drupal_public_directory }}/sites/default/settings.php"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_drupal

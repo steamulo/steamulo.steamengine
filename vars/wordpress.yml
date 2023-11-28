@@ -52,7 +52,7 @@ steamengine_wrapper_scripts_base:
   - name: fixpermissions
     description: Restore project files and folders permissions
     command: |
-      find -L {{ steamengine_project_root_path_web }} \
+      find -L {{ steamengine_project_wordpress_current_release_path }} \
       {% for value in steamengine_wp_path_with_write_permission %}
         -not -path '{{ steamengine_project_root_path_web }}/{{ value }}*' \
       {% endfor %}
@@ -62,7 +62,7 @@ steamengine_wrapper_scripts_base:
         -not -path '{{ steamengine_project_root_path_web }}/.env' \
         -print0 | xargs -0 chmod 'u=rwx,g=rx,o='
 
-      find -L {{ steamengine_project_root_path_web }} \
+      find -L {{ steamengine_project_wordpress_current_release_path }} \
         -not -path '{{ steamengine_project_root_path_web }}/.env' \
         -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_app_user }}
 

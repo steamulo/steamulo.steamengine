@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [2.7.2](https://github.com/STEAMULO/steamulo.steamengine/compare/2.7.1...2.7.2)
+
+> 6 December 2023
+
+- [FIX] Fix on checksum verification
+
 #### [2.7.1](https://github.com/STEAMULO/steamulo.steamengine/compare/2.7.0...2.7.1)
 
 > 30 November 2023

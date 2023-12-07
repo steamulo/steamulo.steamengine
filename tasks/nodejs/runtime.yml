@@ -1,5 +1,21 @@
 ---
 
+- name: Build pm2 binary path without nvm
+  set_fact:
+    steamengine_project_pm2_bin_path: "{{ '/usr/local/lib/npm/bin/pm2' }}"
+    steamengine_project_path_variable: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+  when: steamengine_project_nvm_version is not defined
+  tags:
+    - steamengine_runtime_nodejs
+
+- name: Build pm2 binary path with nvm
+  set_fact:
+    steamengine_project_pm2_bin_path: '/usr/local/nvm/versions/node/{{ steamengine_project_nvm_version }}/bin/pm2'
+    steamengine_project_path_variable: '/usr/local/nvm/versions/node/{{ steamengine_project_nvm_version }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+  when: steamengine_project_nvm_version is defined
+  tags:
+    - steamengine_runtime_nodejs
+
 - name: Create systemd unit file
   ansible.builtin.template:
     src: systemd_nodejs_pm2.service.j2

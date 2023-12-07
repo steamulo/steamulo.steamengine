@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [2.7.2](https://github.com/STEAMULO/steamulo.steamengine/compare/2.7.1...2.7.2)
+
+> 6 December 2023
+
+- [FIX] Fix on checksum verification
+
+#### [2.7.1](https://github.com/STEAMULO/steamulo.steamengine/compare/2.7.0...2.7.1)
+
+> 30 November 2023
+
+- [FIX] Possiblité de renseigner un public directory drupal vide into steamengine_drupal_public_directory
+
+### Breaking Changes
+
+- *steamengine_drupal_public_directory* should start with slash
+
 #### [2.7.0](https://github.com/STEAMULO/steamulo.steamengine/compare/2.6.0...2.7.0)
 
 > 16 October 2023

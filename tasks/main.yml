@@ -11,10 +11,12 @@
 - name: Ensure non-empty checksum
   set_fact:
     empty_checksum_check: "{{ (steamengine_build_checksum == '') | ternary('sha1:1', steamengine_build_checksum) }}"
+  tags: always
 
 - name: Confirm the verification of the checksum
   set_fact:
     checksum_verified: "{{ (steamengine_skip_checksum | default(False)) | ternary('', empty_checksum_check) }}"
+  tags: always
 
 - name: "Include variables for {{ steamengine_project_type }}"
   ansible.builtin.include_vars:

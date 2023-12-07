@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [2.8.0](https://github.com/STEAMULO/steamulo.steamengine/compare/2.7.2...2.8.0)
+
+> 7 December 2023
+
+- [FEAT] Add var *steamengine_project_nvm_version*, to use specific Node version from NVM for PM2 binary
+
 #### [2.7.2](https://github.com/STEAMULO/steamulo.steamengine/compare/2.7.1...2.7.2)
 
 > 6 December 2023

@@ -178,12 +178,4 @@ steamengine_sf_cache_directory: "cache"
 
 # WORDPRESS
 steamengine_wp_path_with_write_permission:
-  - "var/log"
-  - "var/cache"
-steamengine_wp_project_custom_configurations_template_path: {}
-steamengine_wp_external_logs_directory: "wordpress"
-steamengine_wp_public_directory: "public"
-steamengine_wp_bin_directory: "bin"
-steamengine_wp_var_directory: "var"
-steamengine_wp_log_directory: "log"
-steamengine_wp_cache_directory: "cache"
+  - "logs"

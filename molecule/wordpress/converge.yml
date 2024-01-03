@@ -65,7 +65,7 @@
       vars:
         steamengine_project_name: test_wp
         steamengine_project_type: wp
-        steamengine_build_url: https://delivery.steamulo.org/france-competences/mon-cep/wordpress-0.0.1-integration.zip
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/wordpress-test.zip
         steamengine_build_checksum: sha1:7e5b076696bbbbdbb57130697ddf64de1cda754c
         steamengine_project_configuration:
           DB_NAME: "test_wp"
@@ -73,7 +73,7 @@
           DB_PASSWORD: "dev"
           DB_HOST: "localhost"
           WP_ENV: development
-          WP_HOME: http://moncep-refonte.localhost
+          WP_HOME: http://test.localhost
           WP_SITEURL: ${steamengine_project_root_path}/wp
           WP_USE_CACHE: "false"
           AUTH_KEY: ""

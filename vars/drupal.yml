@@ -51,7 +51,7 @@ steamengine_wrapper_scripts_base:
         {{ steamengine_project_root_path_web }}/{{ value }} \
       {% endfor %}
       {% for value in steamengine_persistent_directories %}
-        /{{ steamengine_project_name }}/{{ value.symlink_src }} \
+        /{{ steamengine_persistent_base_path }}/{{ value.path }} \
       {% endfor %}
       || :
   - name: drush_fix_permissions

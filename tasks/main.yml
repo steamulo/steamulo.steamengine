@@ -10,7 +10,7 @@
 # Setup checksum verification
 - name: Ensure non-empty checksum
   set_fact:
-    empty_checksum_check: "{{ (steamengine_build_checksum == '') | ternary('sha1:1', steamengine_build_checksum) }}"
+    empty_checksum_check: "{{ ((steamengine_build_checksum | default('')) == '') | ternary('sha1:1', steamengine_build_checksum) }}"
   tags: always
 
 - name: Confirm the verification of the checksum

@@ -1,5 +1,16 @@
 ---
 # BUILD
+
+- name: "Add maintenance page"
+  become: true
+  ansible.builtin.copy:
+    src: "files/maintenance.html"
+    dest: "{{ steamengine_project_root_path }}/maintenance.html"
+    mode: "0644"
+  tags:
+    - steamengine_deploy_drupal
+  when: steamengine_drupal_maintenance_page_enabled is defined and steamengine_drupal_maintenance_page_enabled | bool
+
 - name: Download build {{ steamengine_build_url }}
   ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
@@ -189,3 +200,12 @@
   when: new_build_to_deploy or steamengine_drupal_initial_install
   tags:
     - steamengine_deploy_drupal
+
+- name: "Remove maintenance page"
+  become: true
+  ansible.builtin.file:
+    path:  "{{ steamengine_project_root_path }}/maintenance.html"
+    state: absent
+  tags:
+    - steamengine_deploy_drupal
+  when: steamengine_drupal_maintenance_page_enabled is defined and steamengine_drupal_maintenance_page_enabled

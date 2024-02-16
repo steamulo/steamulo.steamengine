@@ -58,6 +58,7 @@ steamengine_extra_services: []
 
 steamengine_build_url_validate_certs: true
 steamengine_build_url_headers: {}
+steamengine_trust_url: false
 
 # Create persistent subdirectory
 # All directories are placed in "{{ steamengine_project_name }}/storage"

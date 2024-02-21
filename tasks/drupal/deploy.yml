@@ -8,8 +8,8 @@
     dest: "{{ steamengine_project_root_path }}/maintenance.html"
     mode: "0644"
   tags:
-    - steamengine_deploy_drupal
-  when: steamengine_drupal_maintenance_page_enabled is defined and steamengine_drupal_maintenance_page_enabled | bool
+    - steamengine_deploy
+  when: steamengine_drupal_show_maintenance_page is defined and steamengine_drupal_show_maintenance_page|bool == true
 
 - name: Download build {{ steamengine_build_url }}
   ansible.builtin.get_url:
@@ -207,5 +207,5 @@
     path:  "{{ steamengine_project_root_path }}/maintenance.html"
     state: absent
   tags:
-    - steamengine_deploy_drupal
-  when: steamengine_drupal_maintenance_page_enabled is defined and steamengine_drupal_maintenance_page_enabled
+    - steamengine_deploy
+  when: steamengine_drupal_show_maintenance_page is defined and steamengine_drupal_show_maintenance_page|bool == true

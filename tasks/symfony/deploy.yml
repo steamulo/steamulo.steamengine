@@ -6,7 +6,7 @@
     state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: 0770
+    mode: 0750
   with_items:
     - "{{ steamengine_sf_external_logs_path }}"
   tags:

@@ -1,36 +1,5 @@
 ---
 
-- name: Is there a .env file
-  ansible.builtin.stat:
-    path: "{{ steamengine_conf_path }}/.env"
-  register: project_env_file_exist
-  tags:
-    - steamengine_deploy_wp
-
-- name: "Create .env backup file"
-  ansible.builtin.copy:
-    src: "{{ steamengine_conf_path }}/.env"
-    dest: "{{ steamengine_conf_path }}/.env.backup"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rw,g=r,o=r
-    remote_src: yes
-  become: true
-  when: project_env_file_exist.stat.exists
-  tags:
-    - steamengine_deploy_wp
-
-- name: "Create configuration file for projects"
-  ansible.builtin.template:
-    src: wordpress.env.j2
-    dest: "{{ steamengine_conf_path }}/.env"
-    owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
-    mode: u=rw,g=r,o=r
-  tags:
-    - steamengine_deploy_env
-    - steamengine_deploy_wp
-
 - name: "Download build {{ steamengine_build_url }}"
   ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
@@ -81,6 +50,38 @@
     mode: u=rwx,g=rx,o=
   when: new_build_to_deploy is defined and new_build_to_deploy
   tags:
+    - steamengine_deploy_wp
+
+- name: Is there a .env file
+  ansible.builtin.stat:
+    path: "{{ steamengine_conf_path }}/.env"
+  register: project_env_file_exist
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Create .env backup file"
+  ansible.builtin.copy:
+    src: "{{ steamengine_conf_path }}/.env"
+    dest: "{{ steamengine_conf_path }}/.env.backup"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=r
+    remote_src: yes
+  become: true
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_env_file_exist.stat.exists
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Create configuration file for projects"
+  ansible.builtin.template:
+    src: wordpress.env.j2
+    dest: "{{ steamengine_conf_path }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=r
+  when: not project_env_file_exist.stat.exists or (new_build_to_deploy is defined and new_build_to_deploy)
+  tags:
+    - steamengine_deploy_env
     - steamengine_deploy_wp
 
 - name: Create symlink new release

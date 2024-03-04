@@ -5,12 +5,13 @@ Description={{ steamengine_project_name }} server
 
 [Service]
 WorkingDirectory={{ steamengine_project_root_path_web }}
-ExecStart=/usr/local/lib/npm/bin/pm2 start {{ steamengine_conf_path }}/nodejs_pm2_ecosystem.json --no-daemon
+ExecStart={{ steamengine_project_pm2_bin_path }} start {{ steamengine_conf_path }}/nodejs_pm2_ecosystem.json --no-daemon
 Type=simple
 PIDFile={{ steamengine_project_root_path }}/pm2/pm2.pid
 
 Environment=NODE_ENV=production
 Environment=PM2_HOME={{ steamengine_project_root_path }}/pm2
+Environment=PATH={{ steamengine_project_path_variable }}
 
 Restart=always
 RestartSec=10

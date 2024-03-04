@@ -6,7 +6,7 @@
     state: directory
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
-    mode: 0770
+    mode: 0750
   with_items:
     - "{{ steamengine_sf_external_logs_path }}"
   tags:
@@ -186,7 +186,7 @@
     path: "{{ steamengine_sf_log_path }}"
   when: new_build_to_deploy
   tags:
-    - steamengine_deploy_drupal
+    - steamengine_deploy_sf
 
 - name: Create logs link directory
   ansible.builtin.file:

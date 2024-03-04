@@ -41,6 +41,10 @@ steamengine_project_configuration_base_name:
 # Public ssh keys that will be added to the project user.
 # Default is empty.
 steamengine_project_ssh_keys: []
+
+# If you want use PM2 from a specific version of node install with nvm
+# Do not declare, if you want use classic PM2 binary.
+steamengine_project_nvm_version: v18.17.0
 ```
 
 Example Playbook

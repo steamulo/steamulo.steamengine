@@ -106,5 +106,5 @@
     apply:
       tags:
         - steamengine_deploy
-  when: not steamengine_post_deploy_check.stat.exists
+  when: not steamengine_post_deploy_check.stat.exists and steamengine_project_type != 'wordpress'
   tags: always

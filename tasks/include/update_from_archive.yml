@@ -8,13 +8,13 @@
     list_files: true
   register: front_static_unzip_output
 
-- name: Registring all existing files
+- name: Registering all existing files
   ansible.builtin.find:
     paths: "{{ dest_path }}"
     recurse: true
   register: front_static_find_output
 
-- name: Registring new and old files
+- name: Registering new and old files
   ansible.builtin.set_fact:
     front_static_old_files: "{{ front_static_find_output.files | map(attribute='path') | list | map('regex_replace', dest_path + '/', '' ) | list }}"
     front_static_new_files: "{{ front_static_unzip_output.files }}"

@@ -1,0 +1,9 @@
+---
+
+- name: "Add nginx user in {{ steamengine_app_user }} group"
+  ansible.builtin.user:
+    name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
+    groups: "{{ steamengine_app_user }}"
+    append: true
+  tags:
+    - steamengine_runtime_static

@@ -1,0 +1,89 @@
+---
+- name: Converge
+  hosts: instance
+  become: true
+  pre_tasks:
+    - name: Create project groups
+      ansible.builtin.group:
+        name: "test_wpapp"
+        state: present
+    - name: Create project app user test_wpapp
+      ansible.builtin.user:
+        name: "test_wpapp"
+        password: "*"
+        home: "/test_wp/.app"
+        createhome: true
+        group: "test_wpapp"
+        append: true
+  tasks:
+    - name: Include php versions role
+      ansible.builtin.include_role:
+        name: geerlingguy.php-versions
+      vars:
+        php_version: "8.2"
+    - name: Include php role
+      ansible.builtin.include_role:
+        name: geerlingguy.php
+      vars:
+        php_version: "8.2"
+        php_install_recommends: false
+        php_enable_php_fpm: true
+        php_webserver_daemon: "nginx"
+        php_date_timezone: "Europe/Paris"
+        php_expose_php: false
+        php_fpm_pool_user: test_wpapp
+        php_fpm_pool_group: test_wpapp
+    - name: Include nginx role
+      ansible.builtin.include_role:
+        name: geerlingguy.nginx
+      vars:
+        nginx_remove_default_vhost: true
+        nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+        nginx_vhosts:
+          - listen: "80"
+            server_name: "localhost"
+            index: "/"
+            extra_parameters: |
+              root /test_wp/project_root/www/public;
+              location / {
+                try_files $uri /index.php$is_args$args;
+              }
+              location ~ ^/index\.php(/|$) {
+                fastcgi_pass 127.0.0.1:9000;
+                fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                fastcgi_param DOCUMENT_ROOT $realpath_root;
+                internal;
+              }
+              location ~ \.php$ {
+                return 404;
+              }
+    - name: Include steamengine role
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        steamengine_project_name: test_wp
+        steamengine_project_type: wp
+        steamengine_build_url: https://delivery.steamulo.org/SteamEngineV2_tests/wordpress-test.zip
+        steamengine_build_checksum: sha1:7e5b076696bbbbdbb57130697ddf64de1cda754c
+        steamengine_project_configuration:
+          DB_NAME: "test_wp"
+          DB_USER: "test_wpapp"
+          DB_PASSWORD: "dev"
+          DB_HOST: "localhost"
+          WP_ENV: development
+          WP_HOME: http://test.localhost
+          WP_SITEURL: ${steamengine_project_root_path}/wp
+          WP_USE_CACHE: "false"
+          AUTH_KEY: ""
+          SECURE_AUTH_KEY: ""
+          LOGGED_IN_KEY: ""
+          NONCE_KEY: ""
+          AUTH_SALT: ""
+          SECURE_AUTH_SALT: ""
+          LOGGED_IN_SALT: ""
+          NONCE_SALT: ""
+          FORCE_SSL_LOGIN: "false"
+          FORCE_SSL_ADMIN: "false"
+          DB_PREFIX: wptest_

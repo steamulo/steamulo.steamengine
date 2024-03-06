@@ -1,0 +1,145 @@
+---
+
+- name: Is there a .env file
+  ansible.builtin.stat:
+    path: "{{ steamengine_conf_path }}/.env"
+  register: project_env_file_exist
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Create .env backup file"
+  ansible.builtin.copy:
+    src: "{{ steamengine_conf_path }}/.env"
+    dest: "{{ steamengine_conf_path }}/.env.backup"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=r
+    remote_src: yes
+  become: true
+  when: project_env_file_exist.stat.exists
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Create configuration file for projects"
+  ansible.builtin.template:
+    src: wordpress.env.j2
+    dest: "{{ steamengine_conf_path }}/.env"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=r,o=r
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Download build {{ steamengine_build_url }}"
+  ansible.builtin.get_url:
+    url: "{{ steamengine_build_url }}"
+    dest: "{{ steamengine_project_root_path }}/project.zip"
+    checksum: "{{ checksum_verified }}"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rw,g=rw,o=
+    headers: "{{ steamengine_build_url_headers }}"
+    validate_certs: "{{ steamengine_build_url_validate_certs }}"
+  register: get_url_build
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Is there a new build: {{ get_url_build.changed }}"
+  ansible.builtin.set_fact:
+    new_build_to_deploy: "{{ get_url_build.changed }}"
+  tags:
+    - steamengine_deploy_wp
+
+- include_tasks:
+    file: "include/deploy_database.yml"
+    apply:
+      tags:
+        - deploy
+  when: new_build_to_deploy is defined and new_build_to_deploy and steamengine_project_dump_bdd_url is defined and steamengine_project_dump_bdd_url != ''
+  tags:
+    - steamengine_deploy_wp
+
+- name: Create new release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_new_release_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  tags:
+    - steamengine_deploy_wp
+
+- name: Unarchive build
+  ansible.builtin.unarchive:
+    src: "{{ steamengine_project_root_path }}/project.zip"
+    dest: "{{ steamengine_project_wordpress_new_release_path }}"
+    remote_src: true
+    list_files: true
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  tags:
+    - steamengine_deploy_wp
+
+- name: Create symlink new release
+  ansible.builtin.file:
+    src: "{{ item.symlink_src }}"
+    dest: "{{ item.path }}"
+    state: link
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  with_items: "{{ steamengine_project_wordpress_symlinks }}"
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  tags:
+    - steamengine_deploy_wp
+
+- name: "Is there a current release : {{ steamengine_project_wordpress_current_release_path }}"
+  ansible.builtin.stat:
+    path: "{{ steamengine_project_wordpress_current_release_path }}"
+  register: project_current_release_exist
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  tags:
+    - steamengine_deploy_wp
+
+- name: Create current release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_current_release_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy and not project_current_release_exist.stat.exists
+  tags:
+    - steamengine_deploy_wp
+
+- name: Clean old release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_old_release_path }}"
+    state: absent
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+  tags:
+    - steamengine_deploy_wp
+
+- name: Create old release directory
+  ansible.builtin.file:
+    path: "{{ steamengine_project_wordpress_old_release_path }}"
+    state: directory
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  when: new_build_to_deploy is defined and new_build_to_deploy and project_current_release_exist.stat.exists
+  tags:
+    - steamengine_deploy_wp
+
+- name: Play post deploy tasks
+  ansible.builtin.include_tasks:
+    file: "wordpress/post_deploy_wp.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+  when: new_build_to_deploy is defined and new_build_to_deploy
+  tags:
+    - steamengine_deploy_wp

@@ -85,9 +85,26 @@
         - steamengine_cron
   tags: always
 
+- name: Check if steamengine_project_type/post_deploy.yml exists
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ lookup('ansible.builtin.fileglob', role_path + '/tasks/' + steamengine_project_type + '/post_deploy.yml') }}"
+  become: false
+  register: steamengine_post_deploy_check
+  tags: always
+
+- include_tasks:
+    file: "{{ steamengine_project_type }}/post_deploy.yml"
+    apply:
+      tags:
+        - steamengine_deploy
+  when: steamengine_post_deploy_check.stat.exists
+  tags: always
+
 - include_tasks:
     file: common/post_deploy.yml
     apply:
       tags:
         - steamengine_deploy
+  when: not steamengine_post_deploy_check.stat.exists and steamengine_project_type != 'wordpress'
   tags: always

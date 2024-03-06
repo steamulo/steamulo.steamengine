@@ -1,0 +1,76 @@
+---
+
+steamengine_project_wordpress_current_release_path: "{{ steamengine_project_root_path }}/current_release"
+steamengine_project_wordpress_old_release_path: "{{ steamengine_project_root_path }}/old_release"
+steamengine_project_wordpress_new_release_path: "{{ steamengine_project_root_path }}/new_release"
+steamengine_project_wordpress_symlinks:
+  - path: "{{ steamengine_project_wordpress_new_release_path }}/.env"
+    symlink_src: "{{ steamengine_conf_path }}/.env"
+
+# WORDPRESS
+steamengine_wrapper_scripts_base:
+  - name: start-php
+    description: Start php-fpm
+    command: |
+      systemctl start {{ (ansible_os_family == 'Debian') | ternary(steamengine_php_fpm_service_name, 'php-fpm') }}
+  - name: stop-php
+    description: Stop php-fpm and http server
+    command: |
+      systemctl stop {{ (ansible_os_family == 'Debian') | ternary(steamengine_php_fpm_service_name, 'php-fpm') }}
+  - name: restart-php
+    description: Restart php-fpm and http server
+    command: |
+      systemctl restart {{ (ansible_os_family == 'Debian') | ternary(steamengine_php_fpm_service_name, 'php-fpm') }}
+  - name: status-php
+    description: Display php-fpm and http server status
+    command: |
+      systemctl status {{ (ansible_os_family == 'Debian') | ternary(steamengine_php_fpm_service_name, 'php-fpm') }}
+  - name: start-nginx
+    description: Start http server
+    command: |
+      systemctl start nginx
+  - name: stop-nginx
+    description: Stop http server
+    command: |
+      systemctl stop nginx
+  - name: restart-nginx
+    description: Restart http server
+    command: |
+      systemctl restart nginx
+  - name: reload-nginx
+    description: Reload http server configuration
+    command: |
+      systemctl reload nginx
+  - name: status-nginx
+    description: Display the http server status
+    command: |
+      systemctl status nginx
+  - name: log
+    description: Display and follow project logs
+    command: |
+      tail -f {{ steamengine_logs_path }}/*.log
+  - name: fixpermissions
+    description: Restore project files and folders permissions
+    command: |
+      find -L {{ steamengine_project_wordpress_current_release_path }} \
+      {% for value in steamengine_wp_path_with_write_permission %}
+        -not -path '{{ steamengine_project_root_path_web }}/{{ value }}*' \
+      {% endfor %}
+      {% for value in steamengine_persistent_directories %}
+        -not -path '/{{ steamengine_project_name }}/{{ value.symlink_src }}*' \
+      {% endfor %}
+        -not -path '{{ steamengine_project_root_path_web }}/.env' \
+        -print0 | xargs -0 chmod 'u=rwx,g=rx,o='
+
+      find -L {{ steamengine_project_wordpress_current_release_path }} \
+        -not -path '{{ steamengine_project_root_path_web }}/.env' \
+        -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_app_user }}
+
+      chmod -R 'u=rwx,g=rwx,o=' \
+      {% for value in steamengine_wp_path_with_write_permission %}
+        {{ steamengine_project_root_path_web }}/{{ value }} \
+      {% endfor %}
+      {% for value in steamengine_persistent_directories %}
+        /{{ steamengine_project_name }}/{{ value.symlink_src }} \
+      {% endfor %}
+      || :

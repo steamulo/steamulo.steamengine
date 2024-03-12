@@ -1,5 +1,6 @@
 ---
 # BUILD
+
 - name: Download build {{ steamengine_build_url }}
   ansible.builtin.get_url:
     url: "{{ steamengine_build_url }}"
@@ -21,6 +22,17 @@
     new_build_to_deploy: "{{ get_url_build.changed | bool }}"
   tags:
     - steamengine_deploy_drupal
+
+- name: "Add maintenance page"
+  ansible.builtin.copy:
+    src: "files/maintenance.html"
+    dest: "{{ steamengine_project_root_path }}/maintenance.html"
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  tags:
+    - steamengine_deploy
+  when: new_build_to_deploy and steamengine_drupal_show_maintenance_page
 
 - name: Create tmp directory
   ansible.builtin.tempfile:
@@ -188,3 +200,14 @@
   when: new_build_to_deploy or steamengine_drupal_initial_install
   tags:
     - steamengine_deploy_drupal
+
+- name: "Remove maintenance page"
+  ansible.builtin.file:
+    path:  "{{ steamengine_project_root_path }}/maintenance.html"
+    state: absent
+    owner: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    mode: u=rwx,g=rx,o=
+  tags:
+    - steamengine_deploy
+  when: new_build_to_deploy and steamengine_drupal_show_maintenance_page

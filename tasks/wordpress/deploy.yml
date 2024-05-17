@@ -16,9 +16,14 @@
     mode: u=rw,g=r,o=r
     remote_src: yes
   become: true
-  when: project_env_file_exist.stat.exists
+  when: project_env_file_exist.stat.exists and not ansible_check_mode
   tags:
     - steamengine_deploy_wp
+
+- name: "Check if .env file has changed"
+  ansible.builtin.stat:
+    path: "{{ steamengine_conf_path }}/.env"
+  register: env_file_stat
 
 - name: "Create configuration file for projects"
   ansible.builtin.template:
@@ -27,6 +32,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rw,g=r,o=r
+  when: not env_file_stat.stat.exists or env_file_stat.stat.checksum != lookup('file', 'wordpress.env.j2') | checksum
   tags:
     - steamengine_deploy_wp
 

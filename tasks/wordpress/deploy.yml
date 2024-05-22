@@ -32,7 +32,7 @@
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_app_user }}"
     mode: u=rw,g=r,o=r
-  when: not env_file_stat.stat.exists or env_file_stat.stat.checksum != lookup('file', 'wordpress.env') | checksum
+  when: not env_file_stat.stat.exists or env_file_stat.stat.checksum != lookup('file', '.env') | checksum
   tags:
     - steamengine_deploy_wp
 

@@ -1,18 +1,18 @@
 ---
 
-- name: "Add nginx user in {{ steamengine_app_user }} group"
+- name: "Add nginx user in {{ steamengine_project_user }} group"
   ansible.builtin.user:
     name: "www-data"
-    groups: "{{ steamengine_app_user }}"
+    groups: "{{ steamengine_project_user }}"
     append: true
   when: ansible_os_family != 'RedHat'
   tags:
     - steamengine_runtime_drupal
 
-- name: "Add nginx user in {{ steamengine_app_user }} group"
+- name: "Add nginx user in {{ steamengine_project_user }} group"
   ansible.builtin.user:
     name: "{{ item }}"
-    groups: "{{ steamengine_app_user }}"
+    groups: "{{ steamengine_project_user }}"
     append: true
   when: ansible_os_family == 'RedHat'
   loop:

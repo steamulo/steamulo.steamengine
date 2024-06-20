@@ -6,7 +6,6 @@
     state: present
   with_items:
     - "{{ steamengine_project_user }}"
-    - "{{ steamengine_app_user }}"
 
 - name: "Create project app user {{ steamengine_app_user }}"
   ansible.builtin.user:
@@ -14,7 +13,7 @@
     password: "*"
     home: "{{ steamengine_home_path }}/.app"
     createhome: true
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     append: true
 
 - name: "Create project user {{ steamengine_project_user }}"
@@ -24,8 +23,6 @@
     home: "{{ steamengine_home_path }}"
     createhome: true
     group: "{{ steamengine_project_user }}"
-    groups:
-      - "{{ steamengine_app_user }}"
     shell: "/bin/bash"
     append: true
 

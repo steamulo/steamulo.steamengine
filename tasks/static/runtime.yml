@@ -7,3 +7,12 @@
     append: true
   tags:
     - steamengine_runtime_static
+
+- name: "Add nginx user in additionnal group"
+  ansible.builtin.user:
+    name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
+    groups: "{{ steamengine_project_user }}"
+    append: true
+  when: steamengine_additionnal_user_group is defined
+  tags:
+    - steamengine_runtime_static

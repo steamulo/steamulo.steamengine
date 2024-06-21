@@ -9,12 +9,33 @@
   tags:
     - steamengine_runtime_drupal
 
+- name: "Add nginx user in additionnal group"
+  ansible.builtin.user:
+    name: "www-data"
+    groups: "{{ steamengine_project_user }}"
+    append: true
+  when: ansible_os_family != 'RedHat' and steamengine_additionnal_user_group is defined
+  tags:
+    - steamengine_runtime_drupal
+
 - name: "Add nginx user in {{ steamengine_project_user }} group"
   ansible.builtin.user:
     name: "{{ item }}"
     groups: "{{ steamengine_project_user }}"
     append: true
   when: ansible_os_family == 'RedHat'
+  loop:
+    - "nginx" # nginx user for statics
+    - "apache" # php-fpm process for php
+  tags:
+    - steamengine_runtime_drupal
+
+- name: "Add nginx user in additionnal group"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: "{{ steamengine_project_user }}"
+    append: true
+  when: ansible_os_family == 'RedHat' and steamengine_additionnal_user_group is defined
   loop:
     - "nginx" # nginx user for statics
     - "apache" # php-fpm process for php

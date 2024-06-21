@@ -5,7 +5,9 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - "{{ steamengine_app_user }}"
     - "{{ steamengine_project_user }}"
+    - "{{ steamengine_additionnal_user_group | default([]) }}"
 
 - name: "Create project app user {{ steamengine_app_user }}"
   ansible.builtin.user:
@@ -13,8 +15,17 @@
     password: "*"
     home: "{{ steamengine_home_path }}/.app"
     createhome: true
-    group: "{{ steamengine_project_user }}"
+    group: "{{ steamengine_app_user }}"
+    groups: "{{ steamengine_project_user }}"
     append: true
+
+
+- name: "Add projet app user {{ steamengine_app_user }} to additionnal group"
+  ansible.builtin.user:
+    name: "{{ steamengine_app_user }}"
+    groups: "{{ steamengine_additionnal_user_group }}"
+    append: true
+  when: steamengine_additionnal_user_group is defined
 
 - name: "Create project user {{ steamengine_project_user }}"
   ansible.builtin.user:
@@ -23,8 +34,17 @@
     home: "{{ steamengine_home_path }}"
     createhome: true
     group: "{{ steamengine_project_user }}"
+    groups: "{{ steamengine_app_user }}"
     shell: "/bin/bash"
     append: true
+
+
+- name: "Add projet user {{ steamengine_project_user }} to additionnal group"
+  ansible.builtin.user:
+    name: "{{ steamengine_project_user }}"
+    groups: "{{ steamengine_additionnal_user_group }}"
+    append: true
+  when: steamengine_additionnal_user_group is defined
 
 - name: "Ensure authorized_keys are present for user {{ steamengine_project_user }}"
   ansible.builtin.authorized_key:

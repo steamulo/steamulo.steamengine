@@ -38,7 +38,7 @@ while [ $# -gt 0 ]; do
   {% for item in steamengine_wrapper_scripts -%}
   {{ item.name }})
     {% if item.run_as_app_user is defined and item.run_as_app_user %}
-        cat <<"EOF" | sudo -u {{ steamengine_app_user }} bash
+        cat <<"EOF" | sudo -u {{ steamengine_app_user }} -g {{ steamengine_project_user }} bash
     {% else %}
         cat <<"EOF" | bash
     {% endif %}

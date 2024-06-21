@@ -28,7 +28,7 @@
     src: "files/maintenance.html"
     dest: "{{ steamengine_project_root_path }}/maintenance.html"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   tags:
     - steamengine_deploy
@@ -104,7 +104,7 @@
   tags:
     - steamengine_deploy_drupal
 
-- name: "Add read permission for {{ steamengine_app_user }}"
+- name: "Add read permission for {{ steamengine_project_user }}"
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
@@ -206,7 +206,7 @@
     path:  "{{ steamengine_project_root_path }}/maintenance.html"
     state: absent
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   tags:
     - steamengine_deploy

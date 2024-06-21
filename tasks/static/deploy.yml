@@ -38,7 +38,7 @@
   tags:
     - steamengine_deploy_static
 
-- name: "Add read permission for {{ steamengine_app_user }}"
+- name: "Add read permission for {{ steamengine_project_user }}"
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"

@@ -43,7 +43,7 @@ steamengine_wrapper_scripts_base:
         -exec chmod 'u=rwx,g=rx,o=' {} \;
 
       find -L {{ steamengine_project_root_path_web }} \
-        -exec chown {{ steamengine_project_user }}:{{ steamengine_app_user }} {} \; \
+        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }} {} \; \
       || :
 
       chmod -R 'u=rwx,g=rwx,o=' \
@@ -58,7 +58,7 @@ steamengine_wrapper_scripts_base:
     description: Restore drush cache files permissions
     command: |
       find -L {{ steamengine_home_path }}/.drush \
-        -exec chown {{ steamengine_project_user }}:{{ steamengine_app_user }} {} \; \
+        -exec chown {{ steamengine_project_user }}:{{ steamengine_project_user }} {} \; \
       || :
   - name: drush_deploy
     description: "Deploy site with Drush command"

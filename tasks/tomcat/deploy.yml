@@ -5,7 +5,7 @@
     src: "project_properties.conf.j2"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
   notify:
@@ -18,7 +18,7 @@
     src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration_template_path is defined
   notify:
@@ -30,7 +30,7 @@
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/tomcat"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
   tags:
@@ -42,7 +42,7 @@
     dest: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat_version }}.tar.gz"
     checksum: "sha512:{{ steamengine_tomcat_archive_sha512 }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   register: get_url_tomcat
   notify:
@@ -61,7 +61,7 @@
     src: "{{ steamengine_project_root_path }}/tomcat_{{ steamengine_tomcat_version }}.tar.gz"
     dest: "{{ steamengine_project_root_path }}/tomcat"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     remote_src: true
     extra_opts: [--strip-components=1]
@@ -82,7 +82,7 @@
     path: "{{ steamengine_project_root_path }}/tomcat/webapps"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   when: new_tomcat_version
   tags:
@@ -93,7 +93,7 @@
     path: "{{ steamengine_project_root_path }}/tomcat/work"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rwx,o=
   when: new_tomcat_version
   tags:
@@ -104,7 +104,7 @@
     path: "{{ steamengine_project_root_path }}/tomcat/temp"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rwx,o=
   when: new_tomcat_version
   tags:
@@ -115,7 +115,7 @@
     src: "tomcat.server.xml.j2"
     dest: "{{ steamengine_project_root_path }}/tomcat/conf/server.xml"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   notify:
     - "{{ steamengine_project_name }} restart"
@@ -128,7 +128,7 @@
     dest: "{{ steamengine_project_root_path }}/project.war"
     checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
@@ -173,7 +173,7 @@
     path: "{{ steamengine_project_root_path }}/tomcat/webapps/ROOT"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   when: new_build_to_deploy
   tags:

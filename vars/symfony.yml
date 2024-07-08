@@ -62,7 +62,7 @@ steamengine_wrapper_scripts_base:
       {% endfor %}
       || :
   - name: cache_clear
-    description: "Clear symfony cache prod"
-    command: "{{ steamengine_php_bin_path }} -d memory_limit=1024M bin/console cache:clear --env=prod"
+    description: "Clear symfony cache"
+    command: "APP_ENV='{{ steamengine_project_configuration.APP_ENV }}' {{ steamengine_php_bin_path }} -d memory_limit=1024M bin/console cache:clear"
     run_as_app_user: true
     run_in_project_root_path_web: true

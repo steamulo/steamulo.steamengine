@@ -5,7 +5,7 @@
     url: "{{ steamengine_project_dump_bdd_url }}"
     dest: "{{ steamengine_home_path }}/db_dump.zip"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   register: db_dump
 
@@ -14,7 +14,7 @@
     src: "{{ steamengine_home_path }}/db_dump.zip"
     dest: "{{ steamengine_project_name }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     remote_src: true
     list_files: true

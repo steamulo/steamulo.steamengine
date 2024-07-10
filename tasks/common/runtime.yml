@@ -4,9 +4,9 @@
   ansible.builtin.template:
     src: "steamengine_wrapper.sh.j2"
     dest: "{{ steamengine_bin_path }}/steamengine"
-    owner: "root"
+    owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_project_user }}"
-    mode: 0750
+    mode: 0500
 
 - name: Create sudo configuration
   ansible.builtin.copy:

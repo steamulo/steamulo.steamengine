@@ -5,7 +5,7 @@
     path: "{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0751
   with_items:
     - "{{ steamengine_home_path }}"
@@ -15,7 +15,7 @@
     path: "{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0750
   with_items:
     - "{{ steamengine_project_root_path }}"
@@ -25,9 +25,9 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "root"
+    owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_project_user }}"
-    mode: 0750
+    mode: 0500
   with_items:
     - "{{ steamengine_bin_path }}"
 
@@ -36,7 +36,7 @@
     path: "{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0770
   with_items:
     - "{{ steamengine_logs_path }}"

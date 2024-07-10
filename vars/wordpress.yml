@@ -64,7 +64,7 @@ steamengine_wrapper_scripts_base:
 
       find -L {{ steamengine_project_wordpress_current_release_path }} \
         -not -path '{{ steamengine_project_root_path_web }}/.env' \
-        -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_app_user }}
+        -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_project_user }}
 
       chmod -R 'u=rwx,g=rwx,o=' \
       {% for value in steamengine_wp_path_with_write_permission %}

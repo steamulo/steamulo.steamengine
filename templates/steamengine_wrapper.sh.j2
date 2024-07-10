@@ -45,7 +45,12 @@ while [ $# -gt 0 ]; do
     {% if item.run_in_project_root_path_web is defined and item.run_in_project_root_path_web %}
         cd {{ steamengine_project_root_path_web }}
     {% endif %}
-    {{ item.command }}
+    {% if item.run_with_symfony_app_env is defined and item.run_with_symfony_app_env %}
+        APP_ENV='{{ steamengine_project_configuration.APP_ENV }}' {{ item.command }}
+    {% else %}
+      {{ item.command }}
+    {% endif %}
+
 EOF
     exit $?
     ;;

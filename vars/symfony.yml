@@ -46,11 +46,11 @@ steamengine_wrapper_scripts_base:
       {% for value in steamengine_persistent_directories %}
         -not -path '/{{ steamengine_project_name }}/{{ value.symlink_src }}*' \
       {% endfor %}
-        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+        -not -path '{{ steamengine_project_root_path_web }}/.env.{{ steamengine_project_configuration.APP_ENV }}.local' \
         -print0 | xargs -0 chmod 'u=rwx,g=rx,o='
 
       find -L {{ steamengine_project_root_path_web }} \
-        -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
+        -not -path '{{ steamengine_project_root_path_web }}/.env.{{ steamengine_project_configuration.APP_ENV }}.local' \
         -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_project_user }}
 
       chmod -R 'u=rwx,g=rwx,o=' \

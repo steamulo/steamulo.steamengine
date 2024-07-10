@@ -5,6 +5,9 @@ Description={{ steamengine_project_name }} {{ item.description }}
 
 [Service]
 WorkingDirectory={{ steamengine_project_root_path_web }}
+{% if item.run_with_symfony_app_env is defined and item.run_with_symfony_app_env %}
+Environment="APP_ENV='{{ steamengine_project_configuration.APP_ENV }}'"
+{% endif %}
 ExecStart={{ item.command }} 
 
 Type=simple

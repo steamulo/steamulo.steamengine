@@ -161,7 +161,7 @@
   ansible.builtin.file:
     state: link
     src: "{{ steamengine_conf_path }}/.env.local"
-    dest: "{{ steamengine_project_root_path_web }}/.env.local"
+    dest: "{{ steamengine_project_root_path_web }}/.env.{{ steamengine_project_configuration.APP_ENV }}.local"
     owner: "{{ steamengine_project_user }}"
     group: "{{ steamengine_project_user }}"
   when: new_build_to_deploy and steamengine_project_configuration is defined

@@ -49,10 +49,6 @@ steamengine_wrapper_scripts_base:
         -not -path '{{ steamengine_project_root_path_web }}/.env.{{ steamengine_project_configuration.APP_ENV }}.local' \
         -print0 | xargs -0 chmod 'u=rwx,g=rx,o='
 
-      find -L {{ steamengine_project_root_path_web }} \
-        -not -path '{{ steamengine_project_root_path_web }}/.env.{{ steamengine_project_configuration.APP_ENV }}.local' \
-        -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_project_user }}
-
       chmod -R 'u=rwx,g=rwx,o=' \
       {% for value in steamengine_sf_path_with_write_permission %}
         {{ steamengine_project_root_path_web }}/{{ value }} \

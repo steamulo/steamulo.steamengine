@@ -31,11 +31,11 @@ steamengine_wrapper_scripts_base:
     description: Restore project files and folders permissions
     command: |
       if [ -d "{{ steamengine_project_root_path_web }}" ]; then
-        chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}
+        chown -R {{ steamengine_project_user }}:{{ steamengine_project_user }} {{ steamengine_project_root_path_web }}
         chmod -R u=rwx,g=rx,o= {{ steamengine_project_root_path_web }}
         {% for item in steamengine_nodejs_allowed_write_paths -%}
         if [ -d "{{ steamengine_project_root_path_web }}/{{ item }}" ]; then
-          chown -R {{ steamengine_project_user }}:{{ steamengine_app_user }} {{ steamengine_project_root_path_web }}/{{ item }}
+          chown -R {{ steamengine_project_user }}:{{ steamengine_project_user }} {{ steamengine_project_root_path_web }}/{{ item }}
           chmod -R u=rwx,g=rwx,o= {{ steamengine_project_root_path_web }}/{{ item }}
         fi
         {% endfor %}

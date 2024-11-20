@@ -5,7 +5,7 @@
     path: "{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0750
   with_items:
     - "{{ steamengine_sf_external_logs_path }}"
@@ -17,7 +17,7 @@
     path: "{{ steamengine_persistent_base_path }}/{{ item.path }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0770
   with_items: "{{ steamengine_persistent_directories }}"
   tags:
@@ -28,7 +28,7 @@
     src: "project_properties.env.j2"
     dest: "{{ steamengine_conf_path }}/.env.local"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
   tags:
@@ -39,7 +39,7 @@
     path: "{{ steamengine_conf_path }}/{{ item.value | dirname }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0770
   with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
   tags:
@@ -51,7 +51,7 @@
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
@@ -81,7 +81,7 @@
     src: "{{ item.key }}"
     dest: "{{ steamengine_conf_path }}/{{ item.value }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
   when: new_build_to_deploy
@@ -103,7 +103,7 @@
     dest: "{{ tempdir.path }}"
     remote_src: true
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
@@ -135,11 +135,11 @@
   tags:
     - steamengine_deploy_sf
 
-- name: "Add read permission for {{ steamengine_app_user }}"
+- name: "Add read permission for {{ steamengine_project_user }}"
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     recurse: true
     mode: u=rwx,g=rx,o=
   when: new_build_to_deploy
@@ -151,7 +151,7 @@
     path: "{{ steamengine_sf_var_path }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: 0750
   when: new_build_to_deploy
   tags:
@@ -163,7 +163,7 @@
     src: "{{ steamengine_conf_path }}/.env.local"
     dest: "{{ steamengine_project_root_path_web }}/.env.local"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
   when: new_build_to_deploy and steamengine_project_configuration is defined
   tags:
     - steamengine_deploy_sf
@@ -174,7 +174,7 @@
     src: "{{ steamengine_conf_path }}/{{ item.value }}"
     dest: "{{ steamengine_project_root_path_web }}/{{ item.value }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
   with_dict: "{{ steamengine_sf_project_custom_configurations_template_path }}"
   when: new_build_to_deploy
   tags:
@@ -194,7 +194,7 @@
     src: "{{ steamengine_sf_external_logs_path }}"
     dest: "{{ steamengine_sf_log_path }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
   when: new_build_to_deploy
   tags:
     - steamengine_deploy_sf
@@ -204,7 +204,7 @@
     path: "{{ steamengine_project_root_path_web }}/{{ item }}"
     state: directory
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rwx,o=
   with_items: "{{ steamengine_sf_path_with_write_permission }}"
   when: new_build_to_deploy

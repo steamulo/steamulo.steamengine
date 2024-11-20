@@ -12,7 +12,7 @@
       {{ steamengine_drupal_env }}
     dest: "{{ steamengine_conf_path }}/.env"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
 
 - name: Create env symlink
@@ -21,4 +21,4 @@
     src: "{{ steamengine_conf_path }}/.env"
     dest: "{{ steamengine_project_root_path_web }}/.env"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"

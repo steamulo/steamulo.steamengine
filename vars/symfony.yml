@@ -51,7 +51,7 @@ steamengine_wrapper_scripts_base:
 
       find -L {{ steamengine_project_root_path_web }} \
         -not -path '{{ steamengine_project_root_path_web }}/.env.local' \
-        -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_app_user }}
+        -print0 | xargs -0 chown {{ steamengine_project_user }}:{{ steamengine_project_user }}
 
       chmod -R 'u=rwx,g=rwx,o=' \
       {% for value in steamengine_sf_path_with_write_permission %}
@@ -62,7 +62,7 @@ steamengine_wrapper_scripts_base:
       {% endfor %}
       || :
   - name: cache_clear
-    description: "Clear symfony cache prod"
-    command: "{{ steamengine_php_bin_path }} -d memory_limit=1024M bin/console cache:clear --env=prod"
+    description: "Clear symfony cache"
+    command: "APP_ENV='{{ steamengine_project_configuration.APP_ENV }}' {{ steamengine_php_bin_path }} -d memory_limit=1024M bin/console cache:clear"
     run_as_app_user: true
     run_in_project_root_path_web: true

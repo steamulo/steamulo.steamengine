@@ -27,6 +27,7 @@ steamengine_wrapper_scripts_extra: []
 #  command:
 #  run_as_app_user: true # optional
 #  run_in_project_root_path_web: true # optional
+#  run_with_symfony_app_env: false # optional
 
 steamengine_wrapper_scripts_post_deploy: []
 steamengine_wrapper_scripts_pre_deploy: []
@@ -54,6 +55,7 @@ steamengine_crons: []
 #   - name: messenger
 #     description: "Symfony Messenger: Sync & Queued Message Handling"
 #     command: "/usr/bin/php bin/console messenger:consume async --limit=10 --env=prod"
+#     run_with_symfony_app_env: false # optional run the command setting the symfony APP_ENV variable from the configuration
 steamengine_extra_services: []
 
 steamengine_build_url_validate_certs: true

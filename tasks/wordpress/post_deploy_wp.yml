@@ -13,7 +13,7 @@
 - name: Delete directories if exists
   ansible.builtin.file:
     state: absent
-    path: "{{ steamengine_project_name }}/{{ item.symlink_src }}"
+    path: "/{{ steamengine_project_name }}/{{ item.symlink_src }}"
   when:
     - item.delete_dir is defined and item.delete_dir
     - new_build_to_deploy is defined and new_build_to_deploy

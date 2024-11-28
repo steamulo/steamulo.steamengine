@@ -5,7 +5,7 @@
     url: "{{ steamengine_drupal_db_dump_url }}"
     dest: "{{ steamengine_project_root_path }}/db_dump.zip"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_drupal_db_dump_url_headers }}"
   register: db_dump
@@ -17,7 +17,7 @@
     src: "{{ steamengine_project_root_path }}/db_dump.zip"
     dest: "{{ steamengine_project_root_path }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     remote_src: true
     list_files: true

@@ -36,11 +36,20 @@
   tags:
     - steamengine_runtime_nodejs
 
-- name: "Add nginx user in {{ steamengine_app_user }} group"
+- name: "Add nginx user in {{ steamengine_project_user }} group"
   ansible.builtin.user:
     name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
-    groups: "{{ steamengine_app_user }}"
+    groups: "{{ steamengine_project_user }}"
     append: true
   when: steamengine_nodejs_add_nginx_app_group
+  tags:
+    - steamengine_runtime_nodejs
+
+- name: "Add nginx user in additionnal group"
+  ansible.builtin.user:
+    name: "{{ (ansible_os_family == 'RedHat') | ternary('nginx', 'www-data') }}"
+    groups: "{{ steamengine_project_user }}"
+    append: true
+  when: steamengine_nodejs_add_nginx_app_group and steamengine_additionnal_user_group is defined
   tags:
     - steamengine_runtime_nodejs

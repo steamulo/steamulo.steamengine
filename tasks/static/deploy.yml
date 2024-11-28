@@ -6,7 +6,7 @@
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
@@ -18,7 +18,7 @@
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
   tags:
@@ -38,11 +38,11 @@
   tags:
     - steamengine_deploy_static
 
-- name: "Add read permission for {{ steamengine_app_user }}"
+- name: "Add read permission for {{ steamengine_project_user }}"
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     recurse: true
     mode: u=rwx,g=rx,o=
   tags:

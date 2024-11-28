@@ -5,7 +5,7 @@
     src: "nodejs_pm2_ecosystem.json.j2"
     dest: "{{ steamengine_conf_path }}/nodejs_pm2_ecosystem.json"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   notify:
     - "{{ steamengine_project_name }} restart"
@@ -18,7 +18,7 @@
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
@@ -53,7 +53,7 @@
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path }}/pm2"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rwx,o=
     state: directory
   tags:
@@ -71,7 +71,7 @@
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
   when: new_build_to_deploy

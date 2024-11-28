@@ -5,7 +5,7 @@
     src: "project_properties.conf.j2"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration is defined
   notify:
@@ -18,7 +18,7 @@
     src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env.conf"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration_template_path is defined
   notify:
@@ -32,7 +32,7 @@
     dest: "{{ steamengine_project_root_path }}/project.zip"
     checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
@@ -87,7 +87,7 @@
   ansible.builtin.file:
     path: "{{ steamengine_project_root_path_web }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     state: directory
   when: new_build_to_deploy
@@ -106,7 +106,7 @@
     state: directory
     recurse: true
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
   when: new_build_to_deploy
   tags:

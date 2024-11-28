@@ -7,7 +7,7 @@
       {{ steamengine_project_configuration | to_nice_yaml }}
     dest: "{{ steamengine_conf_path }}/project_env_conf.yml"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   notify:
     - "{{ steamengine_project_name }} restart"
@@ -19,7 +19,7 @@
     src: "{{ steamengine_project_configuration_template_path }}"
     dest: "{{ steamengine_conf_path }}/project_env_conf.yml"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rw,g=r,o=
   when: steamengine_project_configuration_template_path is defined
   notify:
@@ -33,7 +33,7 @@
     dest: "{{ steamengine_project_root_path }}/project.jar"
     checksum: "{{ checksum_verified }}"
     owner: "{{ steamengine_project_user }}"
-    group: "{{ steamengine_app_user }}"
+    group: "{{ steamengine_project_user }}"
     mode: u=rwx,g=rx,o=
     headers: "{{ steamengine_build_url_headers }}"
     validate_certs: "{{ steamengine_build_url_validate_certs }}"
